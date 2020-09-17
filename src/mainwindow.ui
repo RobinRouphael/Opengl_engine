@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1287</width>
+    <height>674</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QWidget" name="horizontalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>1281</width>
+      <height>601</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="mainLayout">
+     <item>
+      <widget class="MyOpenGLWidget" name="openGLWidget">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>4</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="mouseTracking">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QWidget" name="panelWidget" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>1</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1287</width>
+     <height>29</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="SelectShader">
+    <property name="title">
+     <string>Select Shader</string>
+    </property>
+    <addaction name="actionPhong"/>
+    <addaction name="actionBasic_Texture"/>
+    <addaction name="actionApproximation_error"/>
+   </widget>
+   <widget class="QMenu" name="menuCreate_Asset">
+    <property name="title">
+     <string>Create Model</string>
+    </property>
+    <addaction name="actionCreate_Sphere"/>
+    <addaction name="actionCreate_IcoSphere"/>
+    <addaction name="actionCreate_Mesh_from_file"/>
+   </widget>
+   <addaction name="SelectShader"/>
+   <addaction name="menuCreate_Asset"/>
+  </widget>
+  <action name="actionCreate_Sphere">
+   <property name="text">
+    <string>Create Sphere</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Create a new UV Sphere&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
+  <action name="actionCreate_IcoSphere">
+   <property name="text">
+    <string>Create IcoSphere</string>
+   </property>
+  </action>
+  <action name="actionCreate_Mesh_from_file">
+   <property name="text">
+    <string>Create Mesh from file</string>
+   </property>
+  </action>
+  <action name="actionPhong">
+   <property name="text">
+    <string>Phong</string>
+   </property>
+  </action>
+  <action name="actionBasic_Texture">
+   <property name="text">
+    <string>Basic Texture</string>
+   </property>
+  </action>
+  <action name="actionApproximation_error">
+   <property name="text">
+    <string>Approximation error</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MyOpenGLWidget</class>
+   <extends>QOpenGLWidget</extends>
+   <header>myopenglwidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
