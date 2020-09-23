@@ -8,6 +8,8 @@ CMAKE_POLICY(SET CMP0043 NEW) # This will silence the Cmake Warning "Policy CMP0
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -Wall -pedantic -Wextra")
 #set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
 
+
+
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin)
 
 find_package(Qt5 COMPONENTS OpenGL REQUIRED)
@@ -22,11 +24,7 @@ find_package(OpenGL REQUIRED) # define OPENGL_LIBRARIES
 add_definitions(-DGL_SILENCE_DEPRECATION)
 
 
-#ASSIMP
-find_package(ASSIMP REQUIRED)
-if(ASSIMP_FOUND)
-   include_directories(${ASSIMP_INCLUDE_DIR})
-endif()
+
 
 
 ################################################################################
@@ -53,6 +51,7 @@ include_directories(
    ${CMAKE_SOURCE_DIR}/src
    ${CMAKE_SOURCE_DIR}/glm
    ${CMAKE_SOURCE_DIR}/textures
+   ${CMAKE_SOURCE_DIR}/assimp
 )
 
 SOURCE_GROUP("Source Files" FILES ${folder_source})

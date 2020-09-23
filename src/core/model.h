@@ -25,7 +25,7 @@ public:
      * Draws the model
      * @param shader
      */
-    void drawModel(Shader shader);
+    virtual void drawModel(Shader shader);
 
 
     /**

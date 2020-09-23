@@ -29,6 +29,9 @@ OpenGLDemo::OpenGLDemo(int width, int height) : _width(width), _height(height), 
     auto l3 = std::make_shared<PointLight>(glm::vec3(-4.5, 0, 4));
     _lights.emplace_back(std::make_pair(l3, new PointLightWidget(l3)));
 
+    auto bspline = std::make_shared<BSpline>();
+    _models.emplace_back(std::make_pair(bspline,new ImportedModelWidget(bspline) ))
+
 
 
     _cameraselector.push_back( []()->Camera*{return new EulerCamera(glm::vec3(0.f, 0.f, 3.f));} );
@@ -252,4 +255,3 @@ void OpenGLDemo::setShader(const std::string &name)
     else if(name == "Basic Texture")
         _shader = std::make_unique<Shader>("../shaders/texture_vs.glsl", "../shaders/texture_fs.glsl");
 }
-

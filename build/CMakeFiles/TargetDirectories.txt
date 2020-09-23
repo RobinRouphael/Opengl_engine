@@ -1,0 +1,4 @@
+/home/rpr2264a/TIG3D/Opengl_engine/build/CMakeFiles/rebuild_cache.dir
+/home/rpr2264a/TIG3D/Opengl_engine/build/CMakeFiles/Engine.dir
+/home/rpr2264a/TIG3D/Opengl_engine/build/CMakeFiles/edit_cache.dir
+/home/rpr2264a/TIG3D/Opengl_engine/build/CMakeFiles/Engine_autogen.dir
