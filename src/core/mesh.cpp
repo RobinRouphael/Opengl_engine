@@ -46,7 +46,7 @@ void Mesh::drawLineMesh(Shader &shader)
     shader.isTextured(!_textures.empty());
 
     glBindVertexArray(_vao);
-    glDrawElements(GL_LINES, _indices.size(), GL_UNSIGNED_INT, nullptr);
+    glDrawElements(GL_LINE_STRIP, _indices.size(), GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);
 }
 

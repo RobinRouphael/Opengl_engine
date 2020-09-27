@@ -90,20 +90,6 @@ private:
         return rot;
     }
 
-    /**
-     * Get Model Matrix
-     * @return Translation Mat * Rotation Mat * Scale Mat
-     */
-    glm::mat4 getModel(){
-        return glm::translate(glm::mat4(),_translation)
-               * getRotationMatrix()
-               *glm::scale(glm::mat4(),_scale);
-    }
-
-
-
-private:
-    Material _material;
 
 protected:
     std::vector<std::shared_ptr<Mesh>> _meshs;
@@ -112,6 +98,17 @@ protected:
     glm::vec3 _rotation;
     bool waitingToUpdate;
 
+/**
+ * Get Model Matrix
+ * @return Translation Mat * Rotation Mat * Scale Mat
+ */
+glm::mat4 getModel(){
+    return glm::translate(glm::mat4(),_translation)
+           * getRotationMatrix()
+           *glm::scale(glm::mat4(),_scale);
+}
+
+    Material _material;
 };
 
 

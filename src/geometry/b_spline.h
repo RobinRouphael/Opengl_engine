@@ -27,12 +27,12 @@ public:
     void drawModel(Shader shader) override;
 
 private:
-  glm::vec3 evaluate(const double u);
+  glm::vec3 evaluate(float u);
 
 
 private:
     int _deg;
-    std::vector<double> _nodalVector;
+    std::vector<float> _nodalVector;
     std::vector<glm::vec3> _controlPoints;
 
 
