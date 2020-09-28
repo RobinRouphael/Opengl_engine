@@ -49,7 +49,7 @@ set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "../src"
   "../glm"
   "../textures"
-  "../assimp"
+  "../assimp/include"
   "/opt/anaconda5/include/qt"
   "/opt/anaconda5/include/qt/QtOpenGL"
   "/opt/anaconda5/include/qt/QtWidgets"
