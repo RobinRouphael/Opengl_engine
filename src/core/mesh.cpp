@@ -84,3 +84,5 @@ void Mesh::generateMesh()
     //6. Unbind the VAO
     glBindVertexArray(0);
 }
+
+

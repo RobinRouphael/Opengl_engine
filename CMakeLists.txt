@@ -54,7 +54,6 @@ include_directories(
         ${CMAKE_SOURCE_DIR}/src
         ${CMAKE_SOURCE_DIR}/glm
         ${CMAKE_SOURCE_DIR}/textures
-        ${CMAKE_SOURCE_DIR}/assimp/include
 )
 
 SOURCE_GROUP("Source Files" FILES ${folder_source})

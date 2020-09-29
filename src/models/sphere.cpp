@@ -6,11 +6,15 @@
 
 
 Sphere::Sphere():
-    Model(),
-    _nbSectors(20),
-    _nbStacks(20)
-    {
-        addMesh(std::make_shared<Mesh>(createVertices(),createIndices()));
+    Sphere(20,20)
+    {}
+
+Sphere::Sphere(int nbStacks, int nbSectors):
+        Model(),
+        _nbSectors(nbSectors),
+        _nbStacks(nbStacks)
+        {
+    addMesh(std::make_shared<Mesh>(createVertices(),createIndices()));
     }
 
 Sphere::~Sphere(){}
@@ -113,6 +117,8 @@ void Sphere::setTextureDiffuse(const std::shared_ptr<Texture> &texture)
     _textureDiffuse =texture;
     waitingToUpdate = true;
 }
+
+
 
 
 

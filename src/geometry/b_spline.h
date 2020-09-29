@@ -9,7 +9,7 @@
 
 
 #include <src/core/model.h>
-
+#include "models/sphere.h"
 class BSpline : public Model{
     /**
      *
@@ -34,6 +34,7 @@ private:
     int _deg;
     std::vector<float> _nodalVector;
     std::vector<glm::vec3> _controlPoints;
+    std::vector<std::shared_ptr<Sphere>> _graphicPoints;
 
 
 };

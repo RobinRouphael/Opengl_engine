@@ -15,6 +15,7 @@ public:
      * Create UV Sphere in a single Mesh
      */
     Sphere();
+    Sphere(int nbStacks, int nbSectors);
     /**
      * Destructor
      */

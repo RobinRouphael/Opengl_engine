@@ -13,13 +13,19 @@ BSpline::BSpline(): Model()
   _controlPoints = std::vector<glm::vec3>{
           glm::vec3(0, 0, 0), glm::vec3(1, 1, 0),
           glm::vec3(2, 1, 0),
-          glm::vec3(3, 0, 0), glm::vec3(4, 0, 0), glm::vec3(5, 0, 0)
-          , glm::vec3(7, 0, 0) , glm::vec3(8, 0, 0)
+          glm::vec3(3, 0, 0), glm::vec3(4, -5, 0), glm::vec3(5, 0, 0)
+          , glm::vec3(6, 0, 0) , glm::vec3(7, 0, 0)
   };
   std::vector<Vertex> vertices;
   std::vector<GLuint> indices;
+  for(auto p : _controlPoints){
+      auto s = std::make_shared<Sphere>(Sphere());
+      s->setPosition(p);
+      s->setScale(glm::vec3(0.1,0.1,0.1));
+      _graphicPoints.emplace_back(s);
+  }
   GLuint indice = 0;
-  for(float u = _nodalVector[_deg]; u < _nodalVector[_controlPoints.size()]; u +=0.5){
+  for(float u = _nodalVector[_deg]; u < _nodalVector[_controlPoints.size()]; u +=0.1){
     Vertex v;
     v.Position = this->evaluate(u);
     vertices.push_back(v);
@@ -39,24 +45,26 @@ glm::vec3 BSpline::evaluate(const float u)
 {
   auto k =  _deg+1;
   auto i = k;
-  auto dec = 0;
+  int dec = 0;
   while(u > _nodalVector[i])
   {
     i++;
     dec++;
   }
-
-  auto tempPoints = std::vector<glm::vec3>(_controlPoints.begin()+dec, _controlPoints.begin()+dec+k-1);
+  auto tempPoints = std::vector<glm::vec3>(_controlPoints.begin()+dec, _controlPoints.begin()+dec+k);
   for( auto l = 0; l < _deg; ++l )
   {
     for( auto j = 0; j < k - 1; j++)
     {
+
       tempPoints[j] = ( ( _nodalVector[dec+k+j] - u ) / (_nodalVector[dec+k+j] - _nodalVector[dec+1+j]) ) * tempPoints[j] +
               ( ( u - _nodalVector[dec+1+j] ) / (_nodalVector[dec+k+j] - _nodalVector[dec+1+j]) )* tempPoints[j+1];
+
     }
     dec++;
     k--;
   }
+
 
   return tempPoints[0];
 }
@@ -68,9 +76,11 @@ void BSpline::drawModel(Shader shader)
       waitingToUpdate=false;
       updateModel();
   }
+  for(const auto &gp : _graphicPoints) {
+      gp->drawModel(shader);
+  }
   shader.use();
   shader.setMat4("model", getModel());
   shader.addMaterial(_material);
-  for(auto &m : _meshs)
-      m->drawLineMesh(shader);
+  _meshs[0]->drawLineMesh(shader);
 }
