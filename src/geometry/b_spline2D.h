@@ -26,7 +26,8 @@ private:
     glm::vec3 evaluate(float u, float v);
 private:
     int _deg;
-    std::vector<float> _nodalVector;
+    std::vector<float> _nodalVectorV;
+    std::vector<float> _nodalVectorU;
     std::vector<std::shared_ptr<BSpline>> _uSplines;
 };
 

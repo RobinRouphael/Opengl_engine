@@ -6,30 +6,50 @@
 
 BSpline2D::BSpline2D() {
  _deg = 3;
- _nodalVector = std::vector<float>{1,2,3,4,5,6,7,8,9,10,11,12};
- for(int i = 0; i < 10; i++) {
+ _nodalVectorV = std::vector<float>{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16};
+ _nodalVectorU = std::vector<float>{1,2,3,4,5,6,7,8,9,10,11,12};
+
+    for(int i = 0; i < 12; i++) {
      auto uSpline = std::make_shared<BSpline>(_deg, std::vector<glm::vec3>{
              glm::vec3(0+i, 0, i), glm::vec3(1+i, 1, i),
              glm::vec3(2+i, 1, i),
-             glm::vec3(3+i, 0, i), glm::vec3(4+i, -5, i), glm::vec3(5+i, 0, i), glm::vec3(6+i, 0, i), glm::vec3(7, 0, i)
-     }, _nodalVector);
+             glm::vec3(3+i, 0, i), glm::vec3(4+i, -1, i), glm::vec3(5+i, 0, i), glm::vec3(6+i, 0, i), glm::vec3(7, 0, i)
+     }, _nodalVectorU);
 
      _uSplines.emplace_back(std::move(uSpline));
- }
+    }
 
  std::vector<Vertex> vertices;
  std::vector<GLuint> indices;
- GLuint indice = 0;
- for(float v = _nodalVector[_deg]; v < _nodalVector[8]; v +=0.1){
-     for(float u = _nodalVector[_deg]; u < _nodalVector[8]; u +=0.1) {
+ for(float v = _nodalVectorV[_deg]; v < _nodalVectorV[_nodalVectorV.size()-_deg]; v +=0.1){
+     for(float u = _nodalVectorU[_deg]; u < _nodalVectorU[_nodalVectorU.size()-_deg]; u +=0.1) {
          Vertex vertex;
          vertex.Position = this->evaluate(u,v);
          vertices.push_back(vertex);
-         indices.push_back(indice);
-         indice++;
 
      }
  }
+    int uStep = (_nodalVectorU[_nodalVectorU.size()-_deg] - _nodalVectorU[_deg])/0.1;
+    int k1, k2, k3;
+    for(int v = 0; v < uStep-1; v ++){
+        for(int u = 0; u < uStep-1; u++){
+
+                k1 = v * uStep + u;
+                k2 = v * uStep + 1 + u;
+                k3 = (v+1) * uStep + u;
+            indices.emplace_back(k1);
+            indices.emplace_back(k2);
+            indices.emplace_back(k3);
+
+                k1 = (v+1) * uStep+ u;
+                k3 = (v+1) * uStep + u + 1;
+
+            indices.emplace_back(k1);
+            indices.emplace_back(k2);
+            indices.emplace_back(k3);
+        }
+
+    }
 
  this->addMesh(std::make_shared<Mesh>(vertices, indices));
  vertices.clear();
@@ -46,14 +66,11 @@ void BSpline2D::drawModel(Shader shader) {
         waitingToUpdate=false;
         updateModel();
     }
+
     shader.use();
     shader.setMat4("model", getModel());
     shader.addMaterial(_material);
-    /*for(auto & uspline : _uSplines) {
-        uspline->compute(0.1);
-        uspline->drawModel(shader);
-    }*/
-    _meshs[0]->drawLineMesh(shader);
+    _meshs[0]->drawMesh(shader);
 }
 
 glm::vec3 BSpline2D::evaluate(float u, float v) {
@@ -64,7 +81,7 @@ glm::vec3 BSpline2D::evaluate(float u, float v) {
     auto k =  _deg+1;
     auto i = k;
     int dec = 0;
-    while(v > _nodalVector[i])
+    while(v > _nodalVectorV[i])
     {
         i++;
         dec++;
@@ -75,8 +92,8 @@ glm::vec3 BSpline2D::evaluate(float u, float v) {
         for( auto j = 0; j < k - 1; j++)
         {
 
-            tempPoints[j] = ( ( _nodalVector[dec+k+j] - v ) / (_nodalVector[dec+k+j] - _nodalVector[dec+1+j]) ) * tempPoints[j] +
-                            ( ( v - _nodalVector[dec+1+j] ) / (_nodalVector[dec+k+j] - _nodalVector[dec+1+j]) )* tempPoints[j+1];
+            tempPoints[j] = ( ( _nodalVectorV[dec+k+j] - v ) / (_nodalVectorV[dec+k+j] - _nodalVectorV[dec+1+j]) ) * tempPoints[j] +
+                            ( ( v - _nodalVectorV[dec+1+j] ) / (_nodalVectorV[dec+k+j] - _nodalVectorV[dec+1+j]) )* tempPoints[j+1];
 
         }
         dec++;
