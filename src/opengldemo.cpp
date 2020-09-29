@@ -1,7 +1,7 @@
 
 
 
-#include <src/geometry/b_spline.h>
+#include <src/geometry/b_spline2D.h>
 #include "opengldemo.h"
 
 
@@ -29,8 +29,8 @@ OpenGLDemo::OpenGLDemo(int width, int height) : _width(width), _height(height), 
     auto l3 = std::make_shared<PointLight>(glm::vec3(-4.5, 0, 4));
     _lights.emplace_back(std::make_pair(l3, new PointLightWidget(l3)));
 
-    auto bspline = std::make_shared<BSpline>();
-    _models.emplace_back(std::make_pair(bspline,nullptr));
+    auto bspline2D = std::make_shared<BSpline2D>();
+    _models.emplace_back(std::make_pair(bspline2D,nullptr));
 
 
 

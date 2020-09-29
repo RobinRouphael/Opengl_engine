@@ -19,6 +19,7 @@ public:
      * Constructor
      */
     BSpline();
+    BSpline(int deg,const std::vector<glm::vec3> &controlPoints,const std::vector<float> &nodalVector);
     /**
      * Destructor
      */
@@ -26,8 +27,9 @@ public:
 
     void drawModel(Shader shader) override;
 
-private:
-  glm::vec3 evaluate(float u);
+    glm::vec3 evaluate(float u);
+
+    void compute(float step);
 
 
 private:

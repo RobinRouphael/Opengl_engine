@@ -16,7 +16,7 @@ BSpline::BSpline(): Model()
           glm::vec3(3, 0, 0), glm::vec3(4, -5, 0), glm::vec3(5, 0, 0)
           , glm::vec3(6, 0, 0) , glm::vec3(7, 0, 0)
   };
-  std::vector<Vertex> vertices;
+  /*std::vector<Vertex> vertices;
   std::vector<GLuint> indices;
   for(auto p : _controlPoints){
       auto s = std::make_shared<Sphere>(Sphere());
@@ -36,6 +36,15 @@ BSpline::BSpline(): Model()
   this->addMesh(std::make_shared<Mesh>(vertices, indices));
   vertices.clear();
   indices.clear();
+  */
+}
+
+BSpline::BSpline(int deg,const std::vector<glm::vec3> &controlPoints,const std::vector<float> &nodalVector):
+Model(),
+_deg(deg),
+_controlPoints(controlPoints),
+_nodalVector(nodalVector)
+{
 
 }
 BSpline::~BSpline(){}
@@ -84,3 +93,23 @@ void BSpline::drawModel(Shader shader)
   shader.addMaterial(_material);
   _meshs[0]->drawLineMesh(shader);
 }
+
+void BSpline::compute(float step) {
+    std::vector<Vertex> vertices;
+    std::vector<GLuint> indices;
+
+    GLuint indice = 0;
+    for(float u = _nodalVector[_deg]; u < _nodalVector[_controlPoints.size()]; u +=step){
+        Vertex v;
+        v.Position = this->evaluate(u);
+        vertices.push_back(v);
+        indices.push_back(indice);
+        indice++;
+    }
+
+    this->addMesh(std::make_shared<Mesh>(vertices, indices));
+    vertices.clear();
+    indices.clear();
+}
+
+
