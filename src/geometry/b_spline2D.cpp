@@ -9,7 +9,7 @@ BSpline2D::BSpline2D() {
  _nodalVectorV = std::vector<float>{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16};
  _nodalVectorU = std::vector<float>{1,2,3,4,5,6,7,8,9,10,11,12};
 
-    for(int i = 0; i < 12; i++) {
+    for(int i = 0; i < 10; i++) {
      auto uSpline = std::make_shared<BSpline>(_deg, std::vector<glm::vec3>{
              glm::vec3(0+i, 0, i), glm::vec3(1+i, 1, i),
              glm::vec3(2+i, 1, i),
@@ -21,15 +21,15 @@ BSpline2D::BSpline2D() {
 
  std::vector<Vertex> vertices;
  std::vector<GLuint> indices;
- for(float v = _nodalVectorV[_deg]; v < _nodalVectorV[_nodalVectorV.size()-_deg]; v +=0.1){
-     for(float u = _nodalVectorU[_deg]; u < _nodalVectorU[_nodalVectorU.size()-_deg]; u +=0.1) {
+ for(float v = _nodalVectorV[_deg]; v < _nodalVectorV[_nodalVectorV.size()-_deg-1]; v +=0.1){
+     for(float u = _nodalVectorU[_deg]; u < _nodalVectorU[_nodalVectorU.size()-_deg-1]; u +=0.1) {
          Vertex vertex;
          vertex.Position = this->evaluate(u,v);
          vertices.push_back(vertex);
 
      }
  }
-    int uStep = (_nodalVectorU[_nodalVectorU.size()-_deg] - _nodalVectorU[_deg])/0.1;
+    int uStep = (_nodalVectorU[_nodalVectorU.size()-_deg-1] - _nodalVectorU[_deg])/0.1;
     int k1, k2, k3;
     for(int v = 0; v < uStep-1; v ++){
         for(int u = 0; u < uStep-1; u++){

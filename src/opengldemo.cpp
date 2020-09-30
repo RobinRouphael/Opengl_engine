@@ -30,7 +30,10 @@ OpenGLDemo::OpenGLDemo(int width, int height) : _width(width), _height(height), 
     _lights.emplace_back(std::make_pair(l3, new PointLightWidget(l3)));
 
     auto bspline2D = std::make_shared<BSpline2D>();
-    _models.emplace_back(std::make_pair(bspline2D,nullptr));
+    _models.emplace_back(std::make_pair(bspline2D, [bspline2D]()->ModelInterface*
+    {
+        return new ModelInterface(bspline2D);
+    }));
 
 
 
