@@ -23,9 +23,10 @@ public:
     void drawModel(Shader shader) override;
 
 private:
-    glm::vec3 evaluate(float u, float v);
+    glm::vec3 evaluate(const std::vector<glm::vec3> &uControlPoints, float v);
 private:
     int _deg;
+    float _step;
     std::vector<float> _nodalVectorV;
     std::vector<float> _nodalVectorU;
     std::vector<std::shared_ptr<BSpline>> _uSplines;

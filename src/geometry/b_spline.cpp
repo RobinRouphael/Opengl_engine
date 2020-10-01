@@ -99,9 +99,9 @@ void BSpline::compute(float step) {
     std::vector<GLuint> indices;
 
     GLuint indice = 0;
-    for(float u = _nodalVector[_deg]; u < _nodalVector[_controlPoints.size()]; u +=step){
+    for(int u = _nodalVector[_deg]/step; u < _nodalVector[_controlPoints.size()]/step; u +=1){
         Vertex v;
-        v.Position = this->evaluate(u);
+        v.Position = this->evaluate(u*step);
         vertices.push_back(v);
         indices.push_back(indice);
         indice++;
