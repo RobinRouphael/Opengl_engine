@@ -41,6 +41,15 @@ void Mesh::drawMesh(Shader &shader)
     glBindVertexArray(0);
 }
 
+void Mesh::drawLineMesh(Shader &shader)
+{
+    shader.isTextured(!_textures.empty());
+
+    glBindVertexArray(_vao);
+    glDrawElements(GL_LINE_STRIP, _indices.size(), GL_UNSIGNED_INT, nullptr);
+    glBindVertexArray(0);
+}
+
 
 void Mesh::generateMesh()
 {
@@ -75,24 +84,5 @@ void Mesh::generateMesh()
     //6. Unbind the VAO
     glBindVertexArray(0);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
