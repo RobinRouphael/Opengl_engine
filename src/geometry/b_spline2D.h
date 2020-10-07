@@ -14,21 +14,22 @@ public:
     /**
      * Constructor
      */
-    BSpline2D();
+    BSpline2D(int deg, float step, std::vector<float> nodalVectorV, std::vector<float> nodalVectorU,
+              const std::vector<std::vector<glm::vec3>>& uSplinesPoints);
     /**
      * Destructor
      */
-    ~BSpline2D();
-
-    void drawModel(Shader shader) override;
+    ~BSpline2D() override;
 
 private:
-    glm::vec3 evaluate(const std::vector<glm::vec3> &uControlPoints, float v);
+    void createBSpline2D();
+
 private:
     int _deg;
     float _step;
     std::vector<float> _nodalVectorV;
     std::vector<float> _nodalVectorU;
+    std::shared_ptr<BSpline> _vSpline;
     std::vector<std::shared_ptr<BSpline>> _uSplines;
 };
 

@@ -18,25 +18,18 @@ public:
     /**
      * Constructor
      */
-    BSpline();
-    BSpline(int deg,const std::vector<glm::vec3> &controlPoints,const std::vector<float> &nodalVector);
+    BSpline(int deg,std::vector<glm::vec3> controlPoints,std::vector<float> nodalVector);
     /**
      * Destructor
      */
-    ~BSpline();
-
-    void drawModel(Shader shader) override;
+    ~BSpline() override;
 
     glm::vec3 evaluate(float u);
-
-    void compute(float step);
 
 
 private:
     int _deg;
     std::vector<float> _nodalVector;
     std::vector<glm::vec3> _controlPoints;
-    std::vector<std::shared_ptr<Sphere>> _graphicPoints;
-
 
 };

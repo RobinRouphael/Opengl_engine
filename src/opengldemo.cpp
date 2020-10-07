@@ -29,7 +29,25 @@ OpenGLDemo::OpenGLDemo(int width, int height) : _width(width), _height(height), 
     auto l3 = std::make_shared<PointLight>(glm::vec3(-4.5, 0, 4));
     _lights.emplace_back(std::make_pair(l3, new PointLightWidget(l3)));
 
-    auto bspline2D = std::make_shared<BSpline2D>();
+    auto bspline2D = std::make_shared<BSpline2D>(2, 0.1 , std::vector<float>{1,2,3,4,5,6,7}, std::vector<float>{1,2,3,4,5,6,7},
+                                                std::vector<std::vector<glm::vec3>>{
+        std::vector<glm::vec3>{ glm::vec3(-2.63, 0,-2.01),
+                                glm::vec3(-2.62, 0,0.17),
+                                glm::vec3(-2.51, 0,1.98),
+                                glm::vec3(-2.48, 0,3.74)},
+        std::vector<glm::vec3>{ glm::vec3(-1.18, 0,-1.92),
+                                glm::vec3(-1.09, 1.41,-0.28),
+                                glm::vec3(-1, 1.4,2),
+                                glm::vec3(-1, 0,3.48)},
+        std::vector<glm::vec3>{ glm::vec3(-1.18, 0,-1.92),
+                                glm::vec3(-1.09, 1.41,-0.28),
+                                glm::vec3(-1, 1.4,2),
+                                glm::vec3(-1, 0,3.48)},
+        std::vector<glm::vec3>{ glm::vec3(-1.18, 0,-1.92),
+                                glm::vec3(-1.09, 1.41,-0.28),
+                                glm::vec3(-1, 1.4,2),
+                                glm::vec3(-1, 0,3.48)}});
+
     _models.emplace_back(std::make_pair(bspline2D, [bspline2D]()->ModelInterface*
     {
         return new ModelInterface(bspline2D);
@@ -37,8 +55,8 @@ OpenGLDemo::OpenGLDemo(int width, int height) : _width(width), _height(height), 
 
 
 
-    _cameraselector.push_back( []()->Camera*{return new EulerCamera(glm::vec3(0.f, 0.f, 3.f));} );
-    _cameraselector.push_back( []()->Camera*{return new TrackballCamera(glm::vec3(0.f, 0.f, 3.f),glm::vec3(0.f, 1.f, 0.f),glm::vec3(0.f, 0.f, 0.f));} );
+    _cameraselector.emplace_back([]()->Camera*{return new EulerCamera(glm::vec3(0.f, 0.f, 3.f));} );
+    _cameraselector.emplace_back([]()->Camera*{return new TrackballCamera(glm::vec3(0.f, 0.f, 3.f),glm::vec3(0.f, 1.f, 0.f),glm::vec3(0.f, 0.f, 0.f));} );
 
     _camera.reset(_cameraselector[_activecamera]());
 
@@ -52,8 +70,7 @@ OpenGLDemo::OpenGLDemo(int width, int height) : _width(width), _height(height), 
 
 
 OpenGLDemo::~OpenGLDemo()
-{
-}
+= default;
 
 void OpenGLDemo::resize(int width, int height)
 {
