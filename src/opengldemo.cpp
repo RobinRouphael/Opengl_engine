@@ -18,6 +18,7 @@ OpenGLDemo::OpenGLDemo(int width, int height) : _width(width), _height(height), 
         , _drawLights{false}
 {
     glEnable(GL_DEPTH_TEST);
+    //glEnable(GL_CULL_FACE); TODO : enable cull facing only for closed shapes
     glViewport(0, 0, width, height);
 
     auto l = std::make_shared<PointLight>(glm::vec3(0, 0, -6));
@@ -83,7 +84,7 @@ void OpenGLDemo::resize(int width, int height)
 void OpenGLDemo::draw()
 {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT |  GL_DEPTH_BUFFER_BIT);
     _view = _camera->viewmatrix();
 
     _shader->use();
@@ -121,13 +122,13 @@ void OpenGLDemo::draw()
 
 
     for(auto i =0; i < _models.size(); i++){
-        _models[i].first->drawModel(*_shader);
+        _models[i].first->drawModel(*_shader, GL_TRIANGLES);
         if(_selectedModel == i){
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
             glLineWidth(1);
             glEnable( GL_POLYGON_OFFSET_LINE );
             glPolygonOffset( -1, -1 );
-            _models[i].first->drawModel(*_colorShader);
+            _models[i].first->drawModel(*_colorShader,GL_TRIANGLES);
             glDisable( GL_POLYGON_OFFSET_LINE );
             glPolygonMode(GL_FRONT_AND_BACK,_drawfill ? GL_FILL : GL_LINE);
         }

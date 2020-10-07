@@ -26,7 +26,7 @@ void Light::addToShader(Shader &shader)
 
 void Light::drawLight(Shader &shader)
 {
-    _representation->drawModel(shader);
+    _representation->drawModel(shader, GL_TRIANGLES);
 }
 
 

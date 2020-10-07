@@ -29,7 +29,7 @@ Mesh::~Mesh()
 }
 
 
-void Mesh::drawMesh(Shader &shader)
+void Mesh::drawMesh(Shader &shader, GLuint glmode)
 {
     shader.isTextured(!_textures.empty());
 
@@ -37,18 +37,10 @@ void Mesh::drawMesh(Shader &shader)
         _textures[i]->bindToGL(shader,i);
 
     glBindVertexArray(_vao);
-    glDrawElements(GL_TRIANGLES, _indices.size(), GL_UNSIGNED_INT, nullptr);
+    glDrawElements(glmode, _indices.size(), GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);
 }
 
-void Mesh::drawLineMesh(Shader &shader)
-{
-    shader.isTextured(!_textures.empty());
-
-    glBindVertexArray(_vao);
-    glDrawElements(GL_LINE_STRIP, _indices.size(), GL_UNSIGNED_INT, nullptr);
-    glBindVertexArray(0);
-}
 
 
 void Mesh::generateMesh()

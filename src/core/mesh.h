@@ -43,9 +43,8 @@ public:
      * Draw the mesh
      * @param shader
      */
-    void drawMesh(Shader &shader);
+    void drawMesh(Shader &shader, GLuint glmode);
 
-    void drawLineMesh(Shader &shader);
 
     /**
      * Generate OpenGL buffers from geometry and topology

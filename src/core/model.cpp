@@ -16,7 +16,7 @@ Model::~Model()
 
 }
 
-void Model::drawModel(Shader shader)
+void Model::drawModel(Shader shader, GLuint glmode)
 {
 
     if(waitingToUpdate){
@@ -27,7 +27,7 @@ void Model::drawModel(Shader shader)
     shader.setMat4("model", getModel());
     shader.addMaterial(_material);
     for(auto &m : _meshs)
-        m->drawMesh(shader);
+        m->drawMesh(shader, glmode);
 }
 
 void Model::addMesh(std::shared_ptr<Mesh> mesh)
