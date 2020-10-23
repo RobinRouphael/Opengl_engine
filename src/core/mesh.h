@@ -55,17 +55,19 @@ public:
      * @param texture
      */
 
+    void addTexture(std::shared_ptr<Texture> t);
+
 
 private:
 
-    std::vector<Vertex> _vertices;
-    std::vector<GLuint > _indices;
-    std::vector<std::shared_ptr<Texture>> _textures;
+    std::vector<Vertex> vertices_;
+    std::vector<GLuint > indices_;
+    std::vector<std::shared_ptr<Texture>> textures_;
 
     // OpenGL object for models
-    GLuint _vao;
-    GLuint _vbo;
-    GLuint _ebo;
+    GLuint vao_;
+    GLuint vbo_;
+    GLuint ebo_;
 
 };
 

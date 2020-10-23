@@ -150,10 +150,10 @@ std::vector<std::shared_ptr<Texture>> AssimpModel::loadMaterialTextures(aiMateri
         if(!skip)
         {   // if texture hasn't been loaded already, load it
             std::shared_ptr<Texture> texture = nullptr;
-            if (typeName == "texture_diffuse") texture = std::make_shared<DiffuseMap>(directory + '/'+str.C_Str());
-            else if (typeName == "texture_secular") texture = std::make_shared<SpecularMap>(directory + '/'+str.C_Str());
-            else if (typeName == "texture_normal") texture = std::make_shared<NormalMap>(directory + '/'+str.C_Str());
-            else if (typeName == "texture_height") texture = std::make_shared<HeightMap>(directory + '/'+str.C_Str());
+            if (typeName == "texture_diffuse") texture = std::make_shared<Texture>(directory + '/'+str.C_Str());
+            else if (typeName == "texture_secular") texture = std::make_shared<Texture>(directory + '/'+str.C_Str());
+            else if (typeName == "texture_normal") texture = std::make_shared<Texture>(directory + '/'+str.C_Str());
+            else if (typeName == "texture_height") texture = std::make_shared<Texture>(directory + '/'+str.C_Str());
             if(texture != nullptr){
                 textures.emplace_back(texture);
                 textures_loaded.emplace_back(texture);  // store it as texture loaded for entire model, to ensure we won't unnecesery load duplicate textures.

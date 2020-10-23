@@ -7,10 +7,16 @@
 
 
 
-void DiffuseMap::bindToGL(const Shader &shader, int num)
+void Texture::bindToGL(const Shader &shader, int num)
 {
     glActiveTexture(GL_TEXTURE0+ num);
     glBindTexture(GL_TEXTURE_2D, getID());
+}
+
+Texture::Texture(GLuint existingTex):
+_id(existingTex)
+{
+
 }
 
 Texture::Texture(const std::string &location):
@@ -92,20 +98,3 @@ const std::string &Texture::getLocation()
 }
 
 
-void SpecularMap::bindToGL(const Shader &shader, int num)
-{
-    glActiveTexture(GL_TEXTURE0+ num);
-    glBindTexture(GL_TEXTURE_2D, getID());
-}
-
-void NormalMap::bindToGL(const Shader &shader, int num)
-{
-    glActiveTexture(GL_TEXTURE0+ num);
-    glBindTexture(GL_TEXTURE_2D, getID());
-}
-
-void HeightMap::bindToGL(const Shader &shader, int num)
-{
-    glActiveTexture(GL_TEXTURE0+ num);
-    glBindTexture(GL_TEXTURE_2D, getID());
-}

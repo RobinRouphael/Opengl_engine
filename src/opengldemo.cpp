@@ -16,8 +16,11 @@ OpenGLDemo::OpenGLDemo(int width, int height) : _width(width), _height(height), 
         , _waitingToDestroyModel{false}
         , _modelConstructor{nullptr}
         , _drawLights{false}
+        ,screen_shader{std::make_unique<Shader>("../shaders/screen_vs.glsl", "../shaders/screen_fs.glsl")}
+        ,frame_buffer{std::make_unique<FrameBuffer>(_width,_height,1)}
+        ,screen_quad{std::make_unique<ScreenQuad>(-1.f, 1.f, 2.f, 2.f)}
 {
-    glEnable(GL_DEPTH_TEST);
+
     //glEnable(GL_CULL_FACE); TODO : enable cull facing only for closed shapes
     glViewport(0, 0, width, height);
 
@@ -65,6 +68,12 @@ OpenGLDemo::OpenGLDemo(int width, int height) : _width(width), _height(height), 
     _view = _camera->viewmatrix();
 
     _projection = glm::perspective(_camera->zoom(), float(_width) / _height, 0.1f, 100.0f);
+
+    frame_buffer->addColorTexture();
+    frame_buffer->addDepthStencilBuffer();
+    screen_quad->addTexture(std::make_shared<Texture>(frame_buffer->textures()[0]));
+
+
 }
 
 
@@ -83,11 +92,16 @@ void OpenGLDemo::resize(int width, int height)
 
 void OpenGLDemo::draw()
 {
+
+    frame_buffer->use();
+    glEnable(GL_DEPTH_TEST);
+
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT |  GL_DEPTH_BUFFER_BIT);
     _view = _camera->viewmatrix();
 
     _shader->use();
+    _shader->clearLights();
     _shader->setVec3("viewPos", _camera->position());
     _shader->setMat4("view",_view);
     _shader->setMat4("projection",_projection);
@@ -134,7 +148,13 @@ void OpenGLDemo::draw()
         }
     }
     glDepthRange(0.0, 1.0);
-    _shader->clearLights();
+    frame_buffer->stop(_width,_height);
+    glDisable(GL_DEPTH_TEST);
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    screen_shader->use();
+    screen_quad->drawModel(*screen_shader,GL_TRIANGLES);
+
 }
 
 void OpenGLDemo::mouseclick(int button, float xpos, float ypos)

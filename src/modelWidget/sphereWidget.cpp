@@ -48,7 +48,7 @@ void SphereWidget::setTextureFromFile()
             "../textures",
             tr("*.jpg"));
     if(!filename.isEmpty())
-        _sphere->setTextureDiffuse(std::make_shared<DiffuseMap>(filename.toStdString()));
+        _sphere->setTextureDiffuse(std::make_shared<Texture>(filename.toStdString()));
 }
 
 SphereWidget::~SphereWidget()

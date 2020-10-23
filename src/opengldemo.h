@@ -7,7 +7,6 @@
 #include "core/modelInterface.h"
 #include "src/modelWidget/sphereWidget.h"
 #include "src/models/sphere.h"
-#include "opengl_stuff.h"
 #include <functional>
 #include <QtWidgets/QWidget>
 #include <src/core/light.h>
@@ -17,6 +16,8 @@
 #include <src/modelWidget/icoSphereWidget.h>
 #include <src/modelWidget/importedModelWidget.h>
 #include <src/models/cube.h>
+#include <src/core/frameBuffer.h>
+#include <src/geometry/quad.h>
 
 
 class OpenGLDemo {
@@ -107,6 +108,9 @@ private:
     std::unique_ptr<Shader> _shader;
     std::unique_ptr<Shader> _colorShader;
     std::unique_ptr<Shader> _lightShader;
+    std::unique_ptr<Shader> screen_shader;
+    std::unique_ptr<FrameBuffer> frame_buffer;
+    std::unique_ptr<ScreenQuad> screen_quad;
 
     // for mouse management
     int _button; // 0 --> left. 1 --> right. 2 --> middle. 3 --> other

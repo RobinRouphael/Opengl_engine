@@ -6,8 +6,6 @@
 #define ENGINE_LIGHT_H
 
 
-#include <glm/vec3.hpp>
-#include <GL/gl.h>
 #include "shader.h"
 #include "model.h"
 

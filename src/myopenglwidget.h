@@ -1,12 +1,12 @@
 #ifndef MYOPENGLWIDGET_H
 #define MYOPENGLWIDGET_H
-
+#include "opengldemo.h"
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions_4_1_Core>
 #include <QKeyEvent>
 #include <memory>
 
-#include "opengldemo.h"
+
 
 
 class MyOpenGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_4_1_Core {

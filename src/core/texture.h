@@ -16,6 +16,8 @@ public:
      * @param location of image file
      */
     Texture(const std::string &location);
+
+    Texture(GLuint existingTex);
     /**
      * Destructor
      */
@@ -25,7 +27,7 @@ public:
      * @param shader
      * @param num
      */
-    virtual void bindToGL(const Shader &shader, int num) = 0;
+    void bindToGL(const Shader &shader, int num);
     /**
      * Set texture ID
      * @param id
@@ -68,90 +70,7 @@ private:
 
 
 
-class DiffuseMap : public Texture{
-    /**
-     * Diffuse texture
-     */
-public:
-    /**
-     * Constructor
-     * @param location
-     */
-    explicit DiffuseMap(const std::string &location):
-            Texture(location){}
-    /**
-     * Destructor
-     */
-    ~DiffuseMap(){}
-    /**
-     * Bind to OpenGL context
-     * @param shader
-     * @param num
-     */
-    void bindToGL(const Shader &shader, int num) override;
 
-};
-
-class SpecularMap : public Texture{
-    /**
-     * Specular Texture
-     */
-public:
-    /**
-     * Constructor
-     * @param location
-     */
-    explicit SpecularMap(const std::string &location):
-            Texture(location){}
-    /**
-     * Destructor
-     */
-    ~SpecularMap(){}
-    /**
-     * Bind to OpenGL context
-     * @param shader
-     * @param num
-     */
-    void bindToGL(const Shader &shader, int num) override;
-};
-class NormalMap : public Texture{
-public:
-    /**
-     * Constructor
-     * @param location
-     */
-    explicit NormalMap(const std::string &location):
-            Texture(location){}
-    /**
-     * Destructor
-     */
-    ~NormalMap(){}
-    /**
-     * Bind to OpenGL context
-     * @param shader
-     * @param num
-     */
-    void bindToGL(const Shader &shader, int num) override;
-};
-class HeightMap : public Texture{
-public:
-    /**
-     * Constructor
-     * @param location
-     */
-    explicit HeightMap(const std::string &location):
-            Texture(location){}
-    /**
-     * Destructor
-     */
-    ~HeightMap(){}
-    /**
-     * Bind to OpenGL context
-     * @param shader
-     * @param num
-     */
-    void bindToGL(const Shader &shader, int num) override;
-};
 
 
 #endif //ENGINE_TEXTURE_H
