@@ -6,7 +6,7 @@
 #define ENGINE_SHADER_H
 
 
-#include <glad/GLAD-Includes/gl46core/glad.h>
+#include <opengl_stuff.h>
 #include <string>
 #include <iostream>
 #include <cassert>

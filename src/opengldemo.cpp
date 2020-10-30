@@ -1,7 +1,7 @@
 
 
 
-#include <src/geometry/b_spline2D.h>
+#include <src/geometry/bSplineSurface.h>
 #include "opengldemo.h"
 
 
@@ -18,7 +18,7 @@ OpenGLDemo::OpenGLDemo(int width, int height) : _width(width), _height(height), 
         , _drawLights{false}
         ,screen_shader{std::make_unique<Shader>("../shaders/screen_vs.glsl", "../shaders/screen_fs.glsl")}
         ,frame_buffer{std::make_unique<FrameBuffer>(_width,_height,1)}
-        ,screen_quad{std::make_unique<ScreenQuad>(-1.f, 1.f, 2.f, 2.f)}
+        ,screen_quad{std::make_shared<ScreenQuad>(-1.f, 1.f, 2.f, 2.f)}
 {
 
     //glEnable(GL_CULL_FACE); TODO : enable cull facing only for closed shapes
@@ -33,8 +33,8 @@ OpenGLDemo::OpenGLDemo(int width, int height) : _width(width), _height(height), 
     auto l3 = std::make_shared<PointLight>(glm::vec3(-4.5, 0, 4));
     _lights.emplace_back(std::make_pair(l3, new PointLightWidget(l3)));
 
-    auto bspline2D = std::make_shared<BSpline2D>(2, 0.1 , std::vector<float>{1,2,3,4,5,6,7}, std::vector<float>{1,2,3,4,5,6,7},
-                                                std::vector<std::vector<glm::vec3>>{
+    /*auto bspline2D = std::make_shared<BSplineSurface>(2, 0.1 , std::vector<float>{1, 2, 3, 4, 5, 6, 7}, std::vector<float>{1, 2, 3, 4, 5, 6, 7},
+                                                      std::vector<std::vector<glm::vec3>>{
         std::vector<glm::vec3>{ glm::vec3(-2.63, 0,-2.01),
                                 glm::vec3(-2.62, 0,0.17),
                                 glm::vec3(-2.51, 0,1.98),
@@ -50,12 +50,60 @@ OpenGLDemo::OpenGLDemo(int width, int height) : _width(width), _height(height), 
         std::vector<glm::vec3>{ glm::vec3(-1.18, 0,-1.92),
                                 glm::vec3(-1.09, 1.41,-0.28),
                                 glm::vec3(-1, 1.4,2),
-                                glm::vec3(-1, 0,3.48)}});
+                                glm::vec3(-1, 0,3.48)}});*/
+    auto bspline2D = std::make_shared<BSplineSurface>(2, 0.1 , std::vector<float>{1, 2, 3, 4, 5, 6,7}, std::vector<float>{0, 0, 0, 1, 2, 3,4,5,6,6,6},
+                                                      std::vector<std::vector<glm::vec3>>{
+                                                              std::vector<glm::vec3>{ glm::vec3(1, -1,0),
+                                                                                      glm::vec3(2, 1,0),
+                                                                                      glm::vec3(3, -1,0),
+                                                                                      glm::vec3(4, 1,0),
+                                                                                      glm::vec3(5, -1,0),
+                                                                                      glm::vec3(6, 1,0),
+                                                                                      glm::vec3(7, -1,0),
+                                                                                      glm::vec3(8, 1,0)},
+                                                              std::vector<glm::vec3>{ glm::vec3(1, -1,1),
+                                                                                      glm::vec3(2, 1,1),
+                                                                                      glm::vec3(3, -1,1),
+                                                                                      glm::vec3(4, 1,1),
+                                                                                      glm::vec3(5, -1,1),
+                                                                                      glm::vec3(6, 1,1),
+                                                                                      glm::vec3(7, -1,1),
+                                                                                      glm::vec3(8, 1,1)},
+                                                              std::vector<glm::vec3>{ glm::vec3(1, -1,2),
+                                                                                      glm::vec3(2, 1,2),
+                                                                                      glm::vec3(3, -1,2),
+                                                                                      glm::vec3(4, 1,2),
+                                                                                      glm::vec3(5, -1,2),
+                                                                                      glm::vec3(6, 1,2),
+                                                                                      glm::vec3(7, -1,2),
+                                                                                      glm::vec3(8, 1,2)},
+                                                              std::vector<glm::vec3>{ glm::vec3(1, -1,3),
+                                                                                      glm::vec3(2, 1,3),
+                                                                                      glm::vec3(3, -1,3),
+                                                                                      glm::vec3(4, 1,3),
+                                                                                      glm::vec3(5, -1,3),
+                                                                                      glm::vec3(6, 1,3),
+                                                                                      glm::vec3(7, -1,3),
+                                                                                      glm::vec3(8, 1,3)
+                                                              }});
 
     _models.emplace_back(std::make_pair(bspline2D, [bspline2D]()->ModelInterface*
     {
         return new ModelInterface(bspline2D);
     }));
+    /*auto bspline = std::make_shared<BSpline>(2,std::vector<glm::vec3>{
+                                                                        glm::vec3(0, 0,0),
+                                                                       glm::vec3(0, 1,0),
+                                                                       glm::vec3(1, 1,0),
+                                                                       glm::vec3(1, 0,0),
+                                                                        glm::vec3(0, 0,0),
+                                                                       glm::vec3(0, 1,0),
+                                                                        glm::vec3(1, 1,0)},
+                                             std::vector<float>{1, 2, 3, 4, 5, 6, 7,8,9,10},0.01);
+    _models.emplace_back(std::make_pair(bspline, [bspline]()->ModelInterface*
+    {
+        return new ModelInterface(bspline);
+    }));*/
 
 
 
@@ -71,7 +119,10 @@ OpenGLDemo::OpenGLDemo(int width, int height) : _width(width), _height(height), 
 
     frame_buffer->addColorTexture();
     frame_buffer->addDepthStencilBuffer();
+    frame_buffer->drawBuffers();
     screen_quad->addTexture(std::make_shared<Texture>(frame_buffer->textures()[0]));
+
+
 
 
 }
@@ -95,7 +146,6 @@ void OpenGLDemo::draw()
 
     frame_buffer->use();
     glEnable(GL_DEPTH_TEST);
-
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT |  GL_DEPTH_BUFFER_BIT);
     _view = _camera->viewmatrix();
@@ -147,14 +197,10 @@ void OpenGLDemo::draw()
             glPolygonMode(GL_FRONT_AND_BACK,_drawfill ? GL_FILL : GL_LINE);
         }
     }
-    glDepthRange(0.0, 1.0);
     frame_buffer->stop(_width,_height);
     glDisable(GL_DEPTH_TEST);
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-    screen_shader->use();
     screen_quad->drawModel(*screen_shader,GL_TRIANGLES);
-
 }
 
 void OpenGLDemo::mouseclick(int button, float xpos, float ypos)

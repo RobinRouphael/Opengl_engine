@@ -7,7 +7,7 @@
 
 
 
-#include <glad/GLAD-Includes/gl46core/glad.h>
+#include <opengl_stuff.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>

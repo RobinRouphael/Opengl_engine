@@ -110,7 +110,7 @@ private:
     std::unique_ptr<Shader> _lightShader;
     std::unique_ptr<Shader> screen_shader;
     std::unique_ptr<FrameBuffer> frame_buffer;
-    std::unique_ptr<ScreenQuad> screen_quad;
+    std::shared_ptr<ScreenQuad> screen_quad;
 
     // for mouse management
     int _button; // 0 --> left. 1 --> right. 2 --> middle. 3 --> other

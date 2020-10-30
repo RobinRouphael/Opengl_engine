@@ -50,6 +50,7 @@ void MyOpenGLWidget::initializeGL()
 
 void MyOpenGLWidget::paintGL()
 {
+    FrameBuffer::setDefaultFbo(defaultFramebufferObject());
     std::int64_t starttime = QDateTime::currentMSecsSinceEpoch();
     _engine->draw();
     glFinish();

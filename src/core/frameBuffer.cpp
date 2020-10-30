@@ -4,6 +4,8 @@
 
 #include "frameBuffer.h"
 
+GLuint FrameBuffer::default_fbo{0};
+
 FrameBuffer::~FrameBuffer() {
     for (GLuint &b : buffers_) {
         glDeleteBuffers(1, &b);
@@ -31,7 +33,7 @@ void FrameBuffer::stop(int width, int height) const {
 
 void FrameBuffer::drawBuffers() const {
     glBindFramebuffer(GL_FRAMEBUFFER, fbo_);
-    auto buffers = new GLenum[num_color];
+    auto *buffers = new GLenum[num_color];
     for (int i = 0; i < num_color; ++i)
         buffers[i] = GL_COLOR_ATTACHMENT0 + i;
     glDrawBuffers(num_color, buffers);
@@ -85,7 +87,7 @@ void FrameBuffer::addDepthStencilBuffer() {
 //Add Textures
 //---------------------------------------------------------------------------------------------------------------------------
 
-void FrameBuffer::generateTexture(GLuint texture,GLuint internalFormat,GLuint format, GLuint type, bool border) const {
+void FrameBuffer::generateTexture(GLuint &texture,GLuint internalFormat,GLuint format, GLuint type, bool border) const {
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
     glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width_, height_, 0, format, type, nullptr);

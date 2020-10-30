@@ -16,9 +16,13 @@ class BSpline : public Model{
      */
 public:
     /**
-     * Constructor
+     * Constructor without computation
      */
     BSpline(int deg,std::vector<glm::vec3> controlPoints,std::vector<float> nodalVector);
+    /**
+     * Constructor with computation
+     */
+    BSpline(int deg,std::vector<glm::vec3> controlPoints,std::vector<float> nodalVector, float step);
     /**
      * Destructor
      */
@@ -28,8 +32,12 @@ public:
 
 
 private:
-    int _deg;
-    std::vector<float> _nodalVector;
-    std::vector<glm::vec3> _controlPoints;
+    void createBSpline();
+
+private:
+    int deg_;
+    float step_;
+    std::vector<float> nodal_vector;
+    std::vector<glm::vec3> control_points;
 
 };

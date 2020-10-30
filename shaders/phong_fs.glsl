@@ -1,5 +1,5 @@
 #version 410
-out vec4 fragColor;
+layout (location = 0) out vec4 fragColor;
 in vec3 fragPos;
 in vec3 fragNormal;
 in vec2 fragTex;
@@ -82,8 +82,8 @@ vec3 calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir) {
     }
     else{
         ambient = light.ambient  * attenuation;
-        diffuse = light.diffuse  * attenuation;
-        specular = light.specular  * attenuation;
+        diffuse = light.diffuse  * diff * attenuation;
+        specular = light.specular  * spec * attenuation;
     }
 
 

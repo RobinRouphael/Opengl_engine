@@ -4,7 +4,7 @@
 
 #ifndef ENGINE_FRAMEBUFFER_H
 #define ENGINE_FRAMEBUFFER_H
-#include <glad/GLAD-Includes/gl46core/glad.h>
+#include <opengl_stuff.h>
 #include <vector>
 
 class FrameBuffer {
@@ -14,6 +14,9 @@ public:
             : width_{width}, height_{height}, num_samples(numSamples)
             {
                 glGenFramebuffers(1, &fbo_);
+
+
+
             }
 
     ~FrameBuffer();
@@ -26,14 +29,16 @@ public:
 
     [[nodiscard]] const std::vector<GLuint> &buffers() const { return buffers_; }
 
-    static void setDefaultFbo(GLuint fbo) { default_fbo = fbo; }
+    static void setDefaultFbo(GLuint numFbo){ default_fbo = numFbo;}
+
 
 private:
     void addBuffer(GLuint format,GLuint attachment);
-    void generateTexture(GLuint texture,GLuint internalFormat,GLuint format, GLuint type, bool border) const;
+    void generateTexture(GLuint &texture,GLuint internalFormat,GLuint format, GLuint type, bool border) const;
     void addTexture(GLuint internalFormat,GLuint format, GLuint type, bool border, GLuint attachment);
-    void drawBuffers() const;
+
 public:
+    void drawBuffers() const;
     void addColorBuffer();
     void addDepthBuffer();
     void addStencilBuffer();
@@ -48,7 +53,7 @@ private:
     static GLuint default_fbo;
     int num_samples;
     int width_, height_;
-    GLuint fbo_{0};
+    GLuint fbo_;
     std::vector<GLuint> textures_;
     std::vector<GLuint> buffers_;
 

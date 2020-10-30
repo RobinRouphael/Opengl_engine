@@ -64,7 +64,7 @@ Texture::Texture(const std::string &location):
 
 Texture::~Texture()
 {
-
+    glDeleteTextures(1, &_id);
 }
 
 void Texture::setID(GLuint id)
