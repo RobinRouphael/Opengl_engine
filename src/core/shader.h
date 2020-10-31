@@ -18,10 +18,10 @@ class Shader {
 public:
     /**
      * Constructor
-     * @param vertexShaderLocation
-     * @param fragmentShaderLocation
+     * @param tp_vertexShaderLocation
+     * @param tp_fragmentShaderLocation
      */
-    Shader(const char*vertexShaderLocation, const char*fragmentShaderLocation);
+    Shader(const char *tp_vertexShaderLocation, const char * tp_fragmentShaderLocation);
 
     ~Shader();
     /**
@@ -30,110 +30,110 @@ public:
     void use() const;
     /**
      * Add a PointLight
-     * @param constant
-     * @param linear
-     * @param quadratic
-     * @param pos
-     * @param ambient
-     * @param diffuse
-     * @param specular
+     * @param t_constant
+     * @param t_linear
+     * @param t_quadratic
+     * @param tr_pos
+     * @param tr_ambient
+     * @param tr_diffuse
+     * @param tr_specular
      */
-    void addPointLight(GLfloat constant, GLfloat linear, GLfloat quadratic,
-            const glm::vec3 & pos,const glm::vec3 &ambient, const glm::vec3 &diffuse, const glm::vec3 &specular);
+    void addPointLight(GLfloat t_constant, GLfloat t_linear, GLfloat t_quadratic,
+                       const glm::vec3 & tr_pos, const glm::vec3 &tr_ambient, const glm::vec3 &tr_diffuse, const glm::vec3 &tr_specular);
     /**
      * Add a SpotLight
-     * @param dir
-     * @param innerCutoff
-     * @param outerCutoff
-     * @param intensity
-     * @param pos
-     * @param ambient
-     * @param diffuse
-     * @param specular
+     * @param tr_dir
+     * @param t_innerCutoff
+     * @param t_outerCutoff
+     * @param t_intensity
+     * @param tr_pos
+     * @param tr_ambient
+     * @param tr_diffuse
+     * @param tr_specular
      */
-    void addSpotLight(const glm::vec3 &dir, GLfloat innerCutoff, GLfloat outerCutoff,GLfloat constant, GLfloat linear, GLfloat quadratic,
-            GLfloat intensity, const glm::vec3 & pos,const glm::vec3 &ambient, const glm::vec3 &diffuse, const glm::vec3 &specular);
+    void addSpotLight(const glm::vec3 &tr_dir, GLfloat t_innerCutoff, GLfloat t_outerCutoff, GLfloat t_constant, GLfloat t_linear, GLfloat t_quadratic,
+                      GLfloat t_intensity, const glm::vec3 & tr_pos, const glm::vec3 &tr_ambient, const glm::vec3 &tr_diffuse, const glm::vec3 &tr_specular);
     /**
      * Add a material
-     * @param mat
+     * @param tr_mat
      */
-    void addMaterial(const Material &mat);
+    void addMaterial(const Material &tr_mat);
     /**
      * Reset lights in shaders
      */
     void clearLights();
     /**
      * The shader may need to know if the Model is textured
-     * @param istextured
+     * @param t_istextured
      */
-    void isTextured(bool istextured);
+    void isTextured(bool t_istextured);
 
     ///Uniform utils
     /**
      * Bool setter
-     * @param name
-     * @param value
+     * @param tr_name
+     * @param t_value
      */
-    void setBool(const std::string &name, bool value) const;
+    void setBool(const std::string &tr_name, bool t_value) const;
     /**
      * Int setter
-     * @param name
-     * @param value
+     * @param tr_name
+     * @param t_value
      */
-    void setInt(const std::string &name, int value) const;
+    void setInt(const std::string &tr_name, int t_value) const;
     /**
      * Float setter
-     * @param name
-     * @param value
+     * @param tr_name
+     * @param t_value
      */
-    void setFloat(const std::string &name, float value) const;
+    void setFloat(const std::string &tr_name, float t_value) const;
     /**
      * Vec2 setter
-     * @param name
-     * @param value
+     * @param tr_name
+     * @param t_value
      */
-    void setVec2(const std::string &name, const glm::vec2 & value) const;
+    void setVec2(const std::string &tr_name, const glm::vec2 & t_value) const;
     /**
      * Vec3 setter
-     * @param name
-     * @param value
+     * @param tr_name
+     * @param t_value
      */
-    void setVec3(const std::string &name, const glm::vec3 & value) const;
+    void setVec3(const std::string &tr_name, const glm::vec3 & t_value) const;
     /**
      * Vec4 setter
-     * @param name
-     * @param value
+     * @param tr_name
+     * @param t_value
      */
-    void setVec4(const std::string &name, const glm::vec4 & value) const;
+    void setVec4(const std::string &tr_name, const glm::vec4 & t_value) const;
     /**
      * Mat2 setter
-     * @param name
-     * @param value
+     * @param tr_name
+     * @param t_value
      */
-    void setMat2(const std::string &name, const glm::mat2 & value) const;
+    void setMat2(const std::string &tr_name, const glm::mat2 & t_value) const;
     /**
      * Mat3 setter
-     * @param name
-     * @param value
+     * @param tr_name
+     * @param t_value
      */
-    void setMat3(const std::string &name, const glm::mat3 & value) const;
+    void setMat3(const std::string &tr_name, const glm::mat3 & t_value) const;
     /**
      * Mat4 setter
-     * @param name
-     * @param value
+     * @param tr_name
+     * @param t_value
      */
-    void setMat4(const std::string &name, const glm::mat4 & value) const;
+    void setMat4(const std::string &tr_name, const glm::mat4 & t_value) const;
 
 
 
 private:
 
-    GLint _success;
-    GLchar _infoLog[512]; // warning fixed size ... request for LOG_LENGTH!!!
-    GLuint _vertexshader, _fragmentshader;
-    GLuint _program;
-    GLuint nb_PointLight;
-    GLuint nb_SpotLight;
+    GLint m_success;
+    GLchar m_info_log[512]; // warning fixed size ... request for LOG_LENGTH!!!
+    GLuint m_vertexshader, m_fragmentshader;
+    GLuint m_program;
+    GLuint m_nb_point_light;
+    GLuint m_nb_spot_light;
 
 
 };

@@ -1,0 +1,44 @@
+//
+// Created by robin on 23/10/2020.
+//
+
+#include "quad.h"
+
+ScreenQuad::ScreenQuad(float t_x, float t_y, float t_width, float t_height):
+        Model(),
+        m_x(t_x),
+        m_y(t_y),
+        m_width(t_width),
+        m_height(t_height)
+{
+    setup();
+}
+
+void ScreenQuad::setup(){
+
+    std::vector<Vertex> vertices;
+    std::vector<GLuint> indices= {0, 1, 2, 0, 2, 3};
+    Vertex v;
+    v.position = glm::vec3(m_x, m_y, 0.f);
+    v.texCoords = glm::vec2(0.f, 1.f);
+    vertices.push_back(v);
+    v.position = glm::vec3(m_x + m_width, m_y, 0.f);
+    v.texCoords = glm::vec2(1.f, 1.f);
+    vertices.push_back(v);
+    v.position = glm::vec3(m_x + m_width, m_y - m_height, 0.f);
+    v.texCoords = glm::vec2(1.f, 0.f);
+    vertices.push_back(v);
+    v.position = glm::vec3(m_x, m_y - m_height, 0.f);
+    v.texCoords = glm::vec2(0.f, 0.f);
+    vertices.push_back(v);
+
+    addMesh(std::make_shared<Mesh>(vertices, indices));
+    vertices.clear();
+    indices.clear();
+
+}
+
+void ScreenQuad::addTexture(std::shared_ptr<Texture> t_texture) {
+    m_meshs[0]->addTexture(t_texture);
+
+}

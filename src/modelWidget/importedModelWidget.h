@@ -6,8 +6,8 @@
 #define ENGINE_IMPORTEDMODELWIDGET_H
 
 
-#include <src/core/modelInterface.h>
-#include <src/models/assimpmodel.h>
+#include "modelInterface.h"
+#include "src/models/assimpmodel.h"
 
 class ImportedModelWidget : public ModelInterface {
     Q_OBJECT

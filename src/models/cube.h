@@ -30,7 +30,7 @@ private:
 
 
 private:
-    int _resolution;
+    int m_resolution;
 
 };
 

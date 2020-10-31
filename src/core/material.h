@@ -15,37 +15,37 @@
 class Material {
 public:
     Material() :
-    _albedo {0.5f, 0.0f, 0.0f}
-    , _metalness {0.8f}
-    , _roughness {0.2f}
-    , _ao {0.5f} {}
+            m_albedo {0.5f, 0.0f, 0.0f}
+    , m_metalness {0.8f}
+    , m_roughness {0.2f}
+    , m_ao {0.5f} {}
 
-    Material(const glm::vec3 &albedo, float metalness, float roughness, float ao):
-            _albedo {albedo}
-            ,_metalness {metalness}
-            ,_roughness {roughness}
-            ,_ao {ao} {}
+    Material(const glm::vec3 &tr_albedo, float t_metalness, float t_roughness, float t_ao):
+            m_albedo {tr_albedo}
+            , m_metalness {t_metalness}
+            , m_roughness {t_roughness}
+            , m_ao {t_ao} {}
 
 
     const glm::vec3 &albedo() const {
-        return _albedo;
+        return m_albedo;
     }
 
     float metalness() const {
-        return _metalness;
+        return m_metalness;
     }
     float roughness() const {
-        return _roughness;
+        return m_roughness;
     }
     float ambientOcclusion() const {
-        return _ao;
+        return m_ao;
     }
 
 private:
-    glm::vec3 _albedo;
-    float _metalness;
-    float _roughness;
-    float _ao;
+    glm::vec3 m_albedo;
+    float m_metalness;
+    float m_roughness;
+    float m_ao;
 };
 
 

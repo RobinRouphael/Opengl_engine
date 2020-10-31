@@ -16,12 +16,12 @@ class Light {
 public:
     /**
      * Constructor
-     * @param ambient
-     * @param diffuse
-     * @param specular
-     * @param representation
+     * @param t_ambient
+     * @param t_diffuse
+     * @param t_specular
+     * @param t_representation
      */
-    Light(const glm::vec3 &ambient, const glm::vec3 &diffuse, const glm::vec3 &specular,const std::shared_ptr<Model> &representation);
+    Light(const glm::vec3 &t_ambient, const glm::vec3 &t_diffuse, const glm::vec3 &t_specular, const std::shared_ptr<Model> &t_representation);
     /**
      * Destructor
      */
@@ -34,56 +34,59 @@ public:
     Light &operator=(const Light &) = delete;
 
     Light &&operator=(Light &&) = delete;
+
+    /**
+     * Draw light model
+     * @param t_shader
+     */
+    void drawLight(Shader &t_shader);
+    /**
+     * Add light to Shader
+     * @param t_shader
+     */
+    virtual void addToShader(Shader &t_shader);
+
+
+protected:
     /**
      * Ambient getter
      * @return
      */
-    const glm::vec3 & ambient() const { return _ambient; }
+    [[nodiscard]] const glm::vec3 & ambient() const { return m_ambient; }
     /**
      * Ambient setter
      * @return
      */
-    glm::vec3 & ambient() { return _ambient; }
+    glm::vec3 & ambient() { return m_ambient; }
     /**
      * Diffuse getter
      * @return
      */
-    const glm::vec3 & diffuse() const { return _diffuse; }
+    [[nodiscard]] const glm::vec3 & diffuse() const { return m_diffuse; }
     /**
      * Diffuse setter
      * @return
      */
-    glm::vec3 & diffuse() { return _diffuse; }
+    glm::vec3 & diffuse() { return m_diffuse; }
     /**
      * Specular getter
      * @return
      */
-    const glm::vec3 & specular() const { return _specular; }
+    [[nodiscard]] const glm::vec3 & specular() const { return m_specular; }
     /**
      * Specular setter
      * @return
      */
-    glm::vec3 & specular() { return _specular; }
-
-    /**
-     * Draw light model
-     * @param shader
-     */
-    void drawLight(Shader &shader);
-    /**
-     * Add light to Shader
-     * @param shader
-     */
-    virtual void addToShader(Shader &shader);
+    glm::vec3 & specular() { return m_specular; }
 
 private:
-    glm::vec3 _ambient;
-    glm::vec3 _diffuse;
-    glm::vec3 _specular;
+    glm::vec3 m_ambient;
+    glm::vec3 m_diffuse;
+    glm::vec3 m_specular;
 
 protected:
 
-    std::shared_ptr<Model> _representation; //Model of light
+    std::shared_ptr<Model> m_representation; //Model of light
 };
 
 
@@ -100,52 +103,52 @@ public:
      * Initialize light from default values
      * @param position
      */
-    PointLight(glm::vec3 pos);
+    PointLight(glm::vec3 t_pos);
     /**
      * Destructor
      */
     ~PointLight();
     /**
      * Add pointLight to Shader
-     * @param shader
+     * @param t_shader
      */
-    void addToShader(Shader &shader) override;
+    void addToShader(Shader &t_shader) override;
     /**
      * Constant getter
      * @return
      */
-    GLfloat getConst()const {return _constant;}
+    GLfloat getConst()const {return m_constant;}
     /**
      * Linear getter
      * @return
      */
-    GLfloat getLin() const{return _linear;}
+    GLfloat getLin() const{return m_linear;}
     /**
      * Quadratic getter
      * @return
      */
-    GLfloat getQuad() const{return _quadratic;}
+    GLfloat getQuad() const{return m_quadratic;}
     /**
      * Quadratic setter
-     * @param val
+     * @param t_quad
      */
-    void setQuadratic(double val){ _quadratic = val;}
+    void setQuadratic(double t_quad){ m_quadratic = t_quad;}
     /**
      * Linear setter
-     * @param val
+     * @param t_linear
      */
-    void setLinear(double val){ _linear = val;}
+    void setLinear(double t_linear){ m_linear = t_linear;}
     /**
      * Constant setter
-     * @param val
+     * @param t_const
      */
-    void setConstant(double val){ _constant = val;}
+    void setConstant(double t_const){ m_constant = t_const;}
 
 
 protected:
-    GLfloat _constant;
-    GLfloat _linear;
-    GLfloat _quadratic;
+    GLfloat m_constant;
+    GLfloat m_linear;
+    GLfloat m_quadratic;
 };
 
 
@@ -157,23 +160,23 @@ public:
     SpotLight();
     /**
      * Constructor
-     * @param pos
+     * @param t_pos
      */
-    explicit SpotLight(glm::vec3 pos);
+    explicit SpotLight(glm::vec3 t_pos);
     /**
      * Destructor
      */
     ~SpotLight() override;
     /**
      * Add spotLight to Shader
-     * @param shader
+     * @param t_shader
      */
-    void addToShader(Shader &shader) override;
+    void addToShader(Shader &t_shader) override;
 private:
-    glm::vec3 _direction;
-    float _innerCutoff;
-    float _outerCutoff;
-    float _intensity;
+    glm::vec3 m_direction;
+    float m_inner_cut_off;
+    float m_outer_cut_off;
+    float m_intensity;
 };
 
 

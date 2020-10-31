@@ -7,25 +7,23 @@
 
 
 
-void Texture::bindToGL(const Shader &shader, int num)
+void Texture::bindToGL(const Shader &tr_shader, int t_num)
 {
-    glActiveTexture(GL_TEXTURE0+ num);
-    glBindTexture(GL_TEXTURE_2D, getID());
+    glActiveTexture(GL_TEXTURE0 + t_num);
+    glBindTexture(GL_TEXTURE_2D, m_id);
 }
 
-Texture::Texture(GLuint existingTex):
-_id(existingTex)
+Texture::Texture(GLuint t_existingTex):
+        m_id(t_existingTex)
 {
 
 }
 
-Texture::Texture(const std::string &location):
-    _location(location)
+Texture::Texture(const std::string &tr_location):
+        m_location(tr_location)
 {
-    GLuint id;
-    int width, height, nrChannels;
-    glGenTextures(1, &id);
-    glBindTexture(GL_TEXTURE_2D, id); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
+    glGenTextures(1, &m_id);
+    glBindTexture(GL_TEXTURE_2D, m_id); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
     // set the texture wrapping parameters
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -35,17 +33,17 @@ Texture::Texture(const std::string &location):
     // load image, create texture and generate mipmaps
 
     // The FileSystem::getPath(...) is part of the GitHub repository so we can find files on any IDE/platform; replace it with your own image path.
-    unsigned char *data = stbi_load(location.c_str(), &width, &height, &nrChannels, 0);
+    unsigned char *data = stbi_load(tr_location.c_str(), &m_width, &m_height, &m_nrChannels, 0);
     if (data)
     {
         GLenum format;
-        if (nrChannels == 1)
+        if (m_nrChannels == 1)
             format = GL_RED;
-        else if (nrChannels == 3)
+        else if (m_nrChannels == 3)
             format = GL_RGB;
-        else if (nrChannels == 4)
+        else if (m_nrChannels == 4)
             format = GL_RGBA;
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_width, m_height, 0, format, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
     }
     else
@@ -54,47 +52,19 @@ Texture::Texture(const std::string &location):
     }
     stbi_image_free(data);
 
-    setHeight(height);
-    setID(id);
-    setWidth(width);
-    setNRChannels(nrChannels);
-
 }
-
 
 Texture::~Texture()
 {
-    glDeleteTextures(1, &_id);
+    glDeleteTextures(1, &m_id);
 }
 
-void Texture::setID(GLuint id)
-{
-    _id=id;
+const std::string &Texture::getLocation() const {
+    return m_location;
 }
 
-void Texture::setHeight(int height)
-{
-    _height = height;
-}
 
-void Texture::setWidth(int width)
-{
-    _width = width;
-}
 
-void Texture::setNRChannels(int nrChannels)
-{
-    _nrChannels = nrChannels;
-}
 
-GLuint Texture::getID()
-{
-    return _id;
-}
-
-const std::string &Texture::getLocation()
-{
-    return _location;
-}
 
 

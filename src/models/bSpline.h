@@ -18,26 +18,26 @@ public:
     /**
      * Constructor without computation
      */
-    BSpline(int deg,std::vector<glm::vec3> controlPoints,std::vector<float> nodalVector);
+    BSpline(int t_deg, std::vector<glm::vec3> t_controlPoints, std::vector<float> t_nodalVector);
     /**
      * Constructor with computation
      */
-    BSpline(int deg,std::vector<glm::vec3> controlPoints,std::vector<float> nodalVector, float step);
+    BSpline(int t_deg, std::vector<glm::vec3> t_controlPoints, std::vector<float> t_nodalVector, float t_step);
     /**
      * Destructor
      */
     ~BSpline() override;
 
-    glm::vec3 evaluate(float u);
+    glm::vec3 evaluate(float t_u);
 
 
 private:
     void createBSpline();
 
 private:
-    int deg_;
-    float step_;
-    std::vector<float> nodal_vector;
-    std::vector<glm::vec3> control_points;
+    int m_deg;
+    float m_step;
+    std::vector<float> m_nodal_vector;
+    std::vector<glm::vec3> m_control_points;
 
 };

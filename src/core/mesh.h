@@ -20,20 +20,20 @@ class Mesh {
 public:
     /**
      * Constructor
-     * @param vertices : geometry of mesh
-     * @param indices : topology of mesh
+     * @param t_vertices : geometry of mesh
+     * @param t_indices : topology of mesh
      */
-    Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices);
+    Mesh(std::vector<Vertex> t_vertices, std::vector<GLuint> t_indices);
 
 
     /**
      * Constructor
-     * @param vertices : geometry of mesh
-     * @param indices : topology of mesh
-     * @param textures : textures of mesh
+     * @param t_vertices : geometry of mesh
+     * @param t_indices : topology of mesh
+     * @param t_textures : t_textures of mesh
      */
-    Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices,
-         const std::vector<std::shared_ptr<Texture>> &textures);
+    Mesh(std::vector<Vertex> t_vertices, std::vector<GLuint> t_indices,
+         const std::vector<std::shared_ptr<Texture>> &t_textures);
 
     /**
      * Destructor
@@ -41,9 +41,9 @@ public:
     ~Mesh();
     /**
      * Draw the mesh
-     * @param shader
+     * @param tr_shader
      */
-    void drawMesh(Shader &shader, GLuint glmode);
+    void drawMesh(Shader &tr_shader, GLuint t_glmode);
 
 
     /**
@@ -55,19 +55,19 @@ public:
      * @param texture
      */
 
-    void addTexture(std::shared_ptr<Texture> t);
+    void addTexture(std::shared_ptr<Texture> t_texture);
 
 
 private:
 
-    std::vector<Vertex> vertices_;
-    std::vector<GLuint > indices_;
-    std::vector<std::shared_ptr<Texture>> textures_;
+    std::vector<Vertex> m_vertices;
+    std::vector<GLuint > m_indices;
+    std::vector<std::shared_ptr<Texture>> m_textures;
 
     // OpenGL object for models
-    GLuint vao_;
-    GLuint vbo_;
-    GLuint ebo_;
+    GLuint m_vao;
+    GLuint m_vbo;
+    GLuint m_ebo;
 
 };
 

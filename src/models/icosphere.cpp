@@ -5,11 +5,11 @@
 #include "icosphere.h"
 
 Icosphere::Icosphere() :
-    Model(),
-    _nbsubdivisions(2)
+        Model(),
+        m_nb_subdivisions(2)
 {
     createIcosahedron();
-    for(int i =0; i< _nbsubdivisions; i++)
+    for(int i =0; i < m_nb_subdivisions; i++)
         createSubdivisions();
 }
 
@@ -25,7 +25,7 @@ void Icosphere::createIcosahedron()
 
 // the first top vertex at (0, 0, r)
     Vertex vertex;
-    vertex.Position = vertex.Normal = glm::vec3(0.f, 1.f, 0.f);
+    vertex.position = vertex.normal = glm::vec3(0.f, 1.f, 0.f);
     vertices.push_back(vertex);
 
 // compute 10 vertices at 1st and 2nd rows
@@ -34,10 +34,10 @@ void Icosphere::createIcosahedron()
         z  = sinf(V_ANGLE);            // elevaton
         xy = cosf(V_ANGLE);            // length on XY plane
 
-        vertex.Position = vertex.Normal = glm::vec3(xy * glm::cos(hAngle1), z, xy * glm::sin(hAngle1));
+        vertex.position = vertex.normal = glm::vec3(xy * glm::cos(hAngle1), z, xy * glm::sin(hAngle1));
         vertices.push_back(vertex);
 
-        vertex.Position = vertex.Normal = glm::vec3(xy * glm::cos(hAngle2), -z, xy * glm::sin(hAngle2));
+        vertex.position = vertex.normal = glm::vec3(xy * glm::cos(hAngle2), -z, xy * glm::sin(hAngle2));
         vertices.push_back(vertex);
 
         // next horizontal angles
@@ -45,7 +45,7 @@ void Icosphere::createIcosahedron()
         hAngle2 += H_ANGLE;
     }
     //Bottom vertex
-    vertex.Position = vertex.Normal = glm::vec3(0.f, -1.f, 0.f);
+    vertex.position = vertex.normal = glm::vec3(0.f, -1.f, 0.f);
     vertices.push_back(vertex);
 
     for (auto i = 1;i <= 9;i+=2) {
@@ -67,10 +67,10 @@ void Icosphere::createIcosahedron()
         indices.push_back(mod_eq(i+1,10));
         indices.push_back(11);
     }
-    _meshs.clear();
+    m_meshs.clear();
     addMesh(std::make_shared<Mesh>(vertices,indices));
-    _vertices = vertices;
-    _indices = indices;
+    m_vertices = vertices;
+    m_indices = indices;
 }
 
 void Icosphere::createSubdivisions()
@@ -81,27 +81,27 @@ void Icosphere::createSubdivisions()
     Vertex v1, v2, v3;
     int index = 0;
 
-    for (auto i = 0 ; i < _indices.size() ; i += 3) {
-        i1 = _indices[i];
-        i2 = _indices[i+1];
-        i3 = _indices[i+2];
+    for (auto i = 0 ; i < m_indices.size() ; i += 3) {
+        i1 = m_indices[i];
+        i2 = m_indices[i + 1];
+        i3 = m_indices[i + 2];
 
-        v1.Position = v1.Normal = glm::normalize(_vertices[i1].Position + _vertices[i2].Position);
-        v2.Position = v2.Normal = glm::normalize(_vertices[i2].Position + _vertices[i3].Position);
-        v3.Position = v3.Normal = glm::normalize(_vertices[i1].Position + _vertices[i3].Position);
+        v1.position = v1.normal = glm::normalize(m_vertices[i1].position + m_vertices[i2].position);
+        v2.position = v2.normal = glm::normalize(m_vertices[i2].position + m_vertices[i3].position);
+        v3.position = v3.normal = glm::normalize(m_vertices[i1].position + m_vertices[i3].position);
 
         // top triangle
-        vertices.push_back(_vertices[i1]);
+        vertices.push_back(m_vertices[i1]);
         vertices.push_back(v1);
         vertices.push_back(v3);
         // bottom left triangle
         vertices.push_back(v1);
-        vertices.push_back(_vertices[i2]);
+        vertices.push_back(m_vertices[i2]);
         vertices.push_back(v2);
         // bottom right triangle
         vertices.push_back(v3);
         vertices.push_back(v2);
-        vertices.push_back(_vertices[i3]);
+        vertices.push_back(m_vertices[i3]);
         // bottom middle triangle
         vertices.push_back(v1);
         vertices.push_back(v2);
@@ -112,25 +112,25 @@ void Icosphere::createSubdivisions()
         index += 12;
     }
 
-    _meshs[0] = std::make_shared<Mesh>(vertices,indices);
-    _vertices = vertices;
-    _indices = indices;
+    m_meshs[0] = std::make_shared<Mesh>(vertices, indices);
+    m_vertices = vertices;
+    m_indices = indices;
 }
 
 Icosphere::~Icosphere() {
 
 }
 
-void Icosphere::setNBSubdivisions(int val)
+void Icosphere::setNBSubdivisions(int t_nbSubdiv)
 {
-    _nbsubdivisions =val;
-    waitingToUpdate = true;
+    m_nb_subdivisions =t_nbSubdiv;
+    m_waiting_to_update = true;
 }
 
 
 int Icosphere::getNBSubdivisions()
 {
-    return _nbsubdivisions;
+    return m_nb_subdivisions;
 }
 
 
@@ -138,7 +138,7 @@ int Icosphere::getNBSubdivisions()
 void Icosphere::updateModel()
 {
     createIcosahedron();
-    for(int i =0; i< _nbsubdivisions; i++)
+    for(int i =0; i < m_nb_subdivisions; i++)
         createSubdivisions();
 }
 

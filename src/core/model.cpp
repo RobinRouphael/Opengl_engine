@@ -5,10 +5,10 @@
 #include "model.h"
 
 Model::Model():
-    _scale(1),
-    _translation(0),
-    _rotation(0),
-    waitingToUpdate{false}
+        m_scale(1),
+        m_translation(0),
+        m_rotation(0),
+        m_waiting_to_update{false}
     {}
 
 Model::~Model()
@@ -16,28 +16,29 @@ Model::~Model()
 
 }
 
-void Model::drawModel(Shader shader, GLuint glmode)
+void Model::drawModel(Shader &tr_shader, GLuint t_glmode)
 {
 
-    if(waitingToUpdate){
-        waitingToUpdate=false;
+    if(m_waiting_to_update){
+        m_waiting_to_update=false;
         updateModel();
     }
-    shader.use();
-    shader.setMat4("model", getModel());
-    shader.addMaterial(_material);
-    for(auto &m : _meshs)
-        m->drawMesh(shader, glmode);
+    tr_shader.use();
+    tr_shader.setMat4("model", getModel());
+    tr_shader.addMaterial(m_material);
+    for(auto &m : m_meshs)
+        m->drawMesh(tr_shader, t_glmode);
 }
 
-void Model::addMesh(std::shared_ptr<Mesh> mesh)
+void Model::addMesh(std::shared_ptr<Mesh> t_mesh)
 {
-    _meshs.emplace_back(mesh);
+    m_meshs.emplace_back(t_mesh);
 }
 
 
 
 void Model::updateModel() {}
+
 
 
 

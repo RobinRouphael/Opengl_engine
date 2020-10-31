@@ -5,11 +5,11 @@
 #include <src/models/cube.h>
 #include "light.h"
 
-Light::Light(const glm::vec3 &ambient, const glm::vec3 &diffuse, const glm::vec3 &specular, const std::shared_ptr<Model> &representation):
-    _ambient{ambient},
-    _diffuse{diffuse},
-    _specular{specular},
-    _representation(representation)
+Light::Light(const glm::vec3 &t_ambient, const glm::vec3 &t_diffuse, const glm::vec3 &t_specular, const std::shared_ptr<Model> &t_representation):
+        m_ambient{t_ambient},
+        m_diffuse{t_diffuse},
+        m_specular{t_specular},
+        m_representation(t_representation)
 {
 
 }
@@ -19,49 +19,49 @@ Light::~Light()
 
 }
 
-void Light::addToShader(Shader &shader)
+void Light::addToShader(Shader &t_shader)
 {
 
 }
 
-void Light::drawLight(Shader &shader)
+void Light::drawLight(Shader &t_shader)
 {
-    _representation->drawModel(shader, GL_TRIANGLES);
+    m_representation->drawModel(t_shader, GL_TRIANGLES);
 }
 
 
 PointLight::~PointLight(){}
 
 PointLight::PointLight():
-    Light(glm::vec3(0.5f),glm::vec3(2.f),glm::vec3(1.f),std::make_shared<Cube>()),
-    _constant{1.f},
-    _linear{0.99f},
-    _quadratic{0.032f}
+        Light(glm::vec3(0.5f),glm::vec3(2.f),glm::vec3(1.f),std::make_shared<Cube>()),
+        m_constant{1.f},
+        m_linear{0.99f},
+        m_quadratic{0.032f}
 
 {
-    _representation->setPosition(glm::vec3(0.7f,0.2f,2.0f));
+    m_representation->setTranslation(glm::vec3(0.7f, 0.2f, 2.0f));
 }
 
 
-void PointLight::addToShader(Shader &shader)
+void PointLight::addToShader(Shader &t_shader)
 {
-    shader.use();
- shader.addPointLight(_constant,_linear,_quadratic,_representation->getPosition(),ambient(),diffuse(),specular());
+    t_shader.use();
+ t_shader.addPointLight(m_constant, m_linear, m_quadratic, m_representation->getTranslation(), ambient(), diffuse(), specular());
 }
 
-PointLight::PointLight(glm::vec3 pos):
+PointLight::PointLight(glm::vec3 t_pos):
 PointLight()
 {
-    _representation->setScale(glm::vec3(0.1f));
-    _representation->setPosition(pos);
+    m_representation->setScale(glm::vec3(0.1f));
+    m_representation->setTranslation(t_pos);
 }
 
 SpotLight::SpotLight():
         PointLight(),
-        _direction(glm::vec3(0.0f,0.f,-1.0f)),
-        _innerCutoff(glm::cos(glm::radians(12.f))),
-        _outerCutoff(glm::cos(glm::radians(16.f))),
-        _intensity(1.0f)
+        m_direction(glm::vec3(0.0f, 0.f, -1.0f)),
+        m_inner_cut_off(glm::cos(glm::radians(12.f))),
+        m_outer_cut_off(glm::cos(glm::radians(16.f))),
+        m_intensity(1.0f)
 {
 
 }
@@ -71,14 +71,15 @@ SpotLight::~SpotLight()
 
 }
 
-void SpotLight::addToShader(Shader &shader)
+void SpotLight::addToShader(Shader &t_shader)
 {
-    shader.addSpotLight(_direction,_innerCutoff,_outerCutoff,_constant, _linear, _quadratic,_intensity ,_representation->getPosition(),ambient(),diffuse(),specular());
+    t_shader.addSpotLight(m_direction, m_inner_cut_off, m_outer_cut_off, m_constant, m_linear, m_quadratic, m_intensity ,
+                          m_representation->getTranslation(), ambient(), diffuse(), specular());
 }
 
-SpotLight::SpotLight(glm::vec3 pos):
+SpotLight::SpotLight(glm::vec3 t_pos):
         SpotLight()
 {
-    _representation->setScale(glm::vec3(0.1f));
-    _representation->setPosition(pos);
+    m_representation->setScale(glm::vec3(0.1f));
+    m_representation->setTranslation(t_pos);
 }

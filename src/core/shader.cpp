@@ -7,9 +7,9 @@
 #include <fstream>
 #include "shader.h"
 
-Shader::Shader(const char* vertexShaderSource, const char*fragmentShaderSource):
-    nb_PointLight{0},
-    nb_SpotLight{0}
+Shader::Shader(const char* tp_vertexShaderLocation, const char*tp_fragmentShaderLocation):
+        m_nb_point_light{0},
+        m_nb_spot_light{0}
 {
 
     // 1. retrieve the vertex/fragment source code from filePath
@@ -24,8 +24,8 @@ Shader::Shader(const char* vertexShaderSource, const char*fragmentShaderSource):
     try
     {
         // open files
-        vShaderFile.open(vertexShaderSource);
-        fShaderFile.open(fragmentShaderSource);
+        vShaderFile.open(tp_vertexShaderLocation);
+        fShaderFile.open(tp_fragmentShaderLocation);
 
         std::stringstream vShaderStream, fShaderStream;
         // read file's buffer contents into streams
@@ -47,41 +47,41 @@ Shader::Shader(const char* vertexShaderSource, const char*fragmentShaderSource):
     const char* vShaderCode = vertexCode.c_str();
     const char* fShaderCode = fragmentCode.c_str();
     // 1. Generate the shader
-    _vertexshader = glCreateShader(GL_VERTEX_SHADER);
+    m_vertexshader = glCreateShader(GL_VERTEX_SHADER);
     // 2. set the source
-    glShaderSource(_vertexshader, 1, &vShaderCode , NULL);
+    glShaderSource(m_vertexshader, 1, &vShaderCode , NULL);
     // 3. Compile
-    glCompileShader(_vertexshader);
+    glCompileShader(m_vertexshader);
     // 4. test for compile error
-    glGetShaderiv(_vertexshader, GL_COMPILE_STATUS, &_success);
-    if(!_success) {
-        glGetShaderInfoLog(_vertexshader, 512, NULL, _infoLog);
-        std::cerr << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << _infoLog << std::endl;
+    glGetShaderiv(m_vertexshader, GL_COMPILE_STATUS, &m_success);
+    if(!m_success) {
+        glGetShaderInfoLog(m_vertexshader, 512, NULL, m_info_log);
+        std::cerr << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << m_info_log << std::endl;
     }
 
-    _fragmentshader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(_fragmentshader, 1, &fShaderCode, NULL);
-    glCompileShader(_fragmentshader);
-    glGetShaderiv(_fragmentshader, GL_COMPILE_STATUS, &_success);
-    if(!_success) {
-        glGetShaderInfoLog(_fragmentshader, 512, NULL, _infoLog);
-        std::cerr << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << _infoLog << std::endl;
+    m_fragmentshader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(m_fragmentshader, 1, &fShaderCode, NULL);
+    glCompileShader(m_fragmentshader);
+    glGetShaderiv(m_fragmentshader, GL_COMPILE_STATUS, &m_success);
+    if(!m_success) {
+        glGetShaderInfoLog(m_fragmentshader, 512, NULL, m_info_log);
+        std::cerr << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << m_info_log << std::endl;
     }
     // 1. Generate the program
-    _program = glCreateProgram();
+    m_program = glCreateProgram();
     // 2. Attach the shaders to the program
-    glAttachShader(_program, _vertexshader);
-    glAttachShader(_program, _fragmentshader);
+    glAttachShader(m_program, m_vertexshader);
+    glAttachShader(m_program, m_fragmentshader);
     // 3. Link the program
-    glLinkProgram(_program);
+    glLinkProgram(m_program);
     // 4. Test for link errors
-    glGetProgramiv(_program, GL_LINK_STATUS, &_success);
-    if(!_success) {
-        glGetProgramInfoLog(_program, 512, NULL, _infoLog);
-        std::cerr << "ERROR::SHADER::LINK_FAILED\n" << _infoLog << std::endl;
+    glGetProgramiv(m_program, GL_LINK_STATUS, &m_success);
+    if(!m_success) {
+        glGetProgramInfoLog(m_program, 512, NULL, m_info_log);
+        std::cerr << "ERROR::SHADER::LINK_FAILED\n" << m_info_log << std::endl;
     }
-    glDeleteShader(_vertexshader);
-    glDeleteShader(_fragmentshader);
+    glDeleteShader(m_vertexshader);
+    glDeleteShader(m_fragmentshader);
 }
 
 Shader::~Shader()
@@ -91,68 +91,68 @@ Shader::~Shader()
 
 void Shader::use() const
 {
-    glUseProgram(_program);
+    glUseProgram(m_program);
 }
 
-void Shader::setBool(const std::string &name, bool value) const
+void Shader::setBool(const std::string &tr_name, bool t_value) const
 {
-    glUniform1i(glGetUniformLocation(_program, name.c_str()), (GLuint)value);
+    glUniform1i(glGetUniformLocation(m_program, tr_name.c_str()), (GLuint)t_value);
 }
 
-void Shader::setInt(const std::string &name, int value) const
+void Shader::setInt(const std::string &tr_name, int t_value) const
 {
-    glUniform1i(glGetUniformLocation(_program, name.c_str()), value);
+    glUniform1i(glGetUniformLocation(m_program, tr_name.c_str()), t_value);
 }
 
-void Shader::setFloat(const std::string &name, float value) const
+void Shader::setFloat(const std::string &tr_name, float t_value) const
 {
-    glUniform1f(glGetUniformLocation(_program, name.c_str()), value);
+    glUniform1f(glGetUniformLocation(m_program, tr_name.c_str()), t_value);
 }
 
-void Shader::setVec2(const std::string &name, const glm::vec2 & value) const
+void Shader::setVec2(const std::string &tr_name, const glm::vec2 & t_value) const
 {
-    glUniform2fv(glGetUniformLocation(_program, name.c_str()), 1, glm::value_ptr(value));
+    glUniform2fv(glGetUniformLocation(m_program, tr_name.c_str()), 1, glm::value_ptr(t_value));
 }
 
-void Shader::setVec3(const std::string &name, const glm::vec3 & value) const
+void Shader::setVec3(const std::string &tr_name, const glm::vec3 & t_value) const
 {
-    glUniform3fv(glGetUniformLocation(_program, name.c_str()), 1, glm::value_ptr(value));
+    glUniform3fv(glGetUniformLocation(m_program, tr_name.c_str()), 1, glm::value_ptr(t_value));
 }
 
-void Shader::setVec4(const std::string &name, const glm::vec4 & value) const
+void Shader::setVec4(const std::string &tr_name, const glm::vec4 & t_value) const
 {
-    glUniform4fv(glGetUniformLocation(_program, name.c_str()), 1, glm::value_ptr(value));
+    glUniform4fv(glGetUniformLocation(m_program, tr_name.c_str()), 1, glm::value_ptr(t_value));
 }
 
-void Shader::setMat2(const std::string &name, const glm::mat2 & value) const
+void Shader::setMat2(const std::string &tr_name, const glm::mat2 & t_value) const
 {
-    glUniformMatrix2fv(glGetUniformLocation(_program, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
+    glUniformMatrix2fv(glGetUniformLocation(m_program, tr_name.c_str()), 1, GL_FALSE, glm::value_ptr(t_value));
 }
 
-void Shader::setMat3(const std::string &name, const glm::mat3 & value) const
+void Shader::setMat3(const std::string &tr_name, const glm::mat3 & t_value) const
 {
-    glUniformMatrix3fv(glGetUniformLocation(_program, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
+    glUniformMatrix3fv(glGetUniformLocation(m_program, tr_name.c_str()), 1, GL_FALSE, glm::value_ptr(t_value));
 }
 
-void Shader::setMat4(const std::string &name, const glm::mat4 & value) const
+void Shader::setMat4(const std::string &tr_name, const glm::mat4 & t_value) const
 {
-    glUniformMatrix4fv(glGetUniformLocation(_program, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
+    glUniformMatrix4fv(glGetUniformLocation(m_program, tr_name.c_str()), 1, GL_FALSE, glm::value_ptr(t_value));
 }
 
-void Shader::addPointLight(GLfloat constant, GLfloat linear, GLfloat quadratic,const glm::vec3 &pos, const glm::vec3 &ambient,
-                           const glm::vec3 &diffuse, const glm::vec3 &specular)
+void Shader::addPointLight(GLfloat t_constant, GLfloat t_linear, GLfloat t_quadratic, const glm::vec3 &tr_pos, const glm::vec3 &tr_ambient,
+                           const glm::vec3 &tr_diffuse, const glm::vec3 &tr_specular)
 {
-    setVec3("point_light[" + std::to_string(nb_PointLight) +"].ambient", ambient);
-    setVec3("point_light[" + std::to_string(nb_PointLight) +"].diffuse", diffuse);
-    setVec3("point_light[" + std::to_string(nb_PointLight) +"].specular", specular);
-    setVec3("point_light[" + std::to_string(nb_PointLight) + "].position", pos);
-    setFloat("point_light[" + std::to_string(nb_PointLight) + "].constant", constant);
-    setFloat("point_light[" + std::to_string(nb_PointLight) + "].linear", linear);
-    setFloat("point_light[" + std::to_string(nb_PointLight) + "].quadratic", quadratic);
-    setInt("nb_pointLight", ++nb_PointLight);
+    setVec3("point_light[" + std::to_string(m_nb_point_light) + "].ambient", tr_ambient);
+    setVec3("point_light[" + std::to_string(m_nb_point_light) + "].diffuse", tr_diffuse);
+    setVec3("point_light[" + std::to_string(m_nb_point_light) + "].specular", tr_specular);
+    setVec3("point_light[" + std::to_string(m_nb_point_light) + "].position", tr_pos);
+    setFloat("point_light[" + std::to_string(m_nb_point_light) + "].constant", t_constant);
+    setFloat("point_light[" + std::to_string(m_nb_point_light) + "].linear", t_linear);
+    setFloat("point_light[" + std::to_string(m_nb_point_light) + "].quadratic", t_quadratic);
+    setInt("nb_pointLight", ++m_nb_point_light);
 }
 
-void Shader::addMaterial(const Material &mat)
+void Shader::addMaterial(const Material &tr_mat)
 {
     setInt("mat.diffuse",0); //texture
     setInt("mat.specular",1); //texture
@@ -165,33 +165,33 @@ void Shader::addMaterial(const Material &mat)
 
 void Shader::clearLights()
 {
-    nb_PointLight =0;
-    nb_SpotLight =0;
+    m_nb_point_light =0;
+    m_nb_spot_light =0;
     setInt("nb_pointLight", 0);
     setInt("nb_spotLight", 0);
 }
 
-void Shader::isTextured(bool istextured)
+void Shader::isTextured(bool t_istextured)
 {
-    setBool("objectIsTextured",istextured);
+    setBool("objectIsTextured", t_istextured);
 }
 
-void Shader::addSpotLight(const glm::vec3 &dir, GLfloat innerCutoff, GLfloat outerCutoff, GLfloat constant, GLfloat linear, GLfloat quadratic,GLfloat intensity,
-                          const glm::vec3 &pos, const glm::vec3 &ambient, const glm::vec3 &diffuse,
-                          const glm::vec3 &specular)
+void Shader::addSpotLight(const glm::vec3 &tr_dir, GLfloat t_innerCutoff, GLfloat t_outerCutoff, GLfloat t_constant, GLfloat t_linear, GLfloat t_quadratic, GLfloat t_intensity,
+                          const glm::vec3 &tr_pos, const glm::vec3 &tr_ambient, const glm::vec3 &tr_diffuse,
+                          const glm::vec3 &tr_specular)
 {
-    setVec3("spot_light[" + std::to_string(nb_SpotLight) +"].ambient", ambient);
-    setVec3("spot_light[" + std::to_string(nb_SpotLight) +"].diffuse", diffuse);
-    setVec3("spot_light[" + std::to_string(nb_SpotLight) +"].specular", specular);
-    setVec3("spot_light[" + std::to_string(nb_SpotLight) + "].position", pos);
-    setVec3("spot_light[" + std::to_string(nb_SpotLight) + "].direction", dir);
-    setFloat("spot_light[" + std::to_string(nb_SpotLight) + "].cutOff", innerCutoff);
-    setFloat("spot_light[" + std::to_string(nb_SpotLight) + "].outerCutOff", outerCutoff);
+    setVec3("spot_light[" + std::to_string(m_nb_spot_light) + "].ambient", tr_ambient);
+    setVec3("spot_light[" + std::to_string(m_nb_spot_light) + "].diffuse", tr_diffuse);
+    setVec3("spot_light[" + std::to_string(m_nb_spot_light) + "].specular", tr_specular);
+    setVec3("spot_light[" + std::to_string(m_nb_spot_light) + "].position", tr_pos);
+    setVec3("spot_light[" + std::to_string(m_nb_spot_light) + "].direction", tr_dir);
+    setFloat("spot_light[" + std::to_string(m_nb_spot_light) + "].cutOff", t_innerCutoff);
+    setFloat("spot_light[" + std::to_string(m_nb_spot_light) + "].outerCutOff", t_outerCutoff);
     //setFloat("spot_light[" + std::to_string(nb_SpotLight) + "].intensity", intensity);
-    setFloat("spot_light[" + std::to_string(nb_SpotLight) + "].constant", constant);
-    setFloat("spot_light[" + std::to_string(nb_SpotLight) + "].linear", linear);
-    setFloat("spot_light[" + std::to_string(nb_SpotLight) + "].quadratic", quadratic);
-    setInt("nb_spotLight", ++nb_SpotLight);
+    setFloat("spot_light[" + std::to_string(m_nb_spot_light) + "].constant", t_constant);
+    setFloat("spot_light[" + std::to_string(m_nb_spot_light) + "].linear", t_linear);
+    setFloat("spot_light[" + std::to_string(m_nb_spot_light) + "].quadratic", t_quadratic);
+    setInt("nb_spotLight", ++m_nb_spot_light);
 
 }
 

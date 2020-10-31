@@ -5,8 +5,8 @@
 #include "cube.h"
 
 Cube::Cube() :
-    Model(),
-    _resolution{3}
+        Model(),
+        m_resolution{3}
     {
         setup();
     }
@@ -34,25 +34,25 @@ void Cube::setup()
 
         yAxis = glm::vec3(directions[i].y, directions[i].z, directions[i].x);
         xAxis = glm::cross(directions[i],yAxis);
-        for(auto x = 0; x < _resolution; x++){
+        for(auto x = 0; x < m_resolution; x++){
 
-            for (auto y = 0; y< _resolution; y++){
+            for (auto y = 0; y < m_resolution; y++){
 
-                auto index = x+y*_resolution;
-                auto yPourcent = y/(float(_resolution-1));
-                auto xPourcent = x/(float(_resolution-1));
+                auto index = x+ y * m_resolution;
+                auto yPourcent = y/(float(m_resolution - 1));
+                auto xPourcent = x/(float(m_resolution - 1));
 
 
                 Vertex v;
-                v.Position = directions[i] + (xPourcent-0.5f)*xAxis*2.f + (yPourcent-0.5f)*yAxis*2.f;
-                v.Normal = directions[i];
+                v.position = directions[i] + (xPourcent - 0.5f) * xAxis * 2.f + (yPourcent - 0.5f) * yAxis * 2.f;
+                v.normal = directions[i];
                 vertices.push_back(v);
 
-                if ( x != _resolution - 1 && y != _resolution - 1 ) {
+                if (x != m_resolution - 1 && y != m_resolution - 1 ) {
                     indices.push_back(index);
-                    indices.push_back(index + _resolution);
-                    indices.push_back(index + _resolution + 1);
-                    indices.push_back(index + _resolution + 1);
+                    indices.push_back(index + m_resolution);
+                    indices.push_back(index + m_resolution + 1);
+                    indices.push_back(index + m_resolution + 1);
                     indices.push_back(index + 1);
                     indices.push_back(index);
                 }

@@ -23,16 +23,16 @@ public:
 
     /**
      * Draws the model
-     * @param shader
+     * @param tr_shader
      */
-    virtual void drawModel(Shader shader, GLuint glmode);
+    void drawModel(Shader &tr_shader, GLuint t_glmode);
 
 
     /**
      * Adds a new Mesh to existing
-     * @param mesh
+     * @param t_mesh
      */
-    void addMesh(std::shared_ptr<Mesh> mesh);
+    void addMesh(std::shared_ptr<Mesh> t_mesh);
 
 
 
@@ -47,32 +47,32 @@ public:
      * Scale getter
      * @return scale vector
      */
-    glm::vec3 getScale(){return _scale;}
+    glm::vec3 getScale(){return m_scale;}
     /**
      * Scale setter
-     * @param scale vector
+     * @param t_scale vector
      */
-    void setScale(glm::vec3 scale){_scale = scale;}
+    void setScale(glm::vec3 t_scale){ m_scale = t_scale;}
     /**
      * Rotation getter
      * @return rotation vector
      */
-    glm::vec3 getRotation(){return _rotation;}
+    glm::vec3 getRotation(){return m_rotation;}
     /**
      * Rotation setter
-     * @param rotation vector
+     * @param t_rotation vector
      */
-    void setRotation(glm::vec3 rotation){_rotation = rotation;}
+    void setRotation(glm::vec3 t_rotation){ m_rotation = t_rotation;}
     /**
      * Position getter
      * @return position vector
      */
-    glm::vec3 getPosition(){return _translation;}
+    glm::vec3 getTranslation(){return m_translation;}
     /**
      * Position setter
-     * @param position vector
+     * @param t_position vector
      */
-    void setPosition(glm::vec3 position){_translation = position;}
+    void setTranslation(glm::vec3 t_position){ m_translation = t_position;}
 
 
 private:
@@ -84,31 +84,42 @@ private:
         glm::vec3 x{1.f, 0.f, 0.f};
         glm::vec3 y{0.f, 1.f, 0.f};
         glm::vec3 z{0.f, 0.f, 1.f};
-        glm::mat4 rot = glm::rotate(glm::mat4(),glm::radians(_rotation.x), x);
-        rot = glm::rotate(rot,glm::radians(_rotation.y),y);
-        rot = glm::rotate(rot, glm::radians(_rotation.z),z);
+        glm::mat4 rot = glm::rotate(glm::mat4(), glm::radians(m_rotation.x), x);
+        rot = glm::rotate(rot, glm::radians(m_rotation.y), y);
+        rot = glm::rotate(rot, glm::radians(m_rotation.z), z);
         return rot;
     }
 
 
 protected:
-    std::vector<std::shared_ptr<Mesh>> _meshs;
-    glm::vec3 _scale;
-    glm::vec3 _translation;
-    glm::vec3 _rotation;
-    bool waitingToUpdate;
 
-/**
- * Get Model Matrix
- * @return Translation Mat * Rotation Mat * Scale Mat
- */
-glm::mat4 getModel(){
-    return glm::translate(glm::mat4(),_translation)
-           * getRotationMatrix()
-           *glm::scale(glm::mat4(),_scale);
-}
+    /**
+     * Get Model Matrix
+     * @return Translation Mat * Rotation Mat * Scale Mat
+     */
+    glm::mat4 getModel(){
+        return glm::translate(glm::mat4(), m_translation)
+               * getRotationMatrix()
+               *glm::scale(glm::mat4(), m_scale);
+    }
 
-    Material _material;
+    [[nodiscard]] std::vector<std::shared_ptr<Mesh>> getMeshs() const {return m_meshs;}
+
+    void setMeshs(const std::vector<std::shared_ptr<Mesh>> &t_meshs){m_meshs = t_meshs;}
+
+    void setWaitingToUpdate(bool t_waitingToUpdate){ m_waiting_to_update = t_waitingToUpdate;}
+
+    void setMaterial(const Material &t_material){m_material = t_material;}
+
+protected: //TODO : set this to private
+    std::vector<std::shared_ptr<Mesh>> m_meshs;
+    bool m_waiting_to_update;
+    Material m_material;
+
+private:
+    glm::vec3 m_scale;
+    glm::vec3 m_translation;
+    glm::vec3 m_rotation;
 };
 
 

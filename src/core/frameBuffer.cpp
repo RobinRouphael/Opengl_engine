@@ -4,82 +4,82 @@
 
 #include "frameBuffer.h"
 
-GLuint FrameBuffer::default_fbo{0};
+GLuint FrameBuffer::s_default_fbo{0};
 
 FrameBuffer::~FrameBuffer() {
-    for (GLuint &b : buffers_) {
+    for (GLuint &b : m_buffers) {
         glDeleteBuffers(1, &b);
     }
-    for (GLuint &t : textures_) {
+    for (GLuint &t : m_textures) {
         glDeleteTextures(1, &t);
     }
-    glDeleteFramebuffers(1, &fbo_);
+    glDeleteFramebuffers(1, &m_fbo);
 }
 
 
 void FrameBuffer::use() const {
-    glBindFramebuffer(GL_FRAMEBUFFER, fbo_);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-        glBindFramebuffer(GL_FRAMEBUFFER, default_fbo);
+        glBindFramebuffer(GL_FRAMEBUFFER, s_default_fbo);
         return;
     }
-    glViewport(0, 0, width_, height_);
+    glViewport(0, 0, m_width, m_height);
 }
 
 void FrameBuffer::stop(int width, int height) const {
-    glBindFramebuffer(GL_FRAMEBUFFER, default_fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, s_default_fbo);
     glViewport(0, 0, width, height);
 }
 
 void FrameBuffer::drawBuffers() const {
-    glBindFramebuffer(GL_FRAMEBUFFER, fbo_);
-    auto *buffers = new GLenum[num_color];
-    for (int i = 0; i < num_color; ++i)
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    auto *buffers = new GLenum[m_num_color];
+    for (int i = 0; i < m_num_color; ++i)
         buffers[i] = GL_COLOR_ATTACHMENT0 + i;
-    glDrawBuffers(num_color, buffers);
+    glDrawBuffers(m_num_color, buffers);
     delete[] buffers;
-    glBindFramebuffer(GL_FRAMEBUFFER, default_fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, s_default_fbo);
 }
 
 
 //Add Buffers
 //---------------------------------------------------------------------------------------------------------------------------
 
-void FrameBuffer::addBuffer(GLuint format, GLuint attachment) {
-    glBindFramebuffer(GL_FRAMEBUFFER, fbo_);
+void FrameBuffer::addBuffer(GLuint t_format, GLuint t_attachment) {
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     GLuint rbo;
     glGenRenderbuffers(1, &rbo);
     glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-    if (num_samples == 1)
-        glRenderbufferStorage(GL_RENDERBUFFER, format, width_, height_);
+    if (m_num_samples == 1)
+        glRenderbufferStorage(GL_RENDERBUFFER, t_format, m_width, m_height);
     else
-        glRenderbufferStorageMultisample(GL_RENDERBUFFER, num_samples, format, width_, height_);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment, GL_RENDERBUFFER, rbo);
-    glBindFramebuffer(GL_FRAMEBUFFER, default_fbo);
-    buffers_.push_back(rbo);
+        glRenderbufferStorageMultisample(GL_RENDERBUFFER, m_num_samples, t_format, m_width, m_height);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, t_attachment, GL_RENDERBUFFER, rbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, s_default_fbo);
+    m_buffers.push_back(rbo);
 }
 
 void FrameBuffer::addColorBuffer() {
-    if (num_color > GL_COLOR_ATTACHMENT31) return;
-    addBuffer(GL_RGB, GL_COLOR_ATTACHMENT0 + num_color++ );
+    if (m_num_color > GL_COLOR_ATTACHMENT31) return;
+    addBuffer(GL_RGB, GL_COLOR_ATTACHMENT0 + m_num_color++ );
 }
 
 void FrameBuffer::addDepthBuffer() {
-    if (depth_) return;
+    if (m_is_depth) return;
     addBuffer(GL_DEPTH_COMPONENT, GL_DEPTH_ATTACHMENT);
-    depth_ = true;
+    m_is_depth = true;
 }
 
 void FrameBuffer::addStencilBuffer() {
-    if (stencil_) return;
+    if (m_is_stencil) return;
     addBuffer(GL_STENCIL_INDEX, GL_STENCIL_ATTACHMENT );
-    stencil_ = true;
+    m_is_stencil = true;
 }
 
 void FrameBuffer::addDepthStencilBuffer() {
-    if (stencil_depth) return;
+    if (m_is_stencil_depth) return;
     addBuffer(GL_DEPTH24_STENCIL8,GL_DEPTH_STENCIL_ATTACHMENT);
-    stencil_depth = true;
+    m_is_stencil_depth = true;
 }
 
 
@@ -87,15 +87,15 @@ void FrameBuffer::addDepthStencilBuffer() {
 //Add Textures
 //---------------------------------------------------------------------------------------------------------------------------
 
-void FrameBuffer::generateTexture(GLuint &texture,GLuint internalFormat,GLuint format, GLuint type, bool border) const {
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width_, height_, 0, format, type, nullptr);
+void FrameBuffer::generateTexture(GLuint &t_texture, GLuint t_internalFormat, GLuint t_format, GLuint t_type, bool t_border) const {
+    glGenTextures(1, &t_texture);
+    glBindTexture(GL_TEXTURE_2D, t_texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, t_internalFormat, m_width, m_height, 0, t_format, t_type, nullptr);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    if(border)
+    if(t_border)
     {
         //Border color
         float borderColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
@@ -103,41 +103,41 @@ void FrameBuffer::generateTexture(GLuint &texture,GLuint internalFormat,GLuint f
     }
 }
 
-void FrameBuffer::addTexture(GLuint internalFormat, GLuint format, GLuint type, bool border, GLuint attachment) {
+void FrameBuffer::addTexture(GLuint t_internalFormat, GLuint t_format, GLuint t_type, bool t_border, GLuint t_attachment) {
     //Bind
-    glBindFramebuffer(GL_FRAMEBUFFER, fbo_);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     //Texture creation
     GLuint texture;
-    generateTexture(texture, internalFormat, format, type,border);
+    generateTexture(texture, t_internalFormat, t_format, t_type, t_border);
     //Attach to framebuffer
-    glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, texture, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, t_attachment, GL_TEXTURE_2D, texture, 0);
     //Unbind
-    glBindFramebuffer(GL_FRAMEBUFFER, default_fbo);
-    textures_.push_back(texture);
+    glBindFramebuffer(GL_FRAMEBUFFER, s_default_fbo);
+    m_textures.push_back(texture);
 }
 
 void FrameBuffer::addColorTexture() {
-    if (num_color > GL_COLOR_ATTACHMENT31) return;
-    addTexture(GL_RGB, GL_RGB, GL_UNSIGNED_BYTE,false,GL_COLOR_ATTACHMENT0 + num_color++);
+    if (m_num_color > GL_COLOR_ATTACHMENT31) return;
+    addTexture(GL_RGB, GL_RGB, GL_UNSIGNED_BYTE,false, GL_COLOR_ATTACHMENT0 + m_num_color++);
 }
 
 void FrameBuffer::addDepthTexture() {
-    if (depth_) return;
+    if (m_is_depth) return;
     addTexture(GL_DEPTH_COMPONENT,GL_DEPTH_COMPONENT, GL_FLOAT,true,GL_DEPTH_ATTACHMENT);
-    depth_ = true;
+    m_is_depth = true;
 
 }
 
 void FrameBuffer::addStencilTexture() {
-    if (stencil_) return;
+    if (m_is_stencil) return;
     addTexture(GL_STENCIL_INDEX, GL_STENCIL_INDEX,GL_INT,true,GL_STENCIL_ATTACHMENT);
-    stencil_ = true;
+    m_is_stencil = true;
 }
 
 void FrameBuffer::addDepthStencilTexture() {
-    if (stencil_depth) return;
+    if (m_is_stencil_depth) return;
     addTexture(GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL,GL_UNSIGNED_INT_24_8,true,GL_DEPTH_STENCIL_ATTACHMENT);
-    stencil_depth = true;
+    m_is_stencil_depth = true;
 }
 
 

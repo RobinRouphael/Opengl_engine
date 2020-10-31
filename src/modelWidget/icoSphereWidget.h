@@ -6,8 +6,8 @@
 #define ENGINE_ICOSPHEREWIDGET_H
 
 
-#include <src/core/modelInterface.h>
-#include <src/models/icosphere.h>
+#include "modelInterface.h"
+#include "src/models/icosphere.h"
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QDoubleSpinBox>
 #include <QtWidgets/QLabel>

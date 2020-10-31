@@ -13,59 +13,35 @@ class Texture{
 public:
     /**
      * Constructor
-     * @param location of image file
+     * @param tr_location of image file
      */
-    Texture(const std::string &location);
+    Texture(const std::string &tr_location);
 
-    Texture(GLuint existingTex);
+    Texture(GLuint t_existingTex);
     /**
      * Destructor
      */
     ~Texture();
     /**
      * Bind texture to OpenGL context
-     * @param shader
-     * @param num
+     * @param tr_shader
+     * @param t_num
      */
-    void bindToGL(const Shader &shader, int num);
-    /**
-     * Set texture ID
-     * @param id
-     */
-    void setID(GLuint id);
-    /**
-     * Set Height
-     * @param height
-     */
-    void setHeight(int height);
-    /**
-     * Set Width
-     * @param width
-     */
-    void setWidth(int width);
-    /**
-     * Set NR Channels
-     * @param nrChannels
-     */
-    void setNRChannels(int nrChannels);
-    /**
-     * ID getter
-     * @return
-     */
-    GLuint getID();
-    /**
-     * Location getter
-     * @return
-     */
-    const std::string &getLocation();
+    void bindToGL(const Shader &tr_shader, int t_num);
+
 
 
 private:
-    std::string _location; //image file location
-    GLuint _id;
-    int _height;
-    int _width;
-    int _nrChannels;
+    std::string m_location;
+public:
+    const std::string &getLocation() const;
+
+private:
+    //image file location
+    GLuint m_id;
+    int m_height;
+    int m_width;
+    int m_nrChannels;
 };
 
 

@@ -4,20 +4,21 @@
 
 #include "src/core/camera.h"
 #include "core/model.h"
-#include "core/modelInterface.h"
+#include "modelWidget/modelInterface.h"
 #include "src/modelWidget/sphereWidget.h"
 #include "src/models/sphere.h"
 #include <functional>
 #include <QtWidgets/QWidget>
 #include <src/core/light.h>
-#include <src/core/lightInterface.h>
+#include <src/modelWidget/lightInterface.h>
 #include <src/models/assimpmodel.h>
 #include <src/models/icosphere.h>
 #include <src/modelWidget/icoSphereWidget.h>
 #include <src/modelWidget/importedModelWidget.h>
+#include "src/models/bSplineSurface.h"
 #include <src/models/cube.h>
 #include <src/core/frameBuffer.h>
-#include <src/geometry/quad.h>
+#include <src/models/quad.h>
 
 
 class OpenGLDemo {

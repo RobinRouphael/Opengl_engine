@@ -5,7 +5,7 @@
 
 #include "modelInterface.h"
 
-ModelInterface::ModelInterface(const std::shared_ptr<Model> &asset):
+ModelInterface::ModelInterface(const std::shared_ptr<Model> &t_asset):
         editScaleX(new QDoubleSpinBox()),
         editScaleY(new QDoubleSpinBox()),
         editScaleZ(new QDoubleSpinBox()),
@@ -19,11 +19,11 @@ ModelInterface::ModelInterface(const std::shared_ptr<Model> &asset):
         scaleLayout(new QGridLayout()),
         rotationLayout(new QGridLayout()),
         positionLayout(new QGridLayout()),
-        _asset(asset),
+        m_asset(t_asset),
         mainLayout(new QVBoxLayout())
 
 {
-    auto currentScale = _asset->getScale();
+    auto currentScale = m_asset->getScale();
 
     editScaleX->setValue(currentScale.x);
     editScaleY->setValue(currentScale.y);
@@ -35,7 +35,7 @@ ModelInterface::ModelInterface(const std::shared_ptr<Model> &asset):
     scaleLayout->addWidget(editScaleY,1,1);
     scaleLayout->addWidget(editScaleZ,1,2);
 
-    auto currentRotation = _asset->getRotation();
+    auto currentRotation = m_asset->getRotation();
 
 
     editRotationX->setMaximum(180);
@@ -54,7 +54,7 @@ ModelInterface::ModelInterface(const std::shared_ptr<Model> &asset):
     rotationLayout->addWidget(editRotationY,1,1);
     rotationLayout->addWidget(editRotationZ,1,2);
 
-    auto currentPosition = _asset->getPosition();
+    auto currentPosition = m_asset->getTranslation();
     editPositionX->setMinimum(-99);
     editPositionY->setMinimum(-99);
     editPositionZ->setMinimum(-99);
@@ -96,22 +96,22 @@ void ModelInterface::destroyModel()
 }
 
 
-void ModelInterface::scaleEdited(double val)
+void ModelInterface::scaleEdited(double t_scale)
 {
-    _asset->setScale(glm::vec3(editScaleX->value(), editScaleY->value(), editScaleZ->value()));
+    m_asset->setScale(glm::vec3(editScaleX->value(), editScaleY->value(), editScaleZ->value()));
     emit propertiesHaveChanged();
 }
 
-void ModelInterface::rotationEdited(double val)
+void ModelInterface::rotationEdited(double t_rot)
 {
-    _asset->setRotation(glm::vec3(editRotationX->value(), editRotationY->value(), editRotationZ->value()));
+    m_asset->setRotation(glm::vec3(editRotationX->value(), editRotationY->value(), editRotationZ->value()));
     emit propertiesHaveChanged();
 }
 
 
-void ModelInterface::positionEdited(double val)
+void ModelInterface::positionEdited(double t_pos)
 {
-    _asset->setPosition(glm::vec3(editPositionX->value(), editPositionY->value(), editPositionZ->value()));
+    m_asset->setTranslation(glm::vec3(editPositionX->value(), editPositionY->value(), editPositionZ->value()));
     emit propertiesHaveChanged();
 }
 

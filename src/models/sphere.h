@@ -15,7 +15,7 @@ public:
      * Create UV Sphere in a single Mesh
      */
     Sphere();
-    Sphere(int nbStacks, int nbSectors);
+    Sphere(int t_nbStacks, int t_nbSectors);
     /**
      * Destructor
      */
@@ -23,14 +23,14 @@ public:
 
     /**
      * Set number of stacks
-     * @param nbStacks
+     * @param t_nbStacks
      */
-    void setNbStacks(int nbStacks);
+    void setNbStacks(int t_nbStacks);
     /**
      * Set number of sectors
-     * @param nbSectors
+     * @param t_nbSectors
      */
-    void setNbSectors(int nbSectors);
+    void setNbSectors(int t_nbSectors);
     /**
      * Get number of stacks
      * @return
@@ -47,9 +47,9 @@ public:
     void updateModel() override;
     /**
      * Set a diffuse map
-     * @param texture
+     * @param tr_texture
      */
-    void setTextureDiffuse(const std::shared_ptr<Texture> &texture);
+    void setTextureDiffuse(const std::shared_ptr<Texture> &tr_texture);
 
 
 private:
@@ -65,9 +65,9 @@ private:
     std::vector<GLuint> createIndices() ;
 
 private:
-    int _nbSectors;
-    int _nbStacks;
-    std::shared_ptr<Texture> _textureDiffuse;
+    int m_nb_sectors;
+    int m_nb_stacks;
+    std::shared_ptr<Texture> m_texture;
 };
 
 

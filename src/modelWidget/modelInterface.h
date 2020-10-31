@@ -11,7 +11,7 @@
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QDoubleSpinBox>
 #include <QtWidgets/QLabel>
-#include "model.h"
+#include "core/model.h"
 
 class ModelInterface : public QWidget{
     Q_OBJECT
@@ -19,7 +19,7 @@ class ModelInterface : public QWidget{
      * Base class for QT Widgets to edit Models
      */
 public:
-    explicit ModelInterface(const std::shared_ptr<Model> &asset);
+    explicit ModelInterface(const std::shared_ptr<Model> &t_asset);
 
     virtual ~ModelInterface();
 
@@ -30,19 +30,19 @@ public slots:
     void destroyModel();
     /**
      * Scale of model was edited
-     * @param val : unused
+     * @param t_scale : unused
      */
-    void scaleEdited(double val);
+    void scaleEdited(double t_scale);
     /**
      * Position of model was edited
-     * @param val : unused
+     * @param t_pos : unused
      */
-    void positionEdited(double val);
+    void positionEdited(double t_pos);
     /**
      * Rotation of model was edited
-     * @param val : unused
+     * @param t_rot : unused
      */
-    void rotationEdited(double val);
+    void rotationEdited(double t_rot);
 
 
 signals:
@@ -74,7 +74,7 @@ private:
     QGridLayout *scaleLayout;
     QGridLayout *rotationLayout;
     QGridLayout *positionLayout;
-    std::shared_ptr<Model> _asset;
+    std::shared_ptr<Model> m_asset;
 
 protected:
 

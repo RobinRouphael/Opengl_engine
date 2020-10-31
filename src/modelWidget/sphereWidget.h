@@ -6,8 +6,8 @@
 #define ENGINE_SPHEREWIDGET_H
 
 
-#include "core/modelInterface.h"
-#include <src/models/sphere.h>
+#include "modelInterface.h"
+#include "src/models/sphere.h"
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QFileDialog>

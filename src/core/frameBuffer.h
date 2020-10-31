@@ -10,10 +10,10 @@
 class FrameBuffer {
 public:
 
-    FrameBuffer(int width, int height, int numSamples)
-            : width_{width}, height_{height}, num_samples(numSamples)
+    FrameBuffer(int t_width, int t_height, int t_numSamples)
+            : m_width{t_width}, m_height{t_height}, m_num_samples(t_numSamples)
             {
-                glGenFramebuffers(1, &fbo_);
+                glGenFramebuffers(1, &m_fbo);
 
 
 
@@ -25,17 +25,17 @@ public:
 
     void stop(int width, int height) const;
 
-    [[nodiscard]] const std::vector<GLuint> &textures() const { return textures_; }
+    [[nodiscard]] const std::vector<GLuint> &textures() const { return m_textures; }
 
-    [[nodiscard]] const std::vector<GLuint> &buffers() const { return buffers_; }
+    [[nodiscard]] const std::vector<GLuint> &buffers() const { return m_buffers; }
 
-    static void setDefaultFbo(GLuint numFbo){ default_fbo = numFbo;}
+    static void setDefaultFbo(GLuint t_numFbo){ s_default_fbo = t_numFbo;}
 
 
 private:
-    void addBuffer(GLuint format,GLuint attachment);
-    void generateTexture(GLuint &texture,GLuint internalFormat,GLuint format, GLuint type, bool border) const;
-    void addTexture(GLuint internalFormat,GLuint format, GLuint type, bool border, GLuint attachment);
+    void addBuffer(GLuint t_format, GLuint t_attachment);
+    void generateTexture(GLuint &t_texture, GLuint t_internalFormat, GLuint t_format, GLuint t_type, bool t_border) const;
+    void addTexture(GLuint t_internalFormat, GLuint t_format, GLuint t_type, bool t_border, GLuint t_attachment);
 
 public:
     void drawBuffers() const;
@@ -50,17 +50,17 @@ public:
 
 
 private:
-    static GLuint default_fbo;
-    int num_samples;
-    int width_, height_;
-    GLuint fbo_;
-    std::vector<GLuint> textures_;
-    std::vector<GLuint> buffers_;
+    static GLuint s_default_fbo;
+    int m_num_samples;
+    int m_width, m_height;
+    GLuint m_fbo;
+    std::vector<GLuint> m_textures;
+    std::vector<GLuint> m_buffers;
 
-    bool stencil_{false};
-    bool depth_{false};
-    bool stencil_depth{false};
-    int num_color{0};
+    bool m_is_stencil{false};
+    bool m_is_depth{false};
+    bool m_is_stencil_depth{false};
+    int m_num_color{0};
 };
 
 

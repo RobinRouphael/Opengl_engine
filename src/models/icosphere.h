@@ -22,9 +22,9 @@ public:
     ~Icosphere();
     /**
      * Set number of subdivisions
-     * @param val
+     * @param t_nbSubdiv
      */
-    void setNBSubdivisions(int val);
+    void setNBSubdivisions(int t_nbSubdiv);
     /**
      * Getter of number of subdivisons
      * @return
@@ -47,7 +47,7 @@ private:
      */
     void createSubdivisions();
 
-    GLuint mod_eq(GLuint a, GLuint b)
+    static GLuint mod_eq(GLuint a, GLuint b)
     {
         return (a == b ? a : a%b);
     }
@@ -55,9 +55,9 @@ private:
 
 
 private:
-    std::vector<Vertex> _vertices;
-    std::vector<GLuint> _indices;
-    int _nbsubdivisions;
+    std::vector<Vertex> m_vertices;
+    std::vector<GLuint> m_indices;
+    int m_nb_subdivisions;
 
 
 };

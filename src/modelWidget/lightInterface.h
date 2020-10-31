@@ -9,7 +9,7 @@
 #include <QtWidgets/QWidget>
 #include <memory>
 #include <QtWidgets/QDoubleSpinBox>
-#include "light.h"
+#include "core/light.h"
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QLabel>
 class LightInterface : public QWidget{

@@ -5,10 +5,10 @@
 #include "mesh.h"
 
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, const std::vector<std::shared_ptr<Texture>> &textures):
-        vertices_(std::move(vertices)),
-        indices_(std::move(indices)),
-        textures_(textures)
+Mesh::Mesh(std::vector<Vertex> t_vertices, std::vector<GLuint> t_indices, const std::vector<std::shared_ptr<Texture>> &t_textures):
+        m_vertices(std::move(t_vertices)),
+        m_indices(std::move(t_indices)),
+        m_textures(t_textures)
 {
     generateMesh();
 
@@ -16,28 +16,28 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, const std:
 
 
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices):
-        Mesh(std::move(vertices), std::move(indices), std::vector<std::shared_ptr<Texture>>())
+Mesh::Mesh(std::vector<Vertex> t_vertices, std::vector<GLuint> t_indices):
+        Mesh(std::move(t_vertices), std::move(t_indices), std::vector<std::shared_ptr<Texture>>())
 {
 }
 
 Mesh::~Mesh()
 {
-    glDeleteBuffers(1, &vbo_);
-    glDeleteBuffers(1, &ebo_);
-    glDeleteVertexArrays(1, &vao_) ;
+    glDeleteBuffers(1, &m_vbo);
+    glDeleteBuffers(1, &m_ebo);
+    glDeleteVertexArrays(1, &m_vao) ;
 }
 
 
-void Mesh::drawMesh(Shader &shader, GLuint glmode)
+void Mesh::drawMesh(Shader &tr_shader, GLuint t_glmode)
 {
-    shader.isTextured(!textures_.empty());
+    tr_shader.isTextured(!m_textures.empty());
 
-    for(auto i =0; i < textures_.size(); i++)
-        textures_[i]->bindToGL(shader, i);
+    for(auto i =0; i < m_textures.size(); i++)
+        m_textures[i]->bindToGL(tr_shader, i);
 
-    glBindVertexArray(vao_);
-    glDrawElements(glmode, indices_.size(), GL_UNSIGNED_INT, nullptr);
+    glBindVertexArray(m_vao);
+    glDrawElements(t_glmode, m_indices.size(), GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);
 }
 
@@ -48,37 +48,37 @@ void Mesh::generateMesh()
 
     // Initialize the models
     // 1. Generate models buffers
-    glGenBuffers(1, &vbo_) ;
-    glGenBuffers(1, &ebo_) ;
-    glGenVertexArrays(1, &vao_) ;
+    glGenBuffers(1, &m_vbo) ;
+    glGenBuffers(1, &m_ebo) ;
+    glGenVertexArrays(1, &m_vao) ;
     // 2. Bind Vertex Array Object
-    glBindVertexArray(vao_);
+    glBindVertexArray(m_vao);
 
     // 3. Copy our vertices array in a buffer for OpenGL to use
-    glBindBuffer(GL_ARRAY_BUFFER, vbo_);
-    glBufferData(GL_ARRAY_BUFFER, vertices_.size() * sizeof (Vertex), vertices_.data(), GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+    glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof (Vertex), m_vertices.data(), GL_STATIC_DRAW);
 
     // vertex attributes pointers
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)0);
     glEnableVertexAttribArray(0);
 
     // normal attributes pointers
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, Normal));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, normal));
     glEnableVertexAttribArray(1);
 
     // texture attributes pointers
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, TexCoords));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, texCoords));
     glEnableVertexAttribArray(2);
 
     // 7. Copy our index array in a element buffer for OpenGL to use
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_.size() * sizeof (GLfloat), indices_.data(), GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indices.size() * sizeof (GLfloat), m_indices.data(), GL_STATIC_DRAW);
     //6. Unbind the VAO
     glBindVertexArray(0);
 }
 
-void Mesh::addTexture(std::shared_ptr<Texture> t) {
-    textures_.emplace_back(t);
+void Mesh::addTexture(std::shared_ptr<Texture> t_texture) {
+    m_textures.emplace_back(t_texture);
 
 }
 
