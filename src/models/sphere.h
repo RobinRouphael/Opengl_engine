@@ -45,11 +45,6 @@ public:
      * Reset Mesh from a new number of sectors or stacks
      */
     void updateModel() override;
-    /**
-     * Set a diffuse map
-     * @param tr_texture
-     */
-    void setTextureDiffuse(const std::shared_ptr<Texture> &tr_texture);
 
 
 private:
@@ -67,7 +62,6 @@ private:
 private:
     int m_nb_sectors;
     int m_nb_stacks;
-    std::shared_ptr<Texture> m_texture;
 };
 
 

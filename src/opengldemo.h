@@ -19,6 +19,7 @@
 #include <src/models/cube.h>
 #include <src/core/frameBuffer.h>
 #include <src/models/quad.h>
+#include <src/core/lightsManager.h>
 
 
 class OpenGLDemo {
@@ -92,26 +93,36 @@ private:
     using InterfaceConstructor = std::function<ModelInterface*()>;
 
     //Models and Model Widgets constructor
-    std::function<std::pair<std::shared_ptr<Model>,InterfaceConstructor>()> _modelConstructor;
-    std::function<std::pair<std::shared_ptr<Light>,LightInterface*>()> _lightConstructor;
+    std::function<std::pair<std::shared_ptr<Model>,InterfaceConstructor>()> m_modelConstructor;
+    std::function<std::pair<std::shared_ptr<Light>,LightInterface*>()> m_lightConstructor;
 
     //Lights and Lights Widget constructor
-    std::vector<std::pair<std::shared_ptr<Model>,InterfaceConstructor>> _models;
-    std::vector<std::pair<std::shared_ptr<Light>,LightInterface*>> _lights;
+    std::vector<std::shared_ptr<Model>> m_models;
+    std::vector<InterfaceConstructor> m_interfaces;
+    std::vector<std::shared_ptr<Model>> m_transparent_models;
+
+    LightsManager m_lightsManager;
+    std::shared_ptr<Model> m_spline;
 
 
     bool _waitingModels;
     bool _waitingToDestroyModel;
     int _selectedModel;
-    int _selectedLight;
 
     // Shader program for rendering
     std::unique_ptr<Shader> _shader;
     std::unique_ptr<Shader> _colorShader;
     std::unique_ptr<Shader> _lightShader;
+    std::unique_ptr<Shader> m_depth_shader;
     std::unique_ptr<Shader> screen_shader;
+    std::unique_ptr<Shader> m_transparency_shader;
+    std::unique_ptr<Shader> m_blend_shader;
     std::unique_ptr<FrameBuffer> frame_buffer;
+    std::unique_ptr<FrameBuffer> m_transparency_buffer;
     std::shared_ptr<ScreenQuad> screen_quad;
+    std::shared_ptr<Texture> m_revealageTex;
+    std::shared_ptr<Texture> m_accumTex;
+    std::shared_ptr<Texture> m_hdrTex;
 
     // for mouse management
     int _button; // 0 --> left. 1 --> right. 2 --> middle. 3 --> other

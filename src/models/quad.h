@@ -13,8 +13,6 @@ public:
     ScreenQuad(float t_x, float t_y, float t_width, float t_height);
     ~ScreenQuad() override = default;
 
-    void addTexture(std::shared_ptr<Texture> t_texture);
-
 private:
     void setup();
 private:

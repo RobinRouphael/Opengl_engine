@@ -21,24 +21,23 @@ void ScreenQuad::setup(){
     Vertex v;
     v.position = glm::vec3(m_x, m_y, 0.f);
     v.texCoords = glm::vec2(0.f, 1.f);
+    v.normal = glm::vec3(0,0,1);
     vertices.push_back(v);
     v.position = glm::vec3(m_x + m_width, m_y, 0.f);
     v.texCoords = glm::vec2(1.f, 1.f);
+    v.normal = glm::vec3(0,0,1);
     vertices.push_back(v);
     v.position = glm::vec3(m_x + m_width, m_y - m_height, 0.f);
     v.texCoords = glm::vec2(1.f, 0.f);
+    v.normal = glm::vec3(0,0,1);
     vertices.push_back(v);
     v.position = glm::vec3(m_x, m_y - m_height, 0.f);
     v.texCoords = glm::vec2(0.f, 0.f);
+    v.normal = glm::vec3(0,0,1);
     vertices.push_back(v);
 
-    addMesh(std::make_shared<Mesh>(vertices, indices));
+    addMesh(std::make_shared<Mesh>(vertices, indices,std::make_shared<Material>()));
     vertices.clear();
     indices.clear();
-
-}
-
-void ScreenQuad::addTexture(std::shared_ptr<Texture> t_texture) {
-    m_meshs[0]->addTexture(t_texture);
 
 }

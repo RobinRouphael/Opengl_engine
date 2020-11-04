@@ -139,29 +139,7 @@ void Shader::setMat4(const std::string &tr_name, const glm::mat4 & t_value) cons
     glUniformMatrix4fv(glGetUniformLocation(m_program, tr_name.c_str()), 1, GL_FALSE, glm::value_ptr(t_value));
 }
 
-void Shader::addPointLight(GLfloat t_constant, GLfloat t_linear, GLfloat t_quadratic, const glm::vec3 &tr_pos, const glm::vec3 &tr_ambient,
-                           const glm::vec3 &tr_diffuse, const glm::vec3 &tr_specular)
-{
-    setVec3("point_light[" + std::to_string(m_nb_point_light) + "].ambient", tr_ambient);
-    setVec3("point_light[" + std::to_string(m_nb_point_light) + "].diffuse", tr_diffuse);
-    setVec3("point_light[" + std::to_string(m_nb_point_light) + "].specular", tr_specular);
-    setVec3("point_light[" + std::to_string(m_nb_point_light) + "].position", tr_pos);
-    setFloat("point_light[" + std::to_string(m_nb_point_light) + "].constant", t_constant);
-    setFloat("point_light[" + std::to_string(m_nb_point_light) + "].linear", t_linear);
-    setFloat("point_light[" + std::to_string(m_nb_point_light) + "].quadratic", t_quadratic);
-    setInt("nb_pointLight", ++m_nb_point_light);
-}
 
-void Shader::addMaterial(const Material &tr_mat)
-{
-    setInt("mat.diffuse",0); //texture
-    setInt("mat.specular",1); //texture
-    setFloat("mat.shininess",32.f);
-    /*setVec3("mat.albedo", mat.albedo());
-    setFloat("mat.metalness", mat.metalness());
-    setFloat("mat.roughness", mat.roughness());
-    setFloat("mat.ao", mat.ambientOcclusion());*/
-}
 
 void Shader::clearLights()
 {

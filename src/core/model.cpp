@@ -23,9 +23,7 @@ void Model::drawModel(Shader &tr_shader, GLuint t_glmode)
         m_waiting_to_update=false;
         updateModel();
     }
-    tr_shader.use();
     tr_shader.setMat4("model", getModel());
-    tr_shader.addMaterial(m_material);
     for(auto &m : m_meshs)
         m->drawMesh(tr_shader, t_glmode);
 }

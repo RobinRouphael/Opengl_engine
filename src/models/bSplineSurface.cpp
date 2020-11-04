@@ -44,6 +44,7 @@ void BSplineSurface::createBSplineSurface() {
             Vertex vertex;
             vertex.position = m_v_spline->evaluate(v * m_step);
             vertex.normal = glm::vec3{0};
+            vertex.texCoords = glm::vec2(float(v)/m_nodal_vector_v[m_nodal_vector_v.size() - m_deg - 1],float(u)/m_nodal_vector_u[m_nodal_vector_u.size() - m_deg - 1] );
             vertices.push_back(vertex);
 
         }
@@ -91,7 +92,7 @@ void BSplineSurface::createBSplineSurface() {
     for(auto & vertice : vertices)
         glm::normalize(vertice.normal);
 
-    this->addMesh(std::make_shared<Mesh>(vertices, indices));
+    this->addMesh(std::make_shared<Mesh>(vertices, indices,std::make_shared<Material>()));
     vertices.clear();
     indices.clear();
 }

@@ -14,7 +14,7 @@ Sphere::Sphere(int t_nbStacks, int t_nbSectors):
         m_nb_sectors(t_nbSectors),
         m_nb_stacks(t_nbStacks)
         {
-    addMesh(std::make_shared<Mesh>(createVertices(),createIndices()));
+    addMesh(std::make_shared<Mesh>(createVertices(),createIndices(),std::make_shared<Material>()));
     }
 
 Sphere::~Sphere(){}
@@ -100,12 +100,7 @@ int Sphere::getNBStacks()
 
 void Sphere::updateModel()
 {
-    auto meshs = getMeshs();
-    if(m_texture.get())
-        meshs[0] = std::make_shared<Mesh>(createVertices(), createIndices(), std::vector<std::shared_ptr<Texture>>{m_texture});
-    else
-        meshs[0] = std::make_shared<Mesh>(createVertices(), createIndices());
-    setMeshs(meshs);
+    setMeshs(std::vector<std::shared_ptr<Mesh>>{std::make_shared<Mesh>(createVertices(), createIndices(), std::make_shared<Material>())});
 }
 
 
@@ -114,11 +109,7 @@ int Sphere::getNBSectors()
     return m_nb_sectors;
 }
 
-void Sphere::setTextureDiffuse(const std::shared_ptr<Texture> &tr_texture)
-{
-    m_texture =tr_texture;
-    setWaitingToUpdate(true);
-}
+
 
 
 

@@ -22,6 +22,7 @@ ModelInterface::ModelInterface(const std::shared_ptr<Model> &t_asset):
         m_asset(t_asset),
         mainLayout(new QVBoxLayout())
 
+
 {
     auto currentScale = m_asset->getScale();
 
@@ -75,6 +76,7 @@ ModelInterface::ModelInterface(const std::shared_ptr<Model> &t_asset):
     mainLayout->addLayout(positionLayout);
     mainLayout->addLayout(scaleLayout);
     mainLayout->addLayout(rotationLayout);
+    setLayout(mainLayout);
     QObject::connect(destroyButton,SIGNAL(clicked()),this,SLOT(destroyModel()));
 
     QObject::connect(editScaleX,SIGNAL(valueChanged(double)),this,SLOT(scaleEdited(double)));

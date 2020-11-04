@@ -70,7 +70,7 @@ void BSpline::createBSpline() {
         indices.emplace_back(index++);
     }
 
-    this->addMesh(std::make_shared<Mesh>(vertices, indices));
+    this->addMesh(std::make_shared<Mesh>(vertices, indices,std::make_shared<Material>()));
     vertices.clear();
     indices.clear();
 }

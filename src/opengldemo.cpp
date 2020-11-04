@@ -14,98 +14,43 @@ OpenGLDemo::OpenGLDemo(int width, int height) : _width(width), _height(height), 
         , _selectedModel{-1}
         , _waitingModels{false}
         , _waitingToDestroyModel{false}
-        , _modelConstructor{nullptr}
+        , m_modelConstructor{nullptr}
         , _drawLights{false}
-        ,screen_shader{std::make_unique<Shader>("../shaders/screen_vs.glsl", "../shaders/screen_fs.glsl")}
-        ,frame_buffer{std::make_unique<FrameBuffer>(_width,_height,1)}
-        ,screen_quad{std::make_shared<ScreenQuad>(-1.f, 1.f, 2.f, 2.f)}
+        , screen_shader{std::make_unique<Shader>("../shaders/screen_vs.glsl", "../shaders/hdr_fs.glsl")}
+        , frame_buffer{std::make_unique<FrameBuffer>(_width,_height,1)}
+        , screen_quad{std::make_shared<ScreenQuad>(-1.f, 1.f, 2.f, 2.f)}
+        , m_depth_shader{std::make_unique<Shader>("../shaders/depth_vs.glsl", "../shaders/depth_fs.glsl")}
+        ,m_transparency_shader(std::make_unique<Shader>("../shaders/phong_vs.glsl", "../shaders/transparency_fs.glsl"))
+        ,m_blend_shader(std::make_unique<Shader>("../shaders/screen_vs.glsl", "../shaders/screen_OIT_fs.glsl"))
+        ,m_transparency_buffer(std::make_unique<FrameBuffer>(_width,_height,1))
 {
 
     //glEnable(GL_CULL_FACE); TODO : enable cull facing only for closed shapes
     glViewport(0, 0, width, height);
 
-    auto l = std::make_shared<PointLight>(glm::vec3(0, 0, -6));
-    _lights.emplace_back(std::make_pair(l, new PointLightWidget(l)));
+    //m_lightsManager.addPointLight(glm::vec3(0, 2, -6));
+    //m_lightsManager.addPointLight(glm::vec3(-7, 2, -7));
+    m_lightsManager.addPointLight(glm::vec3(0, 3, 3));
 
-    auto l2 = std::make_shared<PointLight>(glm::vec3(4.5, 0, 4.5));
-    _lights.emplace_back(std::make_pair(l2, new PointLightWidget(l2)));
 
-    auto l3 = std::make_shared<PointLight>(glm::vec3(-4.5, 0, 4));
-    _lights.emplace_back(std::make_pair(l3, new PointLightWidget(l3)));
-
-    /*auto bspline2D = std::make_shared<BSplineSurface>(2, 0.1 , std::vector<float>{1, 2, 3, 4, 5, 6, 7}, std::vector<float>{1, 2, 3, 4, 5, 6, 7},
-                                                      std::vector<std::vector<glm::vec3>>{
-        std::vector<glm::vec3>{ glm::vec3(-2.63, 0,-2.01),
-                                glm::vec3(-2.62, 0,0.17),
-                                glm::vec3(-2.51, 0,1.98),
-                                glm::vec3(-2.48, 0,3.74)},
-        std::vector<glm::vec3>{ glm::vec3(-1.18, 0,-1.92),
-                                glm::vec3(-1.09, 1.41,-0.28),
-                                glm::vec3(-1, 1.4,2),
-                                glm::vec3(-1, 0,3.48)},
-        std::vector<glm::vec3>{ glm::vec3(-1.18, 0,-1.92),
-                                glm::vec3(-1.09, 1.41,-0.28),
-                                glm::vec3(-1, 1.4,2),
-                                glm::vec3(-1, 0,3.48)},
-        std::vector<glm::vec3>{ glm::vec3(-1.18, 0,-1.92),
-                                glm::vec3(-1.09, 1.41,-0.28),
-                                glm::vec3(-1, 1.4,2),
-                                glm::vec3(-1, 0,3.48)}});*/
-    auto bspline2D = std::make_shared<BSplineSurface>(2, 0.1 , std::vector<float>{1, 2, 3, 4, 5, 6,7}, std::vector<float>{0, 0, 0, 1, 2, 3,4,5,6,6,6},
-                                                      std::vector<std::vector<glm::vec3>>{
-                                                              std::vector<glm::vec3>{ glm::vec3(1, -1,0),
-                                                                                      glm::vec3(2, 1,0),
-                                                                                      glm::vec3(3, -1,0),
-                                                                                      glm::vec3(4, 1,0),
-                                                                                      glm::vec3(5, -1,0),
-                                                                                      glm::vec3(6, 1,0),
-                                                                                      glm::vec3(7, -1,0),
-                                                                                      glm::vec3(8, 1,0)},
-                                                              std::vector<glm::vec3>{ glm::vec3(1, -1,1),
-                                                                                      glm::vec3(2, 1,1),
-                                                                                      glm::vec3(3, -1,1),
-                                                                                      glm::vec3(4, 1,1),
-                                                                                      glm::vec3(5, -1,1),
-                                                                                      glm::vec3(6, 1,1),
-                                                                                      glm::vec3(7, -1,1),
-                                                                                      glm::vec3(8, 1,1)},
-                                                              std::vector<glm::vec3>{ glm::vec3(1, -1,2),
-                                                                                      glm::vec3(2, 1,2),
-                                                                                      glm::vec3(3, -1,2),
-                                                                                      glm::vec3(4, 1,2),
-                                                                                      glm::vec3(5, -1,2),
-                                                                                      glm::vec3(6, 1,2),
-                                                                                      glm::vec3(7, -1,2),
-                                                                                      glm::vec3(8, 1,2)},
-                                                              std::vector<glm::vec3>{ glm::vec3(1, -1,3),
-                                                                                      glm::vec3(2, 1,3),
-                                                                                      glm::vec3(3, -1,3),
-                                                                                      glm::vec3(4, 1,3),
-                                                                                      glm::vec3(5, -1,3),
-                                                                                      glm::vec3(6, 1,3),
-                                                                                      glm::vec3(7, -1,3),
-                                                                                      glm::vec3(8, 1,3)
-                                                              }});
-
-    _models.emplace_back(std::make_pair(bspline2D, [bspline2D]()->ModelInterface*
+    auto quad = std::make_shared<ScreenQuad>(-10,-10,20,20);
+    quad->setRotation(glm::vec3(90,0,0));
+    quad->setTranslation(glm::vec3(0,-1,19.5));
+    std::shared_ptr<Material> mat = std::make_shared<Material>();
+    mat->setDiffuseVal(glm::vec3(1));
+    //mat->addDiffuseMap(std::make_shared<Texture>("../textures/container.jpg",Texture::TextureType::DIFFUSE));
+    quad->setMaterial(mat);
+    m_models.emplace_back(quad);
+    m_interfaces.emplace_back([quad]()->ModelInterface*
     {
-        return new ModelInterface(bspline2D);
-    }));
-    /*auto bspline = std::make_shared<BSpline>(2,std::vector<glm::vec3>{
-                                                                        glm::vec3(0, 0,0),
-                                                                       glm::vec3(0, 1,0),
-                                                                       glm::vec3(1, 1,0),
-                                                                       glm::vec3(1, 0,0),
-                                                                        glm::vec3(0, 0,0),
-                                                                       glm::vec3(0, 1,0),
-                                                                        glm::vec3(1, 1,0)},
-                                             std::vector<float>{1, 2, 3, 4, 5, 6, 7,8,9,10},0.01);
-    _models.emplace_back(std::make_pair(bspline, [bspline]()->ModelInterface*
-    {
-        return new ModelInterface(bspline);
-    }));*/
+        return new ModelInterface(quad);
+    });
 
-
+    auto sphere = std::make_shared<Sphere>();
+    std::shared_ptr<Material> matsphere = std::make_shared<Material>();
+    matsphere->setDiffuseVal(glm::vec3(0.5,1,1));
+    sphere->setMaterial(matsphere);
+    m_transparent_models.emplace_back(sphere);
 
     _cameraselector.emplace_back([]()->Camera*{return new EulerCamera(glm::vec3(0.f, 0.f, 3.f));} );
     _cameraselector.emplace_back([]()->Camera*{return new TrackballCamera(glm::vec3(0.f, 0.f, 3.f),glm::vec3(0.f, 1.f, 0.f),glm::vec3(0.f, 0.f, 0.f));} );
@@ -120,8 +65,14 @@ OpenGLDemo::OpenGLDemo(int width, int height) : _width(width), _height(height), 
     frame_buffer->addColorTexture();
     frame_buffer->addDepthStencilBuffer();
     frame_buffer->drawBuffers();
-    screen_quad->addTexture(std::make_shared<Texture>(frame_buffer->textures()[0]));
 
+    m_transparency_buffer->addColorTexture();
+    m_transparency_buffer->addColorTexture();
+    m_transparency_buffer->addDepthStencilBuffer();
+    m_transparency_buffer->drawBuffers();
+    m_revealageTex = std::make_shared<Texture>(m_transparency_buffer->textures()[1],Texture::TextureType::DIFFUSE);
+    m_accumTex = std::make_shared<Texture>(m_transparency_buffer->textures()[0],Texture::TextureType::DIFFUSE);
+    m_hdrTex = std::make_shared<Texture>(frame_buffer->textures()[0],Texture::TextureType::DIFFUSE);
 
 
 
@@ -143,30 +94,6 @@ void OpenGLDemo::resize(int width, int height)
 
 void OpenGLDemo::draw()
 {
-
-    frame_buffer->use();
-    glEnable(GL_DEPTH_TEST);
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT |  GL_DEPTH_BUFFER_BIT);
-    _view = _camera->viewmatrix();
-
-    _shader->use();
-    _shader->clearLights();
-    _shader->setVec3("viewPos", _camera->position());
-    _shader->setMat4("view",_view);
-    _shader->setMat4("projection",_projection);
-
-    _lightShader->use();
-    _lightShader->setMat4("view",_view);
-    _lightShader->setMat4("projection",_projection);
-    _lightShader->setVec3("color", glm::vec3(1.f, 1.f, 1.f));
-
-    _colorShader->use();
-    _colorShader->setMat4("view",_view);
-    _colorShader->setMat4("projection",_projection);
-    _colorShader->setVec3("color", glm::vec3(0.f, 1.f, 0.f));
-
-
     if(_waitingModels){
         _waitingModels = false;
         createWaitingModels();
@@ -176,30 +103,101 @@ void OpenGLDemo::draw()
         destroyWaitingModels();
     }
 
+    //Render ShadowMaps
+    m_depth_shader->use();
+    m_lightsManager.renderShadowMaps(*m_depth_shader,_width, _height,glm::vec3{0.f} ,m_models );//TODO shadow wihth transparent
+
+
+    //Rendering from Camera
+
+    frame_buffer->use();
+    glEnable(GL_DEPTH_TEST);
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT |  GL_DEPTH_BUFFER_BIT);
+    _view = _camera->viewmatrix();
     glPolygonMode(GL_FRONT_AND_BACK,_drawfill ? GL_FILL : GL_LINE);
-    for(auto i=0; i < _lights.size(); i++){
-        _lights[i].first->addToShader(*_shader);
-        if(_drawLights)
-            _lights[i].first->drawLight(*_lightShader);
+
+    if(_drawLights) {
+        _lightShader->use();
+        _lightShader->setMat4("view", _view);
+        _lightShader->setMat4("projection", _projection);
+        _lightShader->setVec3("color", glm::vec3(1.f, 1.f, 1.f));
+        m_lightsManager.renderLights(*_lightShader, GL_TRIANGLES);
     }
 
+    _shader->use();
+    _shader->clearLights();
+    _shader->setVec3("viewPos", _camera->position());
+    _shader->setMat4("view",_view);
+    _shader->setMat4("projection",_projection);
+    m_lightsManager.addLightsToShader(*_shader);
+    //glEnable(GL_CULL_FACE);
+    //glCullFace(GL_BACK);
+    for(const auto& m : m_models)
+        m->drawModel(*_shader, GL_TRIANGLES);
+    //glDisable(GL_CULL_FACE);
 
 
-    for(auto i =0; i < _models.size(); i++){
-        _models[i].first->drawModel(*_shader, GL_TRIANGLES);
-        if(_selectedModel == i){
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-            glLineWidth(1);
-            glEnable( GL_POLYGON_OFFSET_LINE );
-            glPolygonOffset( -1, -1 );
-            _models[i].first->drawModel(*_colorShader,GL_TRIANGLES);
-            glDisable( GL_POLYGON_OFFSET_LINE );
-            glPolygonMode(GL_FRONT_AND_BACK,_drawfill ? GL_FILL : GL_LINE);
-        }
+
+    _colorShader->use();
+    _colorShader->setMat4("view",_view);
+    _colorShader->setMat4("projection",_projection);
+    _colorShader->setVec3("color", glm::vec3(0.f, 1.f, 0.f));
+
+    if(_selectedModel != -1){
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        glLineWidth(1);
+        glEnable( GL_POLYGON_OFFSET_LINE );
+        glPolygonOffset( -1, -1 );
+        m_models[_selectedModel]->drawModel(*_colorShader, GL_TRIANGLES);
+        glDisable( GL_POLYGON_OFFSET_LINE );
+        glPolygonMode(GL_FRONT_AND_BACK,_drawfill ? GL_FILL : GL_LINE);
     }
+
     frame_buffer->stop(_width,_height);
-    glDisable(GL_DEPTH_TEST);
+
+
+    m_transparency_buffer->use();
+    m_transparency_shader->use();
+    m_transparency_shader->setVec3("viewPos", _camera->position());
+    m_transparency_shader->setMat4("view",_view);
+    m_transparency_shader->setMat4("projection",_projection);
+    m_transparency_shader->clearLights();
+    m_lightsManager.addLightsToShader(*m_transparency_shader);
     glClear(GL_COLOR_BUFFER_BIT);
+    const GLfloat ones[4] = {1,1,1,1};
+    const GLfloat zeros[4] = {0,0,0,0};
+
+    glClearBufferfv(GL_COLOR, 0,zeros);
+    glClearBufferfv(GL_COLOR, 1,ones);
+    m_transparency_buffer->copyDepthBuffer(*frame_buffer);
+    glDepthMask(GL_FALSE);
+    glEnable(GL_BLEND);
+    glBlendFunci(0, GL_ONE, GL_ONE);
+    glBlendFunci(1, GL_ZERO, GL_ONE_MINUS_SRC_ALPHA);
+    for(const auto& m : m_transparent_models)
+        m->drawModel(*m_transparency_shader, GL_TRIANGLES);
+    m_transparency_buffer->stop(_width,_height);
+
+    frame_buffer->use();
+    m_blend_shader->use();
+    m_blend_shader->setInt("accumTex",1);
+    m_blend_shader->setInt("revealageTex",2);
+    m_accumTex->bindToGL(*m_blend_shader,1);
+    m_revealageTex->bindToGL(*m_blend_shader,2);
+    glDepthMask(GL_TRUE);
+    glEnable(GL_DEPTH_TEST);
+    glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
+    screen_quad->drawModel(*m_blend_shader,GL_TRIANGLES);
+    frame_buffer->stop(_width,_height);
+
+
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDisable(GL_BLEND);
+    screen_shader->use();
+    screen_shader->setFloat("exposure",1.0);
+    screen_shader->setInt("screenTexture",0);
+    m_hdrTex->bindToGL(*screen_shader,0);
     screen_quad->drawModel(*screen_shader,GL_TRIANGLES);
 }
 
@@ -230,16 +228,16 @@ bool OpenGLDemo::keyboard(unsigned char k)
             _camera->setviewport(glm::vec4(0.f, 0.f, _width, _height));
             return true;
         case '+': {
-            if(_models.size() != 0){
-                _selectedModel = (_selectedModel + 1) % _models.size();
+            if(m_models.size() != 0){
+                _selectedModel = (_selectedModel + 1) % m_models.size();
                 return true;
             }
 
             return false;
         }
         case '-': {
-            if(_models.size() != 0){
-                _selectedModel = (_selectedModel - 1) % _models.size();
+            if(m_models.size() != 0){
+                _selectedModel = (_selectedModel - 1) % m_models.size();
                 return true;
             }
 
@@ -263,7 +261,7 @@ bool OpenGLDemo::keyboard(unsigned char k)
 
 ModelInterface *OpenGLDemo::getSelection()
 {
-    return _models[_selectedModel].second();
+    return m_interfaces[_selectedModel]();
 }
 
 void OpenGLDemo::toggledrawmode()
@@ -273,11 +271,11 @@ void OpenGLDemo::toggledrawmode()
 
 void OpenGLDemo::createNewSphere()
 {
-    _modelConstructor = []()->std::pair<std::shared_ptr<Model>,InterfaceConstructor>{
+    m_modelConstructor = []()->std::pair<std::shared_ptr<Model>,InterfaceConstructor>{
         auto sphere = std::make_shared<Sphere>();
 
         InterfaceConstructor sphereWidgetConstructor = [sphere]()->ModelInterface*
-                {
+        {
             return new SphereWidget(sphere);
         };
 
@@ -288,7 +286,7 @@ void OpenGLDemo::createNewSphere()
 
 void OpenGLDemo::createNewIcoSphere()
 {
-    _modelConstructor = []()->std::pair<std::shared_ptr<Model>,InterfaceConstructor>{
+    m_modelConstructor = []()->std::pair<std::shared_ptr<Model>,InterfaceConstructor>{
         auto sphere = std::make_shared<Icosphere>();
 
         InterfaceConstructor sphereWidgetConstructor = [sphere]()->ModelInterface*
@@ -305,7 +303,7 @@ void OpenGLDemo::createNewIcoSphere()
 
 void OpenGLDemo::createImportedModel(const std::string &path)
 {
-    _modelConstructor = [path]()->std::pair<std::shared_ptr<Model>,InterfaceConstructor>{
+    m_modelConstructor = [path]()->std::pair<std::shared_ptr<Model>,InterfaceConstructor>{
         auto  model = std::make_shared<AssimpModel>(path);
         InterfaceConstructor modelWidgetConstructor = [model]()->ModelInterface*
                 {
@@ -319,7 +317,9 @@ void OpenGLDemo::createImportedModel(const std::string &path)
 
 void OpenGLDemo::createWaitingModels()
 {
-    _models.emplace_back(_modelConstructor());
+    auto pair = m_modelConstructor();
+    m_interfaces.emplace_back(pair.second);
+    m_models.emplace_back(pair.first);
 }
 
 void OpenGLDemo::destroySelected()
@@ -329,7 +329,8 @@ void OpenGLDemo::destroySelected()
 
 void OpenGLDemo::destroyWaitingModels()
 {
-    _models.erase(_models.begin() + _selectedModel);
+    m_models.erase(m_models.begin() + _selectedModel);
+    m_interfaces.erase(m_interfaces.begin() + _selectedModel);
     _selectedModel = -1;
 }
 

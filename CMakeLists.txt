@@ -76,8 +76,7 @@ set( CMAKE_INCLUDE_CURRENT_DIR ON )
 add_executable(${PROJECT_NAME}
         ${folder_source}
         ${folder_header}
-        ${folder_ui}
-        )
+        ${folder_ui})
 
 set(EXT_LIBS Qt5::OpenGL ${OPENGL_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} ${EXT_LIBS})

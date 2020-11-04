@@ -4,6 +4,8 @@
 
 #ifndef ENGINE_MODEL_H
 #define ENGINE_MODEL_H
+#include <utility>
+
 #include "mesh.h"
 #include "material.h"
 
@@ -74,6 +76,8 @@ public:
      */
     void setTranslation(glm::vec3 t_position){ m_translation = t_position;}
 
+    void setMaterial(std::shared_ptr<Material> t_mat){m_meshs[0]->setMaterial(std::move(t_mat));}
+
 
 private:
     /**
@@ -109,12 +113,10 @@ protected:
 
     void setWaitingToUpdate(bool t_waitingToUpdate){ m_waiting_to_update = t_waitingToUpdate;}
 
-    void setMaterial(const Material &t_material){m_material = t_material;}
 
 protected: //TODO : set this to private
     std::vector<std::shared_ptr<Mesh>> m_meshs;
     bool m_waiting_to_update;
-    Material m_material;
 
 private:
     glm::vec3 m_scale;

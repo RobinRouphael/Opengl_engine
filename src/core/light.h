@@ -8,6 +8,7 @@
 
 #include "shader.h"
 #include "model.h"
+#include "frameBuffer.h"
 
 class Light {
     /**
@@ -37,16 +38,20 @@ public:
 
     /**
      * Draw light model
-     * @param t_shader
+     * @param tr_shader
      */
-    void drawLight(Shader &t_shader);
+    void drawLight(Shader &tr_shader);
     /**
      * Add light to Shader
-     * @param t_shader
+     * @param tr_shader
      */
-    virtual void addToShader(Shader &t_shader);
+    virtual void addToShader(Shader &tr_shader, int t_nbLights, int texIndex);
 
 
+    virtual void renderShadowMap(Shader &tr_shader, int t_width, int t_height, const glm::vec3 &tr_camTarget,
+                                 const std::vector<std::shared_ptr<Model>> &tr_models);
+
+    std::shared_ptr<Texture> m_shadow_map;
 protected:
     /**
      * Ambient getter
@@ -79,10 +84,20 @@ protected:
      */
     glm::vec3 & specular() { return m_specular; }
 
+    void renderShadowMapToFbo(const glm::mat4 & tr_lightSpaceMatrix, Shader &tr_shader, int t_width, int t_height,
+                              const std::vector<std::shared_ptr<Model>> &tr_models);
+    [[nodiscard]] const std::shared_ptr<Texture> &getShadowMap() const;
+
+    [[nodiscard]] const glm::mat4 &getLightSpaceMatrix() const;
+
+
 private:
     glm::vec3 m_ambient;
     glm::vec3 m_diffuse;
     glm::vec3 m_specular;
+    std::unique_ptr<FrameBuffer> m_fbo;
+
+    glm::mat4 m_light_space_matrix;
 
 protected:
 
@@ -112,7 +127,7 @@ public:
      * Add pointLight to Shader
      * @param t_shader
      */
-    void addToShader(Shader &t_shader) override;
+    void addToShader(Shader &t_shader, int t_nbLights, int texIndex) override;
     /**
      * Constant getter
      * @return
@@ -144,6 +159,9 @@ public:
      */
     void setConstant(double t_const){ m_constant = t_const;}
 
+    void renderShadowMap(Shader &tr_shader, int t_width, int t_height, const glm::vec3 &tr_camTarget,
+                         const std::vector<std::shared_ptr<Model>> &tr_models);
+
 
 protected:
     GLfloat m_constant;
@@ -171,12 +189,34 @@ public:
      * Add spotLight to Shader
      * @param t_shader
      */
-    void addToShader(Shader &t_shader) override;
+    void addToShader(Shader &t_shader, int t_nbLights, int texIndex) override;
 private:
     glm::vec3 m_direction;
     float m_inner_cut_off;
     float m_outer_cut_off;
     float m_intensity;
+};
+
+class DirLight : public Light{
+public:
+    /**
+     * Constructor
+     */
+    DirLight();
+
+    /**
+     * Destructor
+     */
+    ~DirLight() override;
+    /**
+     * Add spotLight to Shader
+     * @param t_shader
+     */
+    void addToShader(Shader &t_shader, int t_nbLights, int texIndex) override;
+    void renderShadowMap(Shader &tr_shader, int t_width, int t_height, const glm::vec3 &tr_camTarget,
+                         const std::vector<std::shared_ptr<Model>> &tr_models) override;
+private:
+    glm::vec3 m_direction;
 };
 
 

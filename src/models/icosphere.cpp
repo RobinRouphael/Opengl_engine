@@ -68,7 +68,7 @@ void Icosphere::createIcosahedron()
         indices.push_back(11);
     }
     m_meshs.clear();
-    addMesh(std::make_shared<Mesh>(vertices,indices));
+    addMesh(std::make_shared<Mesh>(vertices,indices,std::make_shared<Material>()));
     m_vertices = vertices;
     m_indices = indices;
 }
@@ -112,7 +112,7 @@ void Icosphere::createSubdivisions()
         index += 12;
     }
 
-    m_meshs[0] = std::make_shared<Mesh>(vertices, indices);
+    m_meshs[0] = std::make_shared<Mesh>(vertices, indices,std::make_shared<Material>());
     m_vertices = vertices;
     m_indices = indices;
 }

@@ -10,7 +10,6 @@
 #include <string>
 #include <iostream>
 #include <cassert>
-#include "material.h"
 
 
 class Shader {
@@ -38,26 +37,10 @@ public:
      * @param tr_diffuse
      * @param tr_specular
      */
-    void addPointLight(GLfloat t_constant, GLfloat t_linear, GLfloat t_quadratic,
-                       const glm::vec3 & tr_pos, const glm::vec3 &tr_ambient, const glm::vec3 &tr_diffuse, const glm::vec3 &tr_specular);
-    /**
-     * Add a SpotLight
-     * @param tr_dir
-     * @param t_innerCutoff
-     * @param t_outerCutoff
-     * @param t_intensity
-     * @param tr_pos
-     * @param tr_ambient
-     * @param tr_diffuse
-     * @param tr_specular
-     */
+
     void addSpotLight(const glm::vec3 &tr_dir, GLfloat t_innerCutoff, GLfloat t_outerCutoff, GLfloat t_constant, GLfloat t_linear, GLfloat t_quadratic,
                       GLfloat t_intensity, const glm::vec3 & tr_pos, const glm::vec3 &tr_ambient, const glm::vec3 &tr_diffuse, const glm::vec3 &tr_specular);
-    /**
-     * Add a material
-     * @param tr_mat
-     */
-    void addMaterial(const Material &tr_mat);
+
     /**
      * Reset lights in shaders
      */

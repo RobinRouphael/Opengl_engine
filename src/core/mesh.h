@@ -6,7 +6,8 @@
 #define ENGINE_MESH_H
 
 #include "geometry.h"
-#include "texture.h"
+#include "material.h"
+#include <utility>
 #include <vector>
 #include <memory>
 
@@ -23,17 +24,7 @@ public:
      * @param t_vertices : geometry of mesh
      * @param t_indices : topology of mesh
      */
-    Mesh(std::vector<Vertex> t_vertices, std::vector<GLuint> t_indices);
-
-
-    /**
-     * Constructor
-     * @param t_vertices : geometry of mesh
-     * @param t_indices : topology of mesh
-     * @param t_textures : t_textures of mesh
-     */
-    Mesh(std::vector<Vertex> t_vertices, std::vector<GLuint> t_indices,
-         const std::vector<std::shared_ptr<Texture>> &t_textures);
+    Mesh(std::vector<Vertex> t_vertices, std::vector<GLuint> t_indices, std::shared_ptr<Material> t_mat);
 
     /**
      * Destructor
@@ -50,19 +41,15 @@ public:
      * Generate OpenGL buffers from geometry and topology
      */
     void generateMesh();
-    /**
-     * Add a texture
-     * @param texture
-     */
 
-    void addTexture(std::shared_ptr<Texture> t_texture);
+    void setMaterial(std::shared_ptr<Material> t_mat){m_material = std::move(t_mat);}
 
 
 private:
 
     std::vector<Vertex> m_vertices;
     std::vector<GLuint > m_indices;
-    std::vector<std::shared_ptr<Texture>> m_textures;
+    std::shared_ptr<Material> m_material;
 
     // OpenGL object for models
     GLuint m_vao;

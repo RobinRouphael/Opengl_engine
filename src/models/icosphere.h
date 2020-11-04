@@ -59,7 +59,6 @@ private:
     std::vector<GLuint> m_indices;
     int m_nb_subdivisions;
 
-
 };
 
 

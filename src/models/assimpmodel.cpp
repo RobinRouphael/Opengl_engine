@@ -124,9 +124,13 @@ std::shared_ptr<Mesh> AssimpModel::processMesh(aiMesh *t_mesh, const aiScene *t_
     // 4. height maps
     std::vector<std::shared_ptr<Texture>> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
     textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
+    auto mesh_material = std::make_shared<Material>();
+    if(!diffuseMaps.empty())mesh_material->addDiffuseMap(diffuseMaps[0]);
+    if(!specularMaps.empty())mesh_material->addSpecularMap(specularMaps[0]);
+    //mesh_material->addSpecularMap(textures[1]);
 
     // return a mesh object created from the extracted mesh data
-    return std::make_shared<Mesh>(vertices, indices, textures);
+    return std::make_shared<Mesh>(vertices, indices, mesh_material);
 }
 
 std::vector<std::shared_ptr<Texture>> AssimpModel::loadMaterialTextures(aiMaterial *t_mat, aiTextureType t_type, std::string t_type_name)
@@ -150,10 +154,10 @@ std::vector<std::shared_ptr<Texture>> AssimpModel::loadMaterialTextures(aiMateri
         if(!skip)
         {   // if texture hasn't been loaded already, load it
             std::shared_ptr<Texture> texture = nullptr;
-            if (t_type_name == "texture_diffuse") texture = std::make_shared<Texture>(m_directory + '/' + str.C_Str());
-            else if (t_type_name == "texture_secular") texture = std::make_shared<Texture>(m_directory + '/' + str.C_Str());
-            else if (t_type_name == "texture_normal") texture = std::make_shared<Texture>(m_directory + '/' + str.C_Str());
-            else if (t_type_name == "texture_height") texture = std::make_shared<Texture>(m_directory + '/' + str.C_Str());
+            if (t_type_name == "texture_diffuse") texture = std::make_shared<Texture>(m_directory + '/' + str.C_Str(),Texture::TextureType::DIFFUSE);
+            else if (t_type_name == "texture_specular")texture = std::make_shared<Texture>(m_directory + '/' + str.C_Str(),Texture::TextureType::SPECULAR);
+            //else if (t_type_name == "texture_normal") texture = std::make_shared<Texture>(m_directory + '/' + str.C_Str(),Texture::TextureType::DIFFUSE);
+            //else if (t_type_name == "texture_height") texture = std::make_shared<Texture>(m_directory + '/' + str.C_Str(),Texture::TextureType::DIFFUSE);
             if(texture != nullptr){
                 textures.emplace_back(texture);
                 m_textures_loaded.emplace_back(texture);  // store it as texture loaded for entire model, to ensure we won't unnecesery load duplicate textures.

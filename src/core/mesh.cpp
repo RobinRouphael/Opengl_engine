@@ -5,21 +5,15 @@
 #include "mesh.h"
 
 
-Mesh::Mesh(std::vector<Vertex> t_vertices, std::vector<GLuint> t_indices, const std::vector<std::shared_ptr<Texture>> &t_textures):
+Mesh::Mesh(std::vector<Vertex> t_vertices, std::vector<GLuint> t_indices, std::shared_ptr<Material> t_mat):
         m_vertices(std::move(t_vertices)),
         m_indices(std::move(t_indices)),
-        m_textures(t_textures)
+        m_material(t_mat)
 {
     generateMesh();
 
 }
 
-
-
-Mesh::Mesh(std::vector<Vertex> t_vertices, std::vector<GLuint> t_indices):
-        Mesh(std::move(t_vertices), std::move(t_indices), std::vector<std::shared_ptr<Texture>>())
-{
-}
 
 Mesh::~Mesh()
 {
@@ -31,11 +25,10 @@ Mesh::~Mesh()
 
 void Mesh::drawMesh(Shader &tr_shader, GLuint t_glmode)
 {
-    tr_shader.isTextured(!m_textures.empty());
 
-    for(auto i =0; i < m_textures.size(); i++)
-        m_textures[i]->bindToGL(tr_shader, i);
 
+
+    m_material->addToShader(tr_shader);
     glBindVertexArray(m_vao);
     glDrawElements(t_glmode, m_indices.size(), GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);
@@ -77,9 +70,5 @@ void Mesh::generateMesh()
     glBindVertexArray(0);
 }
 
-void Mesh::addTexture(std::shared_ptr<Texture> t_texture) {
-    m_textures.emplace_back(t_texture);
-
-}
 
 

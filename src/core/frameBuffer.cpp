@@ -118,7 +118,7 @@ void FrameBuffer::addTexture(GLuint t_internalFormat, GLuint t_format, GLuint t_
 
 void FrameBuffer::addColorTexture() {
     if (m_num_color > GL_COLOR_ATTACHMENT31) return;
-    addTexture(GL_RGB, GL_RGB, GL_UNSIGNED_BYTE,false, GL_COLOR_ATTACHMENT0 + m_num_color++);
+    addTexture(GL_RGBA16F, GL_RGBA, GL_UNSIGNED_BYTE,false, GL_COLOR_ATTACHMENT0 + m_num_color++);
 }
 
 void FrameBuffer::addDepthTexture() {
@@ -138,6 +138,14 @@ void FrameBuffer::addDepthStencilTexture() {
     if (m_is_stencil_depth) return;
     addTexture(GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL,GL_UNSIGNED_INT_24_8,true,GL_DEPTH_STENCIL_ATTACHMENT);
     m_is_stencil_depth = true;
+}
+
+void FrameBuffer::copyDepthBuffer(FrameBuffer &t_write_from) {
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER,t_write_from.m_fbo);
+    glBlitFramebuffer(0,0,m_width,m_height,0,0,m_width,m_height,
+                      GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+
 }
 
 

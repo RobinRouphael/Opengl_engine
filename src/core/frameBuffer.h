@@ -25,6 +25,8 @@ public:
 
     void stop(int width, int height) const;
 
+    void copyDepthBuffer(FrameBuffer &t_write_from);
+
     [[nodiscard]] const std::vector<GLuint> &textures() const { return m_textures; }
 
     [[nodiscard]] const std::vector<GLuint> &buffers() const { return m_buffers; }
@@ -47,6 +49,7 @@ public:
     void addDepthTexture();
     void addStencilTexture();
     void addDepthStencilTexture();
+
 
 
 private:

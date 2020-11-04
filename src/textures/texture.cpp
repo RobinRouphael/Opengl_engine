@@ -13,14 +13,16 @@ void Texture::bindToGL(const Shader &tr_shader, int t_num)
     glBindTexture(GL_TEXTURE_2D, m_id);
 }
 
-Texture::Texture(GLuint t_existingTex):
-        m_id(t_existingTex)
+Texture::Texture(GLuint t_existingTex, TextureType t_type):
+        m_id(t_existingTex),
+        m_type(t_type)
 {
 
 }
 
-Texture::Texture(const std::string &tr_location):
-        m_location(tr_location)
+Texture::Texture(const std::string &tr_location, TextureType t_type):
+        m_location(tr_location),
+        m_type(t_type)
 {
     glGenTextures(1, &m_id);
     glBindTexture(GL_TEXTURE_2D, m_id); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
@@ -61,6 +63,21 @@ Texture::~Texture()
 
 const std::string &Texture::getLocation() const {
     return m_location;
+}
+
+const std::string Texture::getName() const {
+    switch(m_type){
+        case TextureType::DIFFUSE:
+            return std::string{"diffuseMap"};
+        case TextureType::SPECULAR:
+            return std::string{"specularMap"};
+        default:
+            return std::string{"shadowMap"};
+    }
+}
+
+GLuint Texture::getMId() const {
+    return m_id;
 }
 
 

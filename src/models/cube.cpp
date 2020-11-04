@@ -59,7 +59,7 @@ void Cube::setup()
 
             }
         }
-        addMesh(std::make_shared<Mesh>(vertices, indices));
+        addMesh(std::make_shared<Mesh>(vertices, indices,std::make_shared<Material>()));
         vertices.clear();
         indices.clear();
 

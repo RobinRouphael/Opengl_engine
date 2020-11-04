@@ -1,5 +1,6 @@
 #version 430 core
 layout (location = 0) out vec4 fragColor;
+layout (location = 1) out vec4 fragAlpha;
 in vec3 fragPos;
 in vec3 fragNormal;
 in vec2 fragTex;
@@ -46,7 +47,7 @@ struct SpotLight {
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
-    //Shadow shadow;
+//Shadow shadow;
 };
 uniform Material mat;
 uniform PointLight point_light[10];
@@ -61,7 +62,6 @@ struct concreteMaterial{
     float shininess;
 }concreteMat;
 
-
 vec3 calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 vec3 calcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 float computeShadow(sampler2D shadowMap, mat4 lightSpaceMatrix, vec3 lightDir);
@@ -69,13 +69,13 @@ void main() {
 
     vec3 normal = normalize(fragNormal);
     vec3 viewDir = normalize(viewPos - fragPos);
+    vec3 resultColor = vec3(0.0);
     concreteMat.diffuse = mat.diffuse;
     concreteMat.specular = mat.specular;
     concreteMat.shininess = mat.shininess;
     if(mat.nb_diffuseMap>0){ concreteMat.diffuse = vec3(texture(mat.diffuseMap, fragTex));}
-    if(mat.nb_specularMap>0){ concreteMat.specular = vec3(texture(mat.specularMap, fragTex));}
-    vec3 resultColor = vec3(0);
-
+    if(mat.nb_diffuseMap>0){ concreteMat.specular = vec3(texture(mat.specularMap, fragTex));}
+    float alpha = 0.001f;
     for (int i = 0 ; i < nb_pointLight ; ++i) {
         resultColor += calcPointLight(point_light[i], normal, fragPos, viewDir);
     }
@@ -83,8 +83,8 @@ void main() {
         resultColor += calcSpotLight(spot_light[i], normal, fragPos, viewDir);
     }
 
-    fragColor = vec4(resultColor, 1.0);
-
+    fragColor = vec4(resultColor, alpha);
+    fragAlpha = vec4(alpha);
 }
 
 vec3 calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir) {
@@ -100,9 +100,8 @@ vec3 calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir) {
     ambient = light.ambient * concreteMat.diffuse * attenuation;
     diffuse = light.diffuse * diff * concreteMat.diffuse * attenuation;
     specular = light.specular * spec * concreteMat.specular * attenuation;
-
     float shadow = computeShadow(light.shadow.shadowMap, light.shadow.lightSpaceMatrix, lightDir);
-    return  (1-shadow*0.5) * ambient + (1-shadow) * ( diffuse + specular);
+    return (1-shadow*0.5) * ambient + (1-shadow) * ( diffuse + specular);
 }
 
 vec3 calcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
@@ -125,9 +124,9 @@ vec3 calcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     vec3 diffuse;
     vec3 specular;
 
-    ambient = light.ambient * concreteMat.diffuse * attenuation;
-    diffuse = light.diffuse * diff * concreteMat.diffuse * attenuation;
-    specular = light.specular * spec * concreteMat.specular * attenuation;
+   ambient = light.ambient * concreteMat.diffuse * attenuation;
+   diffuse = light.diffuse * diff * concreteMat.diffuse * attenuation;
+   specular = light.specular * spec * concreteMat.specular * attenuation;
     ambient *= attenuation * intensity;
     diffuse *= attenuation * intensity;
     specular *= attenuation * intensity;
@@ -149,14 +148,14 @@ float computeShadow(sampler2D shadowMap, mat4 lightSpaceMatrix, vec3 lightDir){
 
     float shadow = 0.0;
     vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
-    for(int x = -2; x <= 2; ++x)
+    for (int x = -1; x <= 1; ++x)
     {
-        for(int y = -2; y <= 2; ++y)
+        for (int y = -1; y <= 1; ++y)
         {
             float pcfDepth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
             shadow += currentDepth - eps > pcfDepth ? 1.0 : 0.0;
         }
     }
-    shadow /= 25.0;
+    shadow /= 9.0;
     return shadow;
 }
