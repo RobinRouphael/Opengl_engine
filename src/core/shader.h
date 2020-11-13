@@ -27,29 +27,6 @@ public:
      * Activate shaders
      */
     void use() const;
-    /**
-     * Add a PointLight
-     * @param t_constant
-     * @param t_linear
-     * @param t_quadratic
-     * @param tr_pos
-     * @param tr_ambient
-     * @param tr_diffuse
-     * @param tr_specular
-     */
-
-    void addSpotLight(const glm::vec3 &tr_dir, GLfloat t_innerCutoff, GLfloat t_outerCutoff, GLfloat t_constant, GLfloat t_linear, GLfloat t_quadratic,
-                      GLfloat t_intensity, const glm::vec3 & tr_pos, const glm::vec3 &tr_ambient, const glm::vec3 &tr_diffuse, const glm::vec3 &tr_specular);
-
-    /**
-     * Reset lights in shaders
-     */
-    void clearLights();
-    /**
-     * The shader may need to know if the Model is textured
-     * @param t_istextured
-     */
-    void isTextured(bool t_istextured);
 
     ///Uniform utils
     /**
@@ -115,8 +92,6 @@ private:
     GLchar m_info_log[512]; // warning fixed size ... request for LOG_LENGTH!!!
     GLuint m_vertexshader, m_fragmentshader;
     GLuint m_program;
-    GLuint m_nb_point_light;
-    GLuint m_nb_spot_light;
 
 
 };

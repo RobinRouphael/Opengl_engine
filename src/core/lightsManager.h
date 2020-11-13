@@ -8,7 +8,10 @@
 
 #include <vector>
 #include "shader.h"
-#include "light.h"
+#include "lights/light.h"
+#include "lights/spotLight.h"
+#include "lights/dirLight.h"
+#include "lights/pointLight.h"
 class LightsManager {
 public:
     LightsManager() = default;
@@ -21,7 +24,7 @@ public:
     std::shared_ptr<Texture> tex(){return m_point_lights[1]->m_shadow_map;}
 
 
-    void addPointLight(const glm::vec3 &tr_pos = glm::vec3(0));
+    void addPointLight();
     void addDirLight();
     void addSpotLight();
 private:

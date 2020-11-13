@@ -17,7 +17,14 @@ struct Vertex{
     glm::vec2 texCoords;
     glm::vec3 tangent;
     glm::vec3 bitangent;
+
+    bool operator==(const struct Vertex &v2) const {
+        return position == v2.position;
+    }
 };
+
+
+
 
 
 

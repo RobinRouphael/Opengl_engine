@@ -15,6 +15,8 @@ struct Material {
     vec3 diffuse;
     vec3 specular;
     float shininess;
+    float alpha;
+    bool alphaChannel;
 };
 
 struct Shadow{
@@ -60,6 +62,7 @@ struct concreteMaterial{
     vec3 diffuse;
     vec3 specular;
     float shininess;
+    float alpha;
 }concreteMat;
 
 vec3 calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
@@ -73,9 +76,15 @@ void main() {
     concreteMat.diffuse = mat.diffuse;
     concreteMat.specular = mat.specular;
     concreteMat.shininess = mat.shininess;
-    if(mat.nb_diffuseMap>0){ concreteMat.diffuse = vec3(texture(mat.diffuseMap, fragTex));}
-    if(mat.nb_diffuseMap>0){ concreteMat.specular = vec3(texture(mat.specularMap, fragTex));}
-    float alpha = 0.001f;
+    concreteMat.alpha = mat.alpha;
+    if(mat.nb_diffuseMap>0){
+        concreteMat.diffuse = vec3(texture(mat.diffuseMap, fragTex));
+        if(mat.alphaChannel){
+            concreteMat.alpha = texture(mat.diffuseMap, fragTex).a;
+        }
+    }
+    if(mat.nb_specularMap>0){ concreteMat.specular = vec3(texture(mat.specularMap, fragTex));}
+
     for (int i = 0 ; i < nb_pointLight ; ++i) {
         resultColor += calcPointLight(point_light[i], normal, fragPos, viewDir);
     }
@@ -83,8 +92,10 @@ void main() {
         resultColor += calcSpotLight(spot_light[i], normal, fragPos, viewDir);
     }
 
-    fragColor = vec4(resultColor, alpha);
-    fragAlpha = vec4(alpha);
+    float weight = max(min(1.0, max(max(resultColor.r, resultColor.g), resultColor.b) * concreteMat.alpha), concreteMat.alpha) * clamp(0.03 / (1e-5 + pow(gl_FragCoord.z / 200, 4.0)), 1e-2, 3e3);
+
+    fragColor = vec4(resultColor * concreteMat.alpha, concreteMat.alpha) * weight;
+    fragAlpha = vec4(concreteMat.alpha);
 }
 
 vec3 calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir) {

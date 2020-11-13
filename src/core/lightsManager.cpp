@@ -4,8 +4,8 @@
 
 #include "lightsManager.h"
 
-void LightsManager::addPointLight(const glm::vec3 &tr_pos) {
-    m_point_lights.emplace_back(std::make_shared<PointLight>(tr_pos));
+void LightsManager::addPointLight() {
+    m_point_lights.emplace_back(std::make_shared<PointLight>());
 }
 
 void LightsManager::addDirLight() {
@@ -13,7 +13,7 @@ void LightsManager::addDirLight() {
 }
 
 void LightsManager::addSpotLight() {
-    m_spot_lights.emplace_back(std::make_shared<SpotLight>());
+    m_spot_lights.emplace_back(std::make_shared<SpotLight>(glm::vec3(6,2,0)));
 }
 
 

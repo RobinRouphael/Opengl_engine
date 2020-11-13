@@ -9,7 +9,10 @@
 #include "src/models/sphere.h"
 #include <functional>
 #include <QtWidgets/QWidget>
-#include <src/core/light.h>
+#include "src/lights/light.h"
+#include "src/lights/dirLight.h"
+#include "src/lights/pointLight.h"
+#include "src/lights/spotLight.h"
 #include <src/modelWidget/lightInterface.h>
 #include <src/models/assimpmodel.h>
 #include <src/models/icosphere.h>
@@ -67,6 +70,9 @@ public:
 
     void toggledrawmode();
 
+    void addToOpaqueModels(std::shared_ptr<Model> t_model);
+    void addToTransparentModels(std::shared_ptr<Model> t_model);
+
 
 
 
@@ -100,6 +106,7 @@ private:
     std::vector<std::shared_ptr<Model>> m_models;
     std::vector<InterfaceConstructor> m_interfaces;
     std::vector<std::shared_ptr<Model>> m_transparent_models;
+    std::vector<std::shared_ptr<Model>> m_opaque_models;
 
     LightsManager m_lightsManager;
     std::shared_ptr<Model> m_spline;

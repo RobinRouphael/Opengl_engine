@@ -3,6 +3,7 @@
 //
 
 #include "sphere.h"
+#include "marchingCube.h"
 
 
 Sphere::Sphere():
@@ -14,7 +15,9 @@ Sphere::Sphere(int t_nbStacks, int t_nbSectors):
         m_nb_sectors(t_nbSectors),
         m_nb_stacks(t_nbStacks)
         {
-    addMesh(std::make_shared<Mesh>(createVertices(),createIndices(),std::make_shared<Material>()));
+    MarchingCube mc{};
+    addMesh(mc.generateMesh([&](glm::vec3 point){ return pow(point.x,2) + pow(point.y,2) + pow(point.z,2); }));
+    //addMesh(std::make_shared<Mesh>(createVertices(),createIndices(),std::make_shared<Material>()));
     }
 
 Sphere::~Sphere(){}
@@ -41,7 +44,7 @@ std::vector<Vertex> Sphere::createVertices()
             Vertex v;
             v.position = glm::vec3(x, y, z);
             v.normal = glm::vec3(x * lengthInv, y * lengthInv, z * lengthInv);
-            v.texCoords = glm::vec2(float(j) / m_nb_sectors, float(i) / m_nb_stacks);
+            v.texCoords = glm::vec2(float(i) / m_nb_stacks, float(j) / m_nb_sectors);
             vertices.emplace_back(v);
 
         }

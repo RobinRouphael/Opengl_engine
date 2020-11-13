@@ -12,7 +12,7 @@ void main()
 {
     // Note that we read the multiplication from right to left
     gl_Position = projection * view * model * vec4(position, 1.0f);
-    normal = inormal;
+    normal = (transpose(inverse(mat3(model)))) * inormal;
     TexCoord = aTexCoord;
     oposition = position;
 }

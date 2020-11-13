@@ -58,7 +58,7 @@ public:
      * @param t_num
      */
     void bindToGL(const Shader &tr_shader, int t_num);
-
+    GLuint loadDDS(const char * filename,TextureType t_type);
 
 
 private:
@@ -66,6 +66,7 @@ private:
 public:
     [[nodiscard]] const std::string &getLocation() const;
     [[nodiscard]] const std::string getName() const;
+    bool isValid()const{return    m_isValid;}
 
 private:
     //image file location
@@ -78,6 +79,7 @@ private:
     int m_width;
     int m_nrChannels;
     TextureType m_type;
+    bool m_isValid;
 
 
 };

@@ -90,7 +90,7 @@ void BSplineSurface::createBSplineSurface() {
     }
 
     for(auto & vertice : vertices)
-        glm::normalize(vertice.normal);
+        vertice.normal = glm::normalize(vertice.normal);
 
     this->addMesh(std::make_shared<Mesh>(vertices, indices,std::make_shared<Material>()));
     vertices.clear();

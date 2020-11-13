@@ -26,7 +26,9 @@ public:
         m_shininess{tr_mat.m_shininess},
         m_textures{tr_mat.m_textures},
         m_specular{tr_mat.m_specular},
-        m_diffuse{tr_mat.m_diffuse}
+        m_diffuse{tr_mat.m_diffuse},
+        m_alpha{tr_mat.m_alpha},
+        m_alpha_channel{tr_mat.m_alpha_channel}
     {}
 
     void addDiffuseMap(std::shared_ptr<Texture> t_diffuseTex);
@@ -35,15 +37,19 @@ public:
     void setDiffuseVal(const glm::vec3 &tr_diffuseVal);
     void setShininess(float t_shininess);
     void addToShader(Shader &t_shader);
+    void setAlpha(float t_alpha);
+    void setAlphaChannel(bool t_isRGBA);
 
 
 private:
     std::vector<std::shared_ptr<Texture>> m_textures;
     glm::vec3 m_diffuse;
     glm::vec3 m_specular;
+    float m_alpha;
     int m_nb_diffuseTexture;
     int m_nb_specularTexture;
     float m_shininess;
+    bool m_alpha_channel;
 };
 
 

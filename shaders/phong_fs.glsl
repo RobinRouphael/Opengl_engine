@@ -20,6 +20,14 @@ struct Shadow{
     sampler2D shadowMap;
     mat4 lightSpaceMatrix;
 };
+struct DirLight {
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+    vec3 direction;
+    Shadow shadow;
+
+};
 
 struct PointLight {
     vec3 position;
@@ -46,13 +54,15 @@ struct SpotLight {
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
-    //Shadow shadow;
+    Shadow shadow;
 };
 uniform Material mat;
-uniform PointLight point_light[10];
-uniform SpotLight spot_light[32];
+uniform PointLight point_light[3];
+uniform SpotLight spot_light[3];
+uniform DirLight dir_light[3];
 uniform int nb_pointLight;
 uniform int nb_spotLight;
+uniform int nb_dirLight;
 uniform vec3 viewPos;
 
 struct concreteMaterial{
@@ -64,6 +74,7 @@ struct concreteMaterial{
 
 vec3 calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 vec3 calcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
+vec3 calcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 float computeShadow(sampler2D shadowMap, mat4 lightSpaceMatrix, vec3 lightDir);
 void main() {
 
@@ -82,16 +93,35 @@ void main() {
     for (int i = 0 ; i < nb_spotLight ; ++i) {
         resultColor += calcSpotLight(spot_light[i], normal, fragPos, viewDir);
     }
+    for (int i = 0 ; i < nb_dirLight ; ++i) {
+        resultColor += calcDirLight(dir_light[i], normal, fragPos, viewDir);
+    }
 
     fragColor = vec4(resultColor, 1.0);
 
 }
 
+vec3 calcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
+{
+    vec3 lightDir = normalize(-light.direction);
+    // diffuse shading
+    float diff = max(dot(normal, lightDir), 0.0);
+    // specular shading
+    vec3 halfwayDir = normalize(lightDir + viewDir);
+    float spec = pow(max(dot(normal, halfwayDir), 0.0), mat.shininess);
+    // combine results
+    vec3  ambient = light.ambient * concreteMat.diffuse ;
+    vec3 diffuse = light.diffuse * diff * concreteMat.diffuse;
+    vec3 specular = light.specular * spec * concreteMat.specular;
+    float shadow = computeShadow(light.shadow.shadowMap, light.shadow.lightSpaceMatrix, lightDir);
+    return  ambient + (1-shadow) * ( diffuse + specular);
+}
+
 vec3 calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir) {
     vec3 lightDir = normalize(light.position - fragPos);
     float diff = max(dot(normal, lightDir), 0.0);
-    vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), mat.shininess);
+    vec3 halfwayDir = normalize(lightDir + viewDir);
+    float spec = pow(max(dot(normal, halfwayDir), 0.0), mat.shininess);
     float distance = length(light.position - fragPos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
     vec3 ambient;
@@ -102,7 +132,7 @@ vec3 calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir) {
     specular = light.specular * spec * concreteMat.specular * attenuation;
 
     float shadow = computeShadow(light.shadow.shadowMap, light.shadow.lightSpaceMatrix, lightDir);
-    return  (1-shadow*0.5) * ambient + (1-shadow) * ( diffuse + specular);
+    return  ambient + (1-shadow) * ( diffuse + specular);
 }
 
 vec3 calcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
@@ -121,18 +151,12 @@ vec3 calcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     float epsilon = light.cutOff - light.outerCutOff;
     float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
     // combine results
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
+    vec3 ambient = light.ambient * concreteMat.diffuse * attenuation * intensity;
+    vec3 diffuse = light.diffuse * diff * concreteMat.diffuse * attenuation * intensity;
+    vec3 specular = light.specular * spec * concreteMat.specular * attenuation * intensity;
 
-    ambient = light.ambient * concreteMat.diffuse * attenuation;
-    diffuse = light.diffuse * diff * concreteMat.diffuse * attenuation;
-    specular = light.specular * spec * concreteMat.specular * attenuation;
-    ambient *= attenuation * intensity;
-    diffuse *= attenuation * intensity;
-    specular *= attenuation * intensity;
-
-    return (ambient + diffuse + specular);
+    float shadow = computeShadow(light.shadow.shadowMap, light.shadow.lightSpaceMatrix, lightDir);
+    return  ambient + (1-shadow) * ( diffuse + specular);
 }
 float computeShadow(sampler2D shadowMap, mat4 lightSpaceMatrix, vec3 lightDir){
     vec4 fragPosLightSpace = lightSpaceMatrix * vec4(fragPos, 1.0);

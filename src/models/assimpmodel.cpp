@@ -67,10 +67,12 @@ std::shared_ptr<Mesh> AssimpModel::processMesh(aiMesh *t_mesh, const aiScene *t_
         vector.z = t_mesh->mVertices[i].z;
         vertex.position = vector;
         // normals
-        vector.x = t_mesh->mNormals[i].x;
-        vector.y = t_mesh->mNormals[i].y;
-        vector.z = t_mesh->mNormals[i].z;
-        vertex.normal = vector;
+        if(t_mesh->HasNormals()) {
+            vector.x = t_mesh->mNormals[i].x;
+            vector.y = t_mesh->mNormals[i].y;
+            vector.z = t_mesh->mNormals[i].z;
+            vertex.normal = vector;
+        }
         // texture coordinates
         if(t_mesh->mTextureCoords[0]) // does the mesh contain texture coordinates?
         {
@@ -84,15 +86,17 @@ std::shared_ptr<Mesh> AssimpModel::processMesh(aiMesh *t_mesh, const aiScene *t_
         else
             vertex.texCoords = glm::vec2(0.0f, 0.0f);
         // tangent
-        vector.x = t_mesh->mTangents[i].x;
-        vector.y = t_mesh->mTangents[i].y;
-        vector.z = t_mesh->mTangents[i].z;
-        vertex.tangent = vector;
-        // bitangent
-        vector.x = t_mesh->mBitangents[i].x;
-        vector.y = t_mesh->mBitangents[i].y;
-        vector.z = t_mesh->mBitangents[i].z;
-        vertex.bitangent = vector;
+        if(t_mesh->HasTangentsAndBitangents()) {
+            vector.x = t_mesh->mTangents[i].x;
+            vector.y = t_mesh->mTangents[i].y;
+            vector.z = t_mesh->mTangents[i].z;
+            vertex.tangent = vector;
+            // bitangent
+            vector.x = t_mesh->mBitangents[i].x;
+            vector.y = t_mesh->mBitangents[i].y;
+            vector.z = t_mesh->mBitangents[i].z;
+            vertex.bitangent = vector;
+        }
         vertices.push_back(vertex);
     }
     // now wak through each of the mesh's faces (a face is a mesh its triangle) and retrieve the corresponding vertex indices.
@@ -125,7 +129,7 @@ std::shared_ptr<Mesh> AssimpModel::processMesh(aiMesh *t_mesh, const aiScene *t_
     std::vector<std::shared_ptr<Texture>> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
     textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
     auto mesh_material = std::make_shared<Material>();
-    if(!diffuseMaps.empty())mesh_material->addDiffuseMap(diffuseMaps[0]);
+    if(!diffuseMaps.empty()){mesh_material->addDiffuseMap(diffuseMaps[0]);}
     if(!specularMaps.empty())mesh_material->addSpecularMap(specularMaps[0]);
     //mesh_material->addSpecularMap(textures[1]);
 
@@ -144,6 +148,7 @@ std::vector<std::shared_ptr<Texture>> AssimpModel::loadMaterialTextures(aiMateri
         bool skip = false;
         for(unsigned int j = 0; j < m_textures_loaded.size(); j++)
         {
+
             if(std::strcmp(m_textures_loaded[j]->getLocation().data(), str.C_Str()) == 0)
             {
                 textures.emplace_back(m_textures_loaded[j]);

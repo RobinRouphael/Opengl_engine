@@ -7,9 +7,7 @@
 #include <fstream>
 #include "shader.h"
 
-Shader::Shader(const char* tp_vertexShaderLocation, const char*tp_fragmentShaderLocation):
-        m_nb_point_light{0},
-        m_nb_spot_light{0}
+Shader::Shader(const char* tp_vertexShaderLocation, const char*tp_fragmentShaderLocation)
 {
 
     // 1. retrieve the vertex/fragment source code from filePath
@@ -137,40 +135,6 @@ void Shader::setMat3(const std::string &tr_name, const glm::mat3 & t_value) cons
 void Shader::setMat4(const std::string &tr_name, const glm::mat4 & t_value) const
 {
     glUniformMatrix4fv(glGetUniformLocation(m_program, tr_name.c_str()), 1, GL_FALSE, glm::value_ptr(t_value));
-}
-
-
-
-void Shader::clearLights()
-{
-    m_nb_point_light =0;
-    m_nb_spot_light =0;
-    setInt("nb_pointLight", 0);
-    setInt("nb_spotLight", 0);
-}
-
-void Shader::isTextured(bool t_istextured)
-{
-    setBool("objectIsTextured", t_istextured);
-}
-
-void Shader::addSpotLight(const glm::vec3 &tr_dir, GLfloat t_innerCutoff, GLfloat t_outerCutoff, GLfloat t_constant, GLfloat t_linear, GLfloat t_quadratic, GLfloat t_intensity,
-                          const glm::vec3 &tr_pos, const glm::vec3 &tr_ambient, const glm::vec3 &tr_diffuse,
-                          const glm::vec3 &tr_specular)
-{
-    setVec3("spot_light[" + std::to_string(m_nb_spot_light) + "].ambient", tr_ambient);
-    setVec3("spot_light[" + std::to_string(m_nb_spot_light) + "].diffuse", tr_diffuse);
-    setVec3("spot_light[" + std::to_string(m_nb_spot_light) + "].specular", tr_specular);
-    setVec3("spot_light[" + std::to_string(m_nb_spot_light) + "].position", tr_pos);
-    setVec3("spot_light[" + std::to_string(m_nb_spot_light) + "].direction", tr_dir);
-    setFloat("spot_light[" + std::to_string(m_nb_spot_light) + "].cutOff", t_innerCutoff);
-    setFloat("spot_light[" + std::to_string(m_nb_spot_light) + "].outerCutOff", t_outerCutoff);
-    //setFloat("spot_light[" + std::to_string(nb_SpotLight) + "].intensity", intensity);
-    setFloat("spot_light[" + std::to_string(m_nb_spot_light) + "].constant", t_constant);
-    setFloat("spot_light[" + std::to_string(m_nb_spot_light) + "].linear", t_linear);
-    setFloat("spot_light[" + std::to_string(m_nb_spot_light) + "].quadratic", t_quadratic);
-    setInt("nb_spotLight", ++m_nb_spot_light);
-
 }
 
 
