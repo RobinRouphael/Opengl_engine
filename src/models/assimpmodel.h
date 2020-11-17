@@ -5,12 +5,12 @@
 #ifndef ENGINE_ASSIMPMODEL_H
 #define ENGINE_ASSIMPMODEL_H
 
-#include <src/core/model.h>
+#include <src/core/asset.h>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-class AssimpModel : public Model {
+class AssimpModel : public Asset {
     /**
      * Model loaded from a file
      */

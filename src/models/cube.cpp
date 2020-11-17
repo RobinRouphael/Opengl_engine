@@ -5,9 +5,10 @@
 #include "cube.h"
 
 Cube::Cube() :
-        Model(),
+        Asset(),
         m_resolution{3}
     {
+        setAssetType(AssetType::Custom);
         setup();
     }
 

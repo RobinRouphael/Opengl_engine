@@ -8,12 +8,13 @@
 
 BSplineSurface::BSplineSurface(int t_deg, float t_step, std::vector<float> t_nodalVectorV, std::vector<float> t_nodalVectorU,
                                const std::vector<std::vector<glm::vec3>>& t_uSplinesPoints):
-        Model(),
+        Asset(),
         m_deg(t_deg),
         m_step(t_step),
         m_nodal_vector_v(std::move(t_nodalVectorV)),
         m_nodal_vector_u(std::move(t_nodalVectorU))
                      {
+                         setAssetType(AssetType::Custom);
     ///Creation of directionnal u_splines
     for(auto &spline : t_uSplinesPoints)
         m_u_splines.emplace_back(std::make_shared<BSpline>(m_deg, spline, m_nodal_vector_u));

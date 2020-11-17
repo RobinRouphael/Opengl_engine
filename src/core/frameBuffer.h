@@ -32,6 +32,7 @@ public:
     [[nodiscard]] const std::vector<GLuint> &buffers() const { return m_buffers; }
 
     static void setDefaultFbo(GLuint t_numFbo){ s_default_fbo = t_numFbo;}
+    bool isCubeMap(){return m_is_cube_map;}
 
 
 private:
@@ -49,6 +50,7 @@ public:
     void addDepthTexture();
     void addStencilTexture();
     void addDepthStencilTexture();
+    void addDepthCubeMap();
 
 
 
@@ -63,6 +65,7 @@ private:
     bool m_is_stencil{false};
     bool m_is_depth{false};
     bool m_is_stencil_depth{false};
+    bool m_is_cube_map{false};
     int m_num_color{0};
 };
 

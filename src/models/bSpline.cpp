@@ -8,7 +8,7 @@
 
 
 BSpline::BSpline(int t_deg, std::vector<glm::vec3> t_controlPoints, std::vector<float> t_nodalVector):
-        Model(),
+        Asset(),
         m_deg(t_deg),
         m_nodal_vector(std::move(t_nodalVector)),
         m_control_points(std::move(t_controlPoints))
@@ -16,7 +16,7 @@ BSpline::BSpline(int t_deg, std::vector<glm::vec3> t_controlPoints, std::vector<
 
 }
 BSpline::BSpline(int t_deg, std::vector<glm::vec3> t_controlPoints, std::vector<float> t_nodalVector, float t_step):
-        Model(),
+        Asset(),
         m_deg(t_deg),
         m_nodal_vector(std::move(t_nodalVector)),
         m_control_points(std::move(t_controlPoints)),

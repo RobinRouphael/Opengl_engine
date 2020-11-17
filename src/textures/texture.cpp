@@ -25,7 +25,6 @@ Texture::Texture(const std::string &tr_location, TextureType t_type):
         m_type(t_type)
 {
     m_isValid=false;
-    std::cout<<tr_location<<std::endl;
     glGenTextures(1, &m_id);
     glBindTexture(GL_TEXTURE_2D, m_id); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
     // set the texture wrapping parameters
@@ -207,6 +206,10 @@ GLuint Texture::loadDDS(const char * filename,TextureType t_type)
         free(header);
         fclose(f);
         return tid;
+}
+
+void Texture::attachCubeMapFace(int index) {
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_CUBE_MAP_POSITIVE_X + index, m_id, 0);
 }
 
 

@@ -13,7 +13,6 @@ IcoSphereWidget::IcoSphereWidget(const std::shared_ptr<Icosphere> &sphere):
     editSubdivisions->setValue(sphere->getNBSubdivisions());
     mainLayout->addWidget(new QLabel("NbSubdivisions : "));
     mainLayout->addWidget(editSubdivisions);
-    setLayout(mainLayout);
     QObject::connect(editSubdivisions,SIGNAL(valueChanged(int)),this,SLOT(subdivisionsEdited(int)));
 }
 

@@ -6,9 +6,10 @@
 
 
 AssimpModel::AssimpModel(std::string const &t_path, bool t_gamma):
-        Model(),
+        Asset(),
         m_gamma_correction{t_gamma}
     {
+        setAssetType(AssetType::Custom);
         loadModel(t_path);
     }
 

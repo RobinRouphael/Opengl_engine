@@ -20,14 +20,12 @@ Mesh::~Mesh()
     glDeleteBuffers(1, &m_vbo);
     glDeleteBuffers(1, &m_ebo);
     glDeleteVertexArrays(1, &m_vao) ;
+
 }
 
 
 void Mesh::drawMesh(Shader &tr_shader, GLuint t_glmode)
 {
-
-
-
     m_material->addToShader(tr_shader);
     glBindVertexArray(m_vao);
     glDrawElements(t_glmode, m_indices.size(), GL_UNSIGNED_INT, nullptr);

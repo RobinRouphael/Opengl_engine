@@ -18,14 +18,21 @@ public:
      */
     ~DirLight() override=default;
     /**
-     * Add spotLight to Shader
+     * Add Light to Shader
      * @param t_shader
      */
     void addToShader(Shader &t_shader, int t_nbLights, int texIndex) override;
+
     void renderShadowMap(Shader &tr_shader, int t_width, int t_height, const glm::vec3 &tr_camTarget,
-                         const std::vector<std::shared_ptr<Model>> &tr_models) override;
+                         const std::vector<std::shared_ptr<Asset>> &tr_models) override;
+
+    [[nodiscard]] const glm::vec3 &getDirection() const;
+
+    void setDirection(const glm::vec3 &tr_direction);
+
 private:
     glm::vec3 m_direction;
+
 };
 
 

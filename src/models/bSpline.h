@@ -8,9 +8,9 @@
 #endif //ENGINE_BSPLINE_H
 
 
-#include <src/core/model.h>
+#include <src/core/asset.h>
 #include "models/sphere.h"
-class BSpline : public Model{
+class BSpline : public Asset{
     /**
      *
      */

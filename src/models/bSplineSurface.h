@@ -6,7 +6,7 @@
 #define ENGINE_BSPLINESURFACE_H
 
 #include "bSpline.h"
-class BSplineSurface : public Model{
+class BSplineSurface : public Asset{
     /**
  *
  */

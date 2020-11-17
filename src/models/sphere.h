@@ -4,8 +4,8 @@
 
 #ifndef ENGINE_SPHERE_H
 #define ENGINE_SPHERE_H
-#include "core/model.h"
-class Sphere : public Model{
+#include "core/asset.h"
+class Sphere : public Asset{
     /**
      * UV Sphere
      */

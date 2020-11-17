@@ -13,6 +13,10 @@ PointLight::PointLight():
         m_quadratic{0.07f}
 
 {
+
+    addLightSpaceMatrix(glm::mat4(0));
+    addFrameBuffer(2048, 2048, 1);
+    drawBuffers();
 }
 
 
@@ -25,23 +29,25 @@ void PointLight::addToShader(Shader &t_shader, int t_nbLights, int texIndex)
     t_shader.setFloat("point_light[" + std::to_string(t_nbLights) + "].constant", m_constant);
     t_shader.setFloat("point_light[" + std::to_string(t_nbLights) + "].linear", m_linear);
     t_shader.setFloat("point_light[" + std::to_string(t_nbLights) + "].quadratic", m_quadratic);
-    t_shader.setMat4("point_light[" + std::to_string(t_nbLights) + "].shadow.lightSpaceMatrix", getLightSpaceMatrix());
     t_shader.setInt("point_light[" + std::to_string(t_nbLights) + "].shadow.shadowMap", 31 - texIndex);
-    Light::getShadowMap()->bindToGL(t_shader,31 - texIndex);
+    Light::getShadowMap()->bindToGL(t_shader, 31 - texIndex);
+    t_shader.setMat4("point_light[" + std::to_string(t_nbLights) + "].shadow.lightSpaceMatrix",
+                         getLightSpaceMatrix(0));
+
 }
 
 
 
 void PointLight::renderShadowMap(Shader &tr_shader, int t_width, int t_height, const glm::vec3 &tr_camTarget,
-                                 const std::vector<std::shared_ptr<Model>> &tr_models) {
+                                 const std::vector<std::shared_ptr<Asset>> &tr_models) {
 
-
-    glm::vec3 center = tr_camTarget;
-    glm::vec3 lightToCenter = center - position();
-    glm::vec3 right = glm::cross(glm::normalize(lightToCenter), glm::vec3{0.f, 1.f, 0.f});
-    glm::vec3 up = glm::cross(right, glm::normalize(lightToCenter));
-    glm::mat4 lightView = glm::lookAt(position(), position() + glm::normalize(lightToCenter), up);
-    glm::mat4 lightProj = glm::ortho(-20.f, 20.f, -20.f, 20.f, 1.f, 2.f * glm::length(lightToCenter));
-    Light::renderShadowMapToFbo(lightProj * lightView, tr_shader,t_width,t_height,tr_models);
+    glm::mat4 lightProjection, lightView;
+    glm::mat4 lightSpaceMatrix;
+    float near_plane = 2.0f, far_plane = 50.f;
+    glm::vec3 right = glm::cross(glm::normalize(tr_camTarget-position()), glm::vec3{0.f, 1.f, 0.f});
+    glm::vec3 up = glm::cross(right, glm::normalize(tr_camTarget-position()));
+    lightProjection = glm::perspective(glm::radians(90.0f), 1.f, near_plane, far_plane);
+    lightView = glm::lookAt(position(),tr_camTarget, up);
+    Light::renderShadowMapToFbo(lightProjection * lightView, tr_shader,t_width,t_height,tr_models,0);
 
 }

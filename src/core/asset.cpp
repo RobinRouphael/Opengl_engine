@@ -2,21 +2,21 @@
 // Created by Robin on 22/02/2020.
 //
 
-#include "model.h"
+#include "asset.h"
 
-Model::Model():
+Asset::Asset():
         m_scale(1),
         m_translation(0),
         m_rotation(0),
         m_waiting_to_update{false}
     {}
 
-Model::~Model()
+Asset::~Asset()
 {
 
 }
 
-void Model::drawModel(Shader &tr_shader, GLuint t_glmode)
+void Asset::drawModel(Shader &tr_shader, GLuint t_glMode)
 {
 
     if(m_waiting_to_update){
@@ -24,18 +24,20 @@ void Model::drawModel(Shader &tr_shader, GLuint t_glmode)
         updateModel();
     }
     tr_shader.setMat4("model", getModel());
-    for(auto &m : m_meshs)
-        m->drawMesh(tr_shader, t_glmode);
+    for(auto &m : m_meshs){
+        m->drawMesh(tr_shader, t_glMode);
+    }
+
 }
 
-void Model::addMesh(std::shared_ptr<Mesh> t_mesh)
+void Asset::addMesh(std::shared_ptr<Mesh> t_mesh)
 {
     m_meshs.emplace_back(t_mesh);
 }
 
 
 
-void Model::updateModel() {}
+void Asset::updateModel() {}
 
 
 

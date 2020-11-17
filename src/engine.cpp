@@ -2,52 +2,32 @@
 
 
 
-#include "opengldemo.h"
+#include "engine.h"
 
 
 
-OpenGLDemo::OpenGLDemo(int width, int height) : _width(width), _height(height), _drawfill(true)
+Engine::Engine(int width, int height) : _width(width), _height(height), _drawfill(true)
         , _activecamera(0), _camera(nullptr)
         , _shader{std::make_unique<Shader>("../shaders/phong_vs.glsl", "../shaders/phong_fs.glsl")}
         , _colorShader{std::make_unique<Shader>("../shaders/color_vs.glsl", "../shaders/color_fs.glsl")}
         , _lightShader{std::make_unique<Shader>("../shaders/color_vs.glsl", "../shaders/color_fs.glsl")}
-        , _selectedModel{-1}
-        , _waitingModels{false}
-        , _waitingToDestroyModel{false}
-        , m_modelConstructor{nullptr}
         , _drawLights{false}
         , screen_shader{std::make_unique<Shader>("../shaders/screen_vs.glsl", "../shaders/hdr_fs.glsl")}
         , frame_buffer{std::make_unique<FrameBuffer>(_width,_height,1)}
         , screen_quad{std::make_shared<ScreenQuad>(-1.f, 1.f, 2.f, 2.f)}
         , m_depth_shader{std::make_unique<Shader>("../shaders/depth_vs.glsl", "../shaders/depth_fs.glsl")}
-        ,m_transparency_shader(std::make_unique<Shader>("../shaders/phong_vs.glsl", "../shaders/transparency_fs.glsl"))
-        ,m_blend_shader(std::make_unique<Shader>("../shaders/screen_vs.glsl", "../shaders/screen_OIT_fs.glsl"))
-        ,m_transparency_buffer(std::make_unique<FrameBuffer>(_width,_height,1))
+        , m_transparency_shader(std::make_unique<Shader>("../shaders/phong_vs.glsl", "../shaders/transparency_fs.glsl"))
+        , m_blend_shader(std::make_unique<Shader>("../shaders/screen_vs.glsl", "../shaders/screen_OIT_fs.glsl"))
+        , m_transparency_buffer(std::make_unique<FrameBuffer>(_width,_height,1))
+        , m_lights_manager(std::make_shared<LightsManager>())
+        , m_asset_manager(std::make_shared<AssetManager>())
 {
 
     //TODO : enable cull facing only for closed shapes
     glViewport(0, 0, width, height);
 
     //m_lightsManager.addPointLight(glm::vec3(0, 2, -6));
-    m_lightsManager.addSpotLight();
-    m_lightsManager.addDirLight();
 
-
-    auto quad = std::make_shared<ScreenQuad>(-10,-10,20,20);
-    quad->setRotation(glm::vec3(90,180,0));
-    quad->setTranslation(glm::vec3(0,-1,19.5));
-    std::shared_ptr<Material> mat = std::make_shared<Material>();
-    mat->setDiffuseVal(glm::vec3(1));
-    mat->addDiffuseMap(std::make_shared<Texture>("../textures/floor.png",Texture::TextureType::DIFFUSE));
-    quad->setMaterial(mat);
-    addToOpaqueModels(quad);
-
-    auto sphere = std::make_shared<Sphere>();
-    /*std::shared_ptr<Material> matsphere = std::make_shared<Material>();
-    matsphere->setDiffuseVal(glm::vec3(1));
-    matsphere->setAlpha(0.5);
-    sphere->setMaterial(matsphere);*/
-    addToOpaqueModels(sphere);
 
     /*auto sphere1 = std::make_shared<Sphere>();
     std::shared_ptr<Material> matsphere1 = std::make_shared<Material>();
@@ -144,16 +124,15 @@ OpenGLDemo::OpenGLDemo(int width, int height) : _width(width), _height(height), 
     m_hdrTex = std::make_shared<Texture>(frame_buffer->textures()[0],Texture::TextureType::DIFFUSE);
 
 
-
 }
 
 
 
 
-OpenGLDemo::~OpenGLDemo()
+Engine::~Engine()
 = default;
 
-void OpenGLDemo::resize(int width, int height)
+void Engine::resize(int width, int height)
 {
    _width = width;
    _height = height;
@@ -161,21 +140,24 @@ void OpenGLDemo::resize(int width, int height)
     _projection = glm::perspective(_camera->zoom(), float(_width) / _height, 0.1f, 100.0f);
 }
 
-void OpenGLDemo::draw()
+void Engine::draw()
 {
-    if(_waitingModels){
-        _waitingModels = false;
-        createWaitingModels();
-    }
-    if(_waitingToDestroyModel){
-        _waitingToDestroyModel=false;
-        destroyWaitingModels();
-    }
+    if(m_scene_has_changed) {
+        if (m_waiting_demo) {
+            m_demo_lambda();
+            m_waiting_demo = false;
+        }
+        m_lights_manager->createWaitingLights();
+        m_lights_manager->destroyWaitingLights();
+        m_asset_manager->createWaitingAssets();
+        m_asset_manager->destroyWaitingAssets();
 
-    //Render ShadowMaps
-    m_depth_shader->use();
-    m_lightsManager.renderShadowMaps(*m_depth_shader,_width, _height,glm::vec3{0.f} ,m_models );//TODO shadow wihth transparent
-
+        //Render ShadowMaps
+        m_depth_shader->use();
+        m_lights_manager->renderShadowMaps(*m_depth_shader, _width, _height, glm::vec3{0.f},
+                                           m_asset_manager->getAssets());
+        m_scene_has_changed=false;
+    }
 
     //Rendering from Camera
 
@@ -186,42 +168,25 @@ void OpenGLDemo::draw()
     _view = _camera->viewmatrix();
     glPolygonMode(GL_FRONT_AND_BACK,_drawfill ? GL_FILL : GL_LINE);
 
+    _colorShader->use();
+    _colorShader->setMat4("view",_view);
+    _colorShader->setMat4("projection",_projection);
+    _colorShader->setVec3("color", glm::vec3(0.f, 1.f, 0.f));
+
     if(_drawLights) {
         _lightShader->use();
         _lightShader->setMat4("view", _view);
         _lightShader->setMat4("projection", _projection);
         _lightShader->setVec3("color", glm::vec3(1.f, 1.f, 1.f));
-        m_lightsManager.renderLights(*_lightShader, GL_TRIANGLES);
+        m_lights_manager->renderLights(*_lightShader,*_colorShader, GL_TRIANGLES);
     }
 
     _shader->use();
     _shader->setVec3("viewPos", _camera->position());
     _shader->setMat4("view",_view);
     _shader->setMat4("projection",_projection);
-    m_lightsManager.addLightsToShader(*_shader);
-    //glEnable(GL_CULL_FACE);
-    //glCullFace(GL_BACK);
-    for(const auto& m : m_opaque_models)
-        m->drawModel(*_shader, GL_TRIANGLES);
-    //glDisable(GL_CULL_FACE);
-
-
-
-    _colorShader->use();
-    _colorShader->setMat4("view",_view);
-    _colorShader->setMat4("projection",_projection);
-    _colorShader->setVec3("color", glm::vec3(0.f, 1.f, 0.f));
-
-    if(_selectedModel != -1){
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        glLineWidth(1);
-        glEnable( GL_POLYGON_OFFSET_LINE );
-        glPolygonOffset( -1, -1 );
-        m_models[_selectedModel]->drawModel(*_colorShader, GL_TRIANGLES);
-        glDisable( GL_POLYGON_OFFSET_LINE );
-        glPolygonMode(GL_FRONT_AND_BACK,_drawfill ? GL_FILL : GL_LINE);
-    }
-
+    m_lights_manager->addLightsToShader(*_shader);
+    m_asset_manager->renderOpaqueAssets(*_shader,*_colorShader,GL_TRIANGLES);
     frame_buffer->stop(_width,_height);
 
     glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
@@ -230,7 +195,7 @@ void OpenGLDemo::draw()
     m_transparency_shader->setVec3("viewPos", _camera->position());
     m_transparency_shader->setMat4("view",_view);
     m_transparency_shader->setMat4("projection",_projection);
-    m_lightsManager.addLightsToShader(*m_transparency_shader);
+    m_lights_manager->addLightsToShader(*m_transparency_shader);
     glClear(GL_COLOR_BUFFER_BIT);
     const GLfloat ones[4] = {1,1,1,1};
     const GLfloat zeros[4] = {0,0,0,0};
@@ -242,8 +207,7 @@ void OpenGLDemo::draw()
     glEnable(GL_BLEND);
     glBlendFunci(0, GL_ONE, GL_ONE);
     glBlendFunci(1, GL_ZERO, GL_ONE_MINUS_SRC_ALPHA);
-    for(const auto& m : m_transparent_models)
-        m->drawModel(*m_transparency_shader, GL_TRIANGLES);
+    m_asset_manager->renderTransparentAssets(*m_transparency_shader,*_colorShader,GL_TRIANGLES);
     m_transparency_buffer->stop(_width,_height);
 
     frame_buffer->use();
@@ -261,6 +225,8 @@ void OpenGLDemo::draw()
 
     glClear(GL_COLOR_BUFFER_BIT);
     glDisable(GL_BLEND);
+    glDepthMask(GL_TRUE);
+    glEnable(GL_DEPTH_TEST);
     screen_shader->use();
     screen_shader->setFloat("exposure",1.0);
     screen_shader->setInt("screenTexture",0);
@@ -268,7 +234,7 @@ void OpenGLDemo::draw()
     screen_quad->drawModel(*screen_shader,GL_TRIANGLES);
 }
 
-void OpenGLDemo::mouseclick(int button, float xpos, float ypos)
+void Engine::mouseclick(int button, float xpos, float ypos)
 {
     _button = button;
     _mousex = xpos;
@@ -276,17 +242,17 @@ void OpenGLDemo::mouseclick(int button, float xpos, float ypos)
     _camera->processmouseclick(_button, xpos, ypos);
 }
 
-void OpenGLDemo::mousemove(float xpos, float ypos)
+void Engine::mousemove(float xpos, float ypos)
 {
     _camera->processmousemovement(_button, xpos, ypos, true);
 }
 
-void OpenGLDemo::keyboardmove(int key, double time)
+void Engine::keyboardmove(int key, double time)
 {
     _camera->processkeyboard(Camera_Movement(key), time);
 }
 
-bool OpenGLDemo::keyboard(unsigned char k)
+bool Engine::keyboard(unsigned char k)
 {
     switch(k) {
         case 'p':
@@ -294,29 +260,6 @@ bool OpenGLDemo::keyboard(unsigned char k)
             _camera.reset(_cameraselector[_activecamera]());
             _camera->setviewport(glm::vec4(0.f, 0.f, _width, _height));
             return true;
-        case '+': {
-            if(m_models.size() != 0){
-                _selectedModel = (_selectedModel + 1) % m_models.size();
-                return true;
-            }
-
-            return false;
-        }
-        case '-': {
-            if(m_models.size() != 0){
-                _selectedModel = (_selectedModel - 1) % m_models.size();
-                return true;
-            }
-
-            return false;
-        }
-        case 'd': {
-            if(_selectedModel != -1){
-                _selectedModel = -1;
-                return true;
-            }
-            return false;
-        }
         case 'l':{
             _drawLights = !_drawLights;
             return true;
@@ -326,83 +269,31 @@ bool OpenGLDemo::keyboard(unsigned char k)
     }
 }
 
-ModelInterface *OpenGLDemo::getSelection()
-{
-    return m_interfaces[_selectedModel]();
-}
-
-void OpenGLDemo::toggledrawmode()
+void Engine::toggledrawmode()
 {
     _drawfill = !_drawfill;
 }
 
-void OpenGLDemo::createNewSphere()
+void Engine::createNewSphere()
 {
-    m_modelConstructor = []()->std::pair<std::shared_ptr<Model>,InterfaceConstructor>{
-        auto sphere = std::make_shared<Sphere>();
-
-        InterfaceConstructor sphereWidgetConstructor = [sphere]()->ModelInterface*
-        {
-            return new SphereWidget(sphere);
-        };
-
-        return std::make_pair(sphere,sphereWidgetConstructor);
-    };
-    _waitingModels = true;
+    m_asset_manager->addSphere();
 }
 
-void OpenGLDemo::createNewIcoSphere()
+void Engine::createNewIcoSphere()
 {
-    m_modelConstructor = []()->std::pair<std::shared_ptr<Model>,InterfaceConstructor>{
-        auto sphere = std::make_shared<Icosphere>();
-
-        InterfaceConstructor sphereWidgetConstructor = [sphere]()->ModelInterface*
-                {
-            return new IcoSphereWidget(sphere);
-        };
-
-        return std::make_pair(sphere,sphereWidgetConstructor);
-    };
-    _waitingModels = true;
+    m_asset_manager->addIcoSphere();
 }
 
 
 
-void OpenGLDemo::createImportedModel(const std::string &path)
+void Engine::createImportedModel(const std::string &path)
 {
-    m_modelConstructor = [path]()->std::pair<std::shared_ptr<Model>,InterfaceConstructor>{
-        auto  model = std::make_shared<AssimpModel>(path);
-        InterfaceConstructor modelWidgetConstructor = [model]()->ModelInterface*
-                {
-            return new ImportedModelWidget(model);
-        };
-        return std::make_pair(model,modelWidgetConstructor);
-    };
-    _waitingModels = true;
+    m_asset_manager->addAssimpFromFile(path);
 
 }
 
-void OpenGLDemo::createWaitingModels()
-{
-    auto pair = m_modelConstructor();
-    m_interfaces.emplace_back(pair.second);
-    m_models.emplace_back(pair.first);
-    m_opaque_models.emplace_back(pair.first);
-}
 
-void OpenGLDemo::destroySelected()
-{
-    _waitingToDestroyModel = true;
-}
-
-void OpenGLDemo::destroyWaitingModels()
-{
-    m_models.erase(m_models.begin() + _selectedModel);
-    m_interfaces.erase(m_interfaces.begin() + _selectedModel);
-    _selectedModel = -1;
-}
-
-void OpenGLDemo::setShader(const std::string &name)
+void Engine::setShader(const std::string &name)
 {
     if(name == "Phong")
         _shader = std::make_unique<Shader>("../shaders/phong_vs.glsl", "../shaders/phong_fs.glsl");
@@ -412,20 +303,78 @@ void OpenGLDemo::setShader(const std::string &name)
         _shader = std::make_unique<Shader>("../shaders/texture_vs.glsl", "../shaders/texture_fs.glsl");
 }
 
-void OpenGLDemo::addToTransparentModels(std::shared_ptr<Model> t_model) {
-    m_transparent_models.emplace_back(t_model);
-    m_models.emplace_back(t_model);
-    m_interfaces.emplace_back([t_model]()->ModelInterface*
-                              {
-                                  return new ModelInterface(t_model);
-                              });
+void Engine::createPointLight() {
+    m_lights_manager->addPointLight();
 }
 
-void OpenGLDemo::addToOpaqueModels(std::shared_ptr<Model> t_model) {
-    m_opaque_models.emplace_back(t_model);
-    m_models.emplace_back(t_model);
-    m_interfaces.emplace_back([t_model]()->ModelInterface*
-                              {
-                                  return new ModelInterface(t_model);
-                              });
+void Engine::createDirLight() {
+    m_lights_manager->addDirLight();
 }
+
+void Engine::createSpotLight() {
+    m_lights_manager->addSpotLight();
+}
+
+void Engine::createDemo() {
+    auto lm =m_lights_manager;
+    auto am=m_asset_manager;
+    m_demo_lambda=[lm,am]()->void {
+        lm->addSpotLight();
+        lm->addDirLight();
+        lm->addPointLight();
+
+
+        auto quad = std::make_shared<ScreenQuad>(-10,-10,20,20);
+        quad->setRotation(glm::vec3(90,180,0));
+        quad->setTranslation(glm::vec3(0,-1,19.5));
+        std::shared_ptr<Material> mat = std::make_shared<Material>();
+        mat->setDiffuseVal(glm::vec3(1));
+        mat->addDiffuseMap(std::make_shared<Texture>("../textures/floor.png",Texture::TextureType::DIFFUSE));
+        quad->setMaterial(mat);
+        quad->setName("quad");
+        am->addAsset(quad);
+
+        auto sphere = std::make_shared<Sphere>();
+        /*std::shared_ptr<Material> matsphere = std::make_shared<Material>();
+        matsphere->setDiffuseVal(glm::vec3(1));
+        matsphere->setAlpha(0.5);
+        sphere->setMaterial(matsphere);*/
+        sphere->setName("sphere");
+        am->addAsset(sphere);
+
+        auto sphere1 = std::make_shared<Sphere>();
+        std::shared_ptr<Material> matsphere1 = std::make_shared<Material>();
+        matsphere1->setDiffuseVal(glm::vec3(1,0,0));
+        matsphere1->setAlpha(0.5);
+        sphere1->setMaterial(matsphere1);
+        sphere1->setName("Tsphere1");
+        sphere1->setShaderType(Asset::ShaderType::TRANSPARENT);
+        am->addAsset(sphere1);
+
+        auto sphere2 = std::make_shared<Sphere>();
+        std::shared_ptr<Material> matsphere2 = std::make_shared<Material>();
+        matsphere2->setDiffuseVal(glm::vec3(1,1,0));
+        matsphere2->setAlpha(0.5);
+        sphere2->setMaterial(matsphere2);
+        sphere2->setName("Tsphere2");
+        sphere2->setShaderType(Asset::ShaderType::TRANSPARENT);
+        am->addAsset(sphere2);
+
+        auto sphere3 = std::make_shared<Sphere>();
+        std::shared_ptr<Material> matsphere3 = std::make_shared<Material>();
+        matsphere3->setDiffuseVal(glm::vec3(0,0,1));
+        matsphere3->setAlpha(0.5);
+        sphere3->setMaterial(matsphere3);
+        sphere3->setName("Tsphere3");
+        sphere3->setShaderType(Asset::ShaderType::TRANSPARENT);
+        am->addAsset(sphere3);
+    };
+    m_waiting_demo=true;
+
+}
+
+void Engine::createMetaBall() {
+    m_asset_manager->addMetaBall();
+}
+
+

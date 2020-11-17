@@ -13,6 +13,7 @@
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QListWidgetItem>
 #include <QActionGroup>
+#include <src/widgets/mainWidget.h>
 
 namespace Ui {
     class MainWindow;
@@ -24,21 +25,6 @@ class MainWindow : public QMainWindow {
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-    /**
-     * Reconnect Model properties widget with openGLWidget
-     * @param interface : model properties widget
-     */
-    void reconnectInterface(ModelInterface *interface);
-public slots:
-    /**
-     * Display the properties widget of the selected model
-     * @param interface model properties widget
-     */
-    void objectSelected(ModelInterface *interface);
-    /**
-     * Remove the property widget
-     */
-    void noObjectSelected();
 
 private slots:
 
@@ -54,10 +40,19 @@ private slots:
 
     void on_actionApproximation_error_triggered();
 
+    void on_actionSpot_Light_triggered();
+
+    void on_actionDirectional_Light_triggered();
+
+    void on_actionPoint_Light_triggered();
+
+    void on_actionCreate_Metaball_triggered();
+
+    void on_actionLaunch_Demo_triggered();
+
 private:
     Ui::MainWindow *ui;
     QActionGroup *shaderSelection;
-    ModelInterface *panelWidget;
 
 
 };

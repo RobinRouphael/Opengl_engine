@@ -148,6 +148,33 @@ void FrameBuffer::copyDepthBuffer(FrameBuffer &t_write_from) {
 
 }
 
+void FrameBuffer::addDepthCubeMap() {
+    if (m_num_color > GL_COLOR_ATTACHMENT31) return;
+    //Bind
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    //Texture creation
+    GLuint texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
+    for(int i=0; i<6; i++) {
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT, m_width, m_height, 0, GL_DEPTH_COMPONENT, GL_FLOAT,
+                     nullptr);
+    }
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    float borderColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
+    glTexParameterfv(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_BORDER_COLOR, borderColor);
+
+    //Attach to framebuffer
+    glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texture, 0);
+        //Unbind
+    glBindFramebuffer(GL_FRAMEBUFFER, s_default_fbo);
+    m_textures.push_back(texture);
+    m_is_cube_map=true;
+}
+
 
 
 

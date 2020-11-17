@@ -20,12 +20,21 @@ public:
     };
 
     MarchingCube():
-        m_grid_size{100},
-        m_cube_size{0.1f},
+        m_grid_size{10},
+        m_cube_size{0.08f},
         m_iso_level{1.f}
         {};
 
     ~MarchingCube() = default;
+
+    void setCubeSize(float t_size){m_cube_size=t_size;}
+    void setIsoLevel(float t_level){m_iso_level=t_level;}
+    float getIsoLevel(){
+        return m_iso_level;
+    }
+    float getCubeSize(){
+        return m_cube_size;
+    }
 
     void polygonise(Cube &tr_cube, std::vector<Vertex> &tr_vertices,std::vector<GLuint> &tr_indices);
     std::shared_ptr<Mesh> generateMesh(const std::function<float(glm::vec3)> &tr_iso_function);

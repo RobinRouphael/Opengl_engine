@@ -1,12 +1,11 @@
 #ifndef MYOPENGLWIDGET_H
 #define MYOPENGLWIDGET_H
-#include "opengldemo.h"
+#include "engine.h"
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions_4_1_Core>
 #include <QKeyEvent>
 #include <memory>
-
-
+#include <src/core/assetManager.h>
 
 
 class MyOpenGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_4_1_Core {
@@ -46,6 +45,14 @@ public:
      */
     void setShader(QString name);
 
+    void createNewPointLight();
+    void createNewDirLight();
+    void createNewSpotLight();
+    void createDemo();
+    void createMetaBall();
+    const std::shared_ptr<LightsManager>  &getLightManager(){return m_engine->getLightManager();}
+    const std::shared_ptr<AssetManager>   &getAssetManager(){return m_engine->getAssetManager();}
+
 
 
 signals:
@@ -58,6 +65,8 @@ signals:
      * No Model is currently selected
      */
     void noObjectSelected();
+    void glInitialized();
+    void sceneTreeChanged();
 
 public slots:
     void cleanup();
@@ -83,7 +92,8 @@ protected:
     void keyPressEvent(QKeyEvent *event) override;
 
 private :
-    std::unique_ptr<OpenGLDemo> _engine;
+    std::unique_ptr<Engine> m_engine;
+    bool m_sceneTreeHasChanged{false};
 
     // for event management
     std::int64_t _lastime;

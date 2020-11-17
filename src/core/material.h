@@ -35,6 +35,8 @@ public:
     void addSpecularMap(std::shared_ptr<Texture> t_specularTex);
     void setSpecularVal(const glm::vec3 &tr_specularVal);
     void setDiffuseVal(const glm::vec3 &tr_diffuseVal);
+    const glm::vec3 &getDiffuseVal(){return m_diffuse;}
+    float getAlpha(){return m_alpha;}
     void setShininess(float t_shininess);
     void addToShader(Shader &t_shader);
     void setAlpha(float t_alpha);

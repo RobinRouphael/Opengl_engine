@@ -43,6 +43,7 @@ public:
     void generateMesh();
 
     void setMaterial(std::shared_ptr<Material> t_mat){m_material = std::move(t_mat);}
+    const std::shared_ptr<Material> &getMaterial(){return m_material;}
 
 
 private:

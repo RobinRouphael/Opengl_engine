@@ -11,13 +11,14 @@ Sphere::Sphere():
     {}
 
 Sphere::Sphere(int t_nbStacks, int t_nbSectors):
-        Model(),
+        Asset(),
         m_nb_sectors(t_nbSectors),
         m_nb_stacks(t_nbStacks)
         {
-    MarchingCube mc{};
-    addMesh(mc.generateMesh([&](glm::vec3 point){ return pow(point.x,2) + pow(point.y,2) + pow(point.z,2); }));
-    //addMesh(std::make_shared<Mesh>(createVertices(),createIndices(),std::make_shared<Material>()));
+    //MarchingCube mc{};
+    //addMesh(mc.generateMesh([&](glm::vec3 point){ return pow(point.x,2) + pow(point.y,2) + pow(point.z,2); }));
+    addMesh(std::make_shared<Mesh>(createVertices(),createIndices(),std::make_shared<Material>()));
+    setAssetType(AssetType::Sphere);
     }
 
 Sphere::~Sphere(){}

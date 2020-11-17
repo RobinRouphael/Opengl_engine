@@ -9,9 +9,9 @@
 
 
 MyOpenGLWidget::MyOpenGLWidget(QWidget *parent) :
-    QOpenGLWidget(parent)/*, QOpenGLFunctions_4_1_Core()*/,
-    _engine(nullptr),
-    _lastime(0)
+        QOpenGLWidget(parent)/*, QOpenGLFunctions_4_1_Core()*/,
+        m_engine(nullptr),
+        _lastime(0)
 {
 
 }
@@ -33,7 +33,7 @@ QSize MyOpenGLWidget::sizeHint() const
 
 void MyOpenGLWidget::cleanup()
 {
-    _engine.reset(nullptr);
+    m_engine.reset(nullptr);
 }
 
 void MyOpenGLWidget::initializeGL()
@@ -45,22 +45,27 @@ void MyOpenGLWidget::initializeGL()
         exit(1);
     }
     // Initialize OpenGL and all OpenGL dependent stuff below
-    _engine.reset(new OpenGLDemo(width(), height()));
+    m_engine.reset(new Engine(width(), height()));
+    emit glInitialized();
 }
 
 void MyOpenGLWidget::paintGL()
 {
     FrameBuffer::setDefaultFbo(defaultFramebufferObject());
     std::int64_t starttime = QDateTime::currentMSecsSinceEpoch();
-    _engine->draw();
+    m_engine->draw();
     glFinish();
     std::int64_t endtime = QDateTime::currentMSecsSinceEpoch();
     _lastime = endtime-starttime;
+    if(m_sceneTreeHasChanged){
+        emit sceneTreeChanged();
+        m_sceneTreeHasChanged=false;
+    }
 }
 
 void MyOpenGLWidget::resizeGL(int width, int height)
 {
-    _engine->resize(width, height);
+    m_engine->resize(width, height);
 }
 
 void MyOpenGLWidget::mousePressEvent(QMouseEvent *event)
@@ -79,14 +84,14 @@ void MyOpenGLWidget::mousePressEvent(QMouseEvent *event)
         b = 2;
     else
         b=3;
-    _engine->mouseclick(b, event->x(), event->y());
+    m_engine->mouseclick(b, event->x(), event->y());
     _lastime = QDateTime::currentMSecsSinceEpoch();
     setFocus();
 }
 
 void MyOpenGLWidget::mouseMoveEvent(QMouseEvent *event)
 {
-    _engine->mousemove(event->x(), event->y());
+    m_engine->mousemove(event->x(), event->y());
     update();
 }
 
@@ -108,33 +113,22 @@ void MyOpenGLWidget::keyPressEvent(QKeyEvent *event)
         case Qt::Key_Up:
         case Qt::Key_Right:
         case Qt::Key_Down:
-            _engine->keyboardmove(event->key()-Qt::Key_Left, 1./100/*double(_lastime)/10.*/);
+            m_engine->keyboardmove(event->key() - Qt::Key_Left, 1. / 100/*double(_lastime)/10.*/);
             update();
         break;
-        case Qt::Key_Plus:
-            if(_engine->keyboard('+'))
-                emit objectSelectionChanged(_engine->getSelection());
-
-            //update();
-            break;
-        case Qt::Key_Minus:
-            if(_engine->keyboard('-'))
-                emit objectSelectionChanged(_engine->getSelection());
-            //update();
-            break;
         case Qt::Key_Escape:
-            if(_engine->keyboard('d'))
+            if(m_engine->keyboard('d'))
                 emit noObjectSelected();
             //update();
             break;
         // Wireframe key
         case Qt::Key_W:
-            _engine->toggledrawmode();
+            m_engine->toggledrawmode();
             update();
         break;
         // Other keys are transmitted to the scene
         default :
-            if (_engine->keyboard(event->text().toLower().toStdString()[0]))
+            if (m_engine->keyboard(event->text().toLower().toStdString()[0]))
                 update();
         break;
     }
@@ -142,38 +136,81 @@ void MyOpenGLWidget::keyPressEvent(QKeyEvent *event)
 
 void MyOpenGLWidget::createNewSphere()
 {
-    _engine->createNewSphere();
+    m_engine->setSceneHasChanged(true);
+    m_engine->createNewSphere();
+    m_sceneTreeHasChanged=true;
     update();
 }
 
 void MyOpenGLWidget::createNewIcoSphere()
 {
-    _engine->createNewIcoSphere();
+    m_engine->setSceneHasChanged(true);
+    m_engine->createNewIcoSphere();
+    m_sceneTreeHasChanged=true;
     update();
 
 }
 
 void MyOpenGLWidget::modelPropertiesChanged()
 {
+    m_engine->setSceneHasChanged(true);
     update();
 }
 
 void MyOpenGLWidget::createImportedModel(const std::string &path)
 {
-    _engine->createImportedModel(path);
+    m_engine->setSceneHasChanged(true);
+    m_engine->createImportedModel(path);
+    m_sceneTreeHasChanged=true;
     update();
 }
 
 void MyOpenGLWidget::selectedIsToBeDestroyed()
 {
-    emit noObjectSelected();
-    _engine->destroySelected();
-    //update();
+    m_engine->setSceneHasChanged(true);
+    m_sceneTreeHasChanged=true;
+    update();
 }
 
 void MyOpenGLWidget::setShader(QString name)
 {
-    _engine->setShader(name.toStdString());
+    m_engine->setSceneHasChanged(true);
+    m_engine->setShader(name.toStdString());
+    update();
+}
+
+void MyOpenGLWidget::createNewPointLight() {
+    m_engine->setSceneHasChanged(true);
+    m_engine->createPointLight();
+    m_sceneTreeHasChanged=true;
+    update();
+}
+
+void MyOpenGLWidget::createNewDirLight() {
+    m_engine->setSceneHasChanged(true);
+    m_engine->createDirLight();
+    m_sceneTreeHasChanged=true;
+    update();
+}
+
+void MyOpenGLWidget::createNewSpotLight() {
+    m_engine->setSceneHasChanged(true);
+    m_engine->createSpotLight();
+    m_sceneTreeHasChanged=true;
+    update();
+}
+
+void MyOpenGLWidget::createMetaBall() {
+    m_engine->setSceneHasChanged(true);
+    m_engine->createMetaBall();
+    m_sceneTreeHasChanged=true;
+    update();
+}
+
+void MyOpenGLWidget::createDemo() {
+    m_engine->setSceneHasChanged(true);
+    m_engine->createDemo();
+    m_sceneTreeHasChanged=true;
     update();
 }
 

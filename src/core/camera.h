@@ -26,6 +26,7 @@ public:
     glm::mat4 viewmatrix() const;
     float &zoom();
     glm::vec3 &position();
+    glm::vec3 &dir(){return _front;}
 
     void setviewport(glm::vec4 viewport);
 

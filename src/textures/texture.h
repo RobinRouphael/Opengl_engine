@@ -58,6 +58,7 @@ public:
      * @param t_num
      */
     void bindToGL(const Shader &tr_shader, int t_num);
+    void attachCubeMapFace(int index);
     GLuint loadDDS(const char * filename,TextureType t_type);
 
 

@@ -76,7 +76,7 @@ set( CMAKE_INCLUDE_CURRENT_DIR ON )
 add_executable(${PROJECT_NAME}
         ${folder_source}
         ${folder_header}
-        ${folder_ui} src/models/marchingCube.cpp src/models/marchingCube.h src/lights/dirLight.cpp src/lights/dirLight.h src/lights/spotLight.cpp src/lights/spotLight.h src/lights/pointLight.cpp src/lights/pointLight.h)
+        ${folder_ui} src/widgets/metaballWidget.cpp src/widgets/metaballWidget.h src/widgets/ballWidget.cpp src/widgets/ballWidget.h src/models/metaball.cpp src/models/metaball.h)
 
 set(EXT_LIBS Qt5::OpenGL ${OPENGL_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} ${EXT_LIBS})

@@ -55,7 +55,7 @@ public:
     void setConstant(double t_const){ m_constant = t_const;}
 
     void renderShadowMap(Shader &tr_shader, int t_width, int t_height, const glm::vec3 &tr_camTarget,
-                         const std::vector<std::shared_ptr<Model>> &tr_models) override;
+                         const std::vector<std::shared_ptr<Asset>> &tr_models) override;
 
 
 private:

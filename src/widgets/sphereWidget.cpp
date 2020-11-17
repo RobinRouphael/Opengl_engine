@@ -21,7 +21,6 @@ SphereWidget::SphereWidget(const std::shared_ptr<Sphere> &sphere):
     mainLayout->addWidget(new QLabel("NbSectors : "));
     mainLayout->addWidget(editSectors);
     mainLayout->addWidget(setDiffuseTexture);
-    setLayout(mainLayout);
     QObject::connect(editStacks,SIGNAL(valueChanged(int)),this,SLOT(stacksEdited(int)));
     QObject::connect(editSectors,SIGNAL(valueChanged(int)),this,SLOT(sectorsEdited(int)));
     QObject::connect(setDiffuseTexture,SIGNAL(clicked()),this,SLOT(setTextureFromFile() ));

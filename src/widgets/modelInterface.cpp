@@ -5,7 +5,7 @@
 
 #include "modelInterface.h"
 
-ModelInterface::ModelInterface(const std::shared_ptr<Model> &t_asset):
+ModelInterface::ModelInterface(const std::shared_ptr<Asset> &t_asset):
         editScaleX(new QDoubleSpinBox()),
         editScaleY(new QDoubleSpinBox()),
         editScaleZ(new QDoubleSpinBox()),
@@ -19,11 +19,18 @@ ModelInterface::ModelInterface(const std::shared_ptr<Model> &t_asset):
         scaleLayout(new QGridLayout()),
         rotationLayout(new QGridLayout()),
         positionLayout(new QGridLayout()),
+        openDiffuse(new QPushButton("Diffuse Color")),
+        editDiffuse(new QColorDialog()),
+        chooseShader(new QComboBox()),
         m_asset(t_asset),
         mainLayout(new QVBoxLayout())
 
 
 {
+    m_asset->setSelected(true);
+    chooseShader->addItem(QString{"Opaque"});
+    chooseShader->addItem(QString{"Transparent"});
+    chooseShader->setCurrentIndex(m_asset->getShaderType()==Asset::ShaderType::OPAQUE ? 0 :1);
     auto currentScale = m_asset->getScale();
 
     editScaleX->setValue(currentScale.x);
@@ -76,8 +83,25 @@ ModelInterface::ModelInterface(const std::shared_ptr<Model> &t_asset):
     mainLayout->addLayout(positionLayout);
     mainLayout->addLayout(scaleLayout);
     mainLayout->addLayout(rotationLayout);
+
+
+    editDiffuse->setOption(QColorDialog::DontUseNativeDialog,true);
+    editDiffuse->setOption(QColorDialog::ShowAlphaChannel,true);
+    glm::vec4 diffusecolor =m_asset->getDiffuseColor();
+    editDiffuse->setCurrentColor(QColor::fromRgbF(diffusecolor.r,diffusecolor.g,diffusecolor.b,diffusecolor.a));
+    editDiffuse->setVisible(false);
+
+    mainLayout->addWidget(openDiffuse);
+    mainLayout->addWidget(chooseShader);
+
     setLayout(mainLayout);
     QObject::connect(destroyButton,SIGNAL(clicked()),this,SLOT(destroyModel()));
+
+    QObject::connect(chooseShader,SIGNAL(currentIndexChanged(int)),this,SLOT(changeShader(int)));
+
+    QObject::connect(openDiffuse,SIGNAL(clicked()),this,SLOT(showDiffuse()));
+
+    QObject::connect(editDiffuse,SIGNAL(currentColorChanged(const QColor)),this,SLOT(diffuseChanged(const QColor)));
 
     QObject::connect(editScaleX,SIGNAL(valueChanged(double)),this,SLOT(scaleEdited(double)));
     QObject::connect(editScaleY,SIGNAL(valueChanged(double)),this,SLOT(scaleEdited(double)));
@@ -94,27 +118,28 @@ ModelInterface::ModelInterface(const std::shared_ptr<Model> &t_asset):
 
 void ModelInterface::destroyModel()
 {
-    emit objectIsToBeDestroyed();
+    m_asset->setToBeDestroyed(true);
+    emit ObjectInterface::objectIsToBeDestroyed();
 }
 
 
 void ModelInterface::scaleEdited(double t_scale)
 {
     m_asset->setScale(glm::vec3(editScaleX->value(), editScaleY->value(), editScaleZ->value()));
-    emit propertiesHaveChanged();
+    emit ObjectInterface::propertiesHaveChanged();
 }
 
 void ModelInterface::rotationEdited(double t_rot)
 {
     m_asset->setRotation(glm::vec3(editRotationX->value(), editRotationY->value(), editRotationZ->value()));
-    emit propertiesHaveChanged();
+    emit ObjectInterface::propertiesHaveChanged();
 }
 
 
 void ModelInterface::positionEdited(double t_pos)
 {
     m_asset->setTranslation(glm::vec3(editPositionX->value(), editPositionY->value(), editPositionZ->value()));
-    emit propertiesHaveChanged();
+    emit ObjectInterface::propertiesHaveChanged();
 }
 
 ModelInterface::~ModelInterface()
@@ -133,7 +158,20 @@ ModelInterface::~ModelInterface()
     delete scaleLayout;
     delete rotationLayout;
     delete mainLayout;
+    m_asset->setSelected(false);
 }
+
+void ModelInterface::diffuseChanged(const QColor &color) {
+    m_asset->setDiffuseColor(glm::vec4(color.redF(),color.greenF(),color.blueF(),color.alphaF()));
+    emit ObjectInterface::propertiesHaveChanged();
+}
+
+void ModelInterface::changeShader(int row) {
+    m_asset->setShaderType(row ==0 ? Asset::ShaderType::OPAQUE :Asset::ShaderType::TRANSPARENT);
+    emit ObjectInterface::propertiesHaveChanged();
+}
+
+
 
 
 

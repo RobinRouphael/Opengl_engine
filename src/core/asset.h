@@ -2,32 +2,34 @@
 // Created by Robin on 22/02/2020.
 //
 
-#ifndef ENGINE_MODEL_H
-#define ENGINE_MODEL_H
+#ifndef ENGINE_ASSET_H
+#define ENGINE_ASSET_H
 #include <utility>
 
 #include "mesh.h"
 #include "material.h"
 
-class Model {
+class Asset {
     /**
      * Model of meshes with a Model Matrix
      */
 public:
+    enum class AssetType{Sphere, IcoSphere, Metaball, Custom};
+    enum class ShaderType{OPAQUE,TRANSPARENT};
     /**
      * Constructor, do not create any Mesh,
      * it is the responsibility of the inherited classes
      * to create the meshes
      */
-    Model();
+    Asset();
 
-    virtual ~Model();
+    virtual ~Asset();
 
     /**
      * Draws the model
      * @param tr_shader
      */
-    void drawModel(Shader &tr_shader, GLuint t_glmode);
+    void drawModel(Shader &tr_shader, GLuint t_glMode);
 
 
     /**
@@ -77,6 +79,31 @@ public:
     void setTranslation(glm::vec3 t_position){ m_translation = t_position;}
 
     void setMaterial(std::shared_ptr<Material> t_mat){m_meshs[0]->setMaterial(std::move(t_mat));}
+    void setDiffuseColor(const glm::vec4 &color){
+        m_meshs[0]->getMaterial()->setDiffuseVal(glm::vec3(color.r,color.g,color.b));
+        m_meshs[0]->getMaterial()->setAlpha(color.a);
+    }
+    glm::vec4 getDiffuseColor(){return glm::vec4(m_meshs[0]->getMaterial()->getDiffuseVal(),m_meshs[0]->getMaterial()->getAlpha());}
+
+    AssetType getAssetType(){return m_asset_type;}
+
+    void setAssetType(AssetType t_atype){m_asset_type=t_atype;}
+
+    ShaderType getShaderType(){return m_shader_type;}
+
+    void setShaderType(ShaderType t_stype){m_shader_type=t_stype;}
+
+    const std::string &getName(){return m_name;}
+
+    void setName(const std::string &tr_name){m_name=tr_name;}
+
+    void setSelected(bool t_isSelected){m_selected=t_isSelected;}
+
+    bool isSelected(){return m_selected;}
+
+    void setToBeDestroyed(bool t_to_be_destroyed){m_to_be_destroyed=t_to_be_destroyed;}
+
+    bool toBeDestroyed(){return m_to_be_destroyed;}
 
 
 private:
@@ -114,15 +141,18 @@ protected:
     void setWaitingToUpdate(bool t_waitingToUpdate){ m_waiting_to_update = t_waitingToUpdate;}
 
 
-protected: //TODO : set this to private
-    std::vector<std::shared_ptr<Mesh>> m_meshs;
-    bool m_waiting_to_update;
-
 private:
     glm::vec3 m_scale;
     glm::vec3 m_translation;
     glm::vec3 m_rotation;
+    AssetType m_asset_type{AssetType::Custom};
+    ShaderType m_shader_type{ShaderType::OPAQUE};
+    bool m_waiting_to_update;
+    bool m_to_be_destroyed{false};
+    bool m_selected{false};
+    std::vector<std::shared_ptr<Mesh>> m_meshs;
+    std::string m_name;
 };
 
 
-#endif //ENGINE_MODEL_H
+#endif //ENGINE_ASSET_H

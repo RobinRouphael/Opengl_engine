@@ -5,17 +5,17 @@
 #include "quad.h"
 
 ScreenQuad::ScreenQuad(float t_x, float t_y, float t_width, float t_height):
-        Model(),
+        Asset(),
         m_x(t_x),
         m_y(t_y),
         m_width(t_width),
         m_height(t_height)
 {
+    setAssetType(AssetType::Custom);
     setup();
 }
 
 void ScreenQuad::setup(){
-
     std::vector<Vertex> vertices;
     std::vector<GLuint> indices= {0, 1, 2, 0, 2, 3};
     Vertex v;

@@ -5,9 +5,10 @@
 #include "icosphere.h"
 
 Icosphere::Icosphere() :
-        Model(),
+        Asset(),
         m_nb_subdivisions(2)
 {
+    setAssetType(AssetType::IcoSphere);
     createIcosahedron();
     for(int i =0; i < m_nb_subdivisions; i++)
         createSubdivisions();
@@ -67,8 +68,7 @@ void Icosphere::createIcosahedron()
         indices.push_back(mod_eq(i+1,10));
         indices.push_back(11);
     }
-    m_meshs.clear();
-    addMesh(std::make_shared<Mesh>(vertices,indices,std::make_shared<Material>()));
+    setMeshs(std::vector<std::shared_ptr<Mesh>>{std::make_shared<Mesh>(vertices,indices,std::make_shared<Material>())});
     m_vertices = vertices;
     m_indices = indices;
 }
@@ -112,7 +112,7 @@ void Icosphere::createSubdivisions()
         index += 12;
     }
 
-    m_meshs[0] = std::make_shared<Mesh>(vertices, indices,std::make_shared<Material>());
+    setMeshs(std::vector<std::shared_ptr<Mesh>>{std::make_shared<Mesh>(vertices,indices,std::make_shared<Material>())});
     m_vertices = vertices;
     m_indices = indices;
 }
@@ -124,7 +124,7 @@ Icosphere::~Icosphere() {
 void Icosphere::setNBSubdivisions(int t_nbSubdiv)
 {
     m_nb_subdivisions =t_nbSubdiv;
-    m_waiting_to_update = true;
+    setWaitingToUpdate(true);
 }
 
 

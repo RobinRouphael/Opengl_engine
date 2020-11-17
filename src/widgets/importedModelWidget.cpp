@@ -8,7 +8,6 @@ ImportedModelWidget::ImportedModelWidget(const std::shared_ptr<AssimpModel> &ass
         _assimpMesh(assimpMesh),
         ModelInterface(assimpMesh)
     {
-        setLayout(mainLayout);
 
     }
 

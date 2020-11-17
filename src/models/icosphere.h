@@ -4,9 +4,9 @@
 
 #ifndef ENGINE_ICOSPHERE_H
 #define ENGINE_ICOSPHERE_H
-#include "core/model.h"
+#include "core/asset.h"
 
-class Icosphere  : public Model{
+class Icosphere  : public Asset{
     /**
      * Icosphere created from the subdivisions of the triangles of an icosahedron
      */

@@ -46,37 +46,40 @@ void MarchingCube::polygonise(MarchingCube::Cube &tr_cube, std::vector<Vertex> &
         glm::vec3 p1 = vertList[m_tri_table[cubeIndex][i]];
         glm::vec3 p2 = vertList[m_tri_table[cubeIndex][i + 1]];
         glm::vec3 p3 = vertList[m_tri_table[cubeIndex][i + 2]];
-        glm::vec3 normal = glm::cross((p2 - p1),(p3 - p1));
+        glm::vec3 normal = glm::cross((p3 - p1),(p2 - p1));
         Vertex v1, v2, v3;
         v1.position = p1;
         v2.position = p2;
         v3.position = p3;
-
-        auto iterator = std::find(tr_vertices.begin(), tr_vertices.end(), v1);
-        if (iterator != tr_vertices.end()) {
-            tr_indices.push_back(iterator - tr_vertices.begin());
-            iterator->normal += normal;
-        } else {
+        bool v1_exist{false},v2_exist{false},v3_exist{false};
+        for(auto j=0;j<tr_vertices.size();j++){
+            if(tr_vertices[j]==v1){
+                tr_indices.push_back(j);
+                tr_vertices[j].normal+=normal;
+                v1_exist=true;
+            }
+            if(tr_vertices[j]==v2){
+                tr_indices.push_back(j);
+                tr_vertices[j].normal+=normal;
+                v2_exist=true;
+            }
+            if(tr_vertices[j]==v3){
+                tr_indices.push_back(j);
+                tr_vertices[j].normal+=normal;
+                v3_exist=true;
+            }
+        }
+        if(!v1_exist){
             v1.normal = normal;
             tr_vertices.emplace_back(v1);
             tr_indices.push_back(index++);
         }
-
-        iterator = std::find(tr_vertices.begin(), tr_vertices.end(), v2);
-        if (iterator != tr_vertices.end()) {
-            tr_indices.push_back(iterator - tr_vertices.begin());
-            iterator->normal += normal;
-        } else {
+        if(!v2_exist){
             v2.normal = normal;
             tr_vertices.emplace_back(v2);
             tr_indices.push_back(index++);
         }
-
-        iterator = std::find(tr_vertices.begin(), tr_vertices.end(), v3);
-        if (iterator != tr_vertices.end()) {
-            tr_indices.push_back(iterator - tr_vertices.begin());
-            iterator->normal += normal;
-        } else {
+        if(!v3_exist){
             v3.normal = normal;
             tr_vertices.emplace_back(v3);
             tr_indices.push_back(index++);
@@ -88,12 +91,12 @@ void MarchingCube::polygonise(MarchingCube::Cube &tr_cube, std::vector<Vertex> &
 std::shared_ptr<Mesh> MarchingCube::generateMesh(const std::function<float(glm::vec3)> &tr_iso_function) {
     std::vector<Vertex> vertices;
     std::vector<GLuint> indices;
-    for(int x = -m_grid_size/2; x < m_grid_size/2; x++) {
-        for (int y = -m_grid_size/2; y < m_grid_size/2; y++) {
-            for (int z = -m_grid_size/2; z < m_grid_size/2; z++) {
-                auto x_bis{float(x) * m_cube_size};
-                auto y_bis{float(y) * m_cube_size};
-                auto z_bis{float(z) * m_cube_size};
+    for(float x = -m_grid_size/2; x < m_grid_size/2; x+=m_cube_size) {
+        for (float y = -m_grid_size/2; y < m_grid_size/2; y+=m_cube_size) {
+            for (float z = -m_grid_size/2; z < m_grid_size/2; z+=m_cube_size) {
+                auto x_bis{float(x)};
+                auto y_bis{float(y)};
+                auto z_bis{float(z)};
                 std::array<glm::vec3, 8> points{};
                 std::array<float, 8> vals{};
 

@@ -11,15 +11,18 @@
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QDoubleSpinBox>
 #include <QtWidgets/QLabel>
-#include "core/model.h"
+#include <QtWidgets/QColorDialog>
+#include <QtWidgets/QComboBox>
+#include "core/asset.h"
+#include "objectInterface.h"
 
-class ModelInterface : public QWidget{
+class ModelInterface : public ObjectInterface{
     Q_OBJECT
     /**
      * Base class for QT Widgets to edit Models
      */
 public:
-    explicit ModelInterface(const std::shared_ptr<Model> &t_asset);
+    explicit ModelInterface(const std::shared_ptr<Asset> &t_asset);
 
     virtual ~ModelInterface();
 
@@ -44,18 +47,14 @@ public slots:
      */
     void rotationEdited(double t_rot);
 
-
-signals:
-    /**
-     * Properties of the model have been modified
-     */
-    void propertiesHaveChanged();
-    /**
-     * Model must be deleted
-     */
-    void objectIsToBeDestroyed();
+    void showDiffuse(){editDiffuse->setVisible(true);}
+    void diffuseChanged(const QColor &color);
+    void changeShader(int row);
 
 private:
+
+    QPushButton *openDiffuse;
+    QColorDialog *editDiffuse;
 
     QDoubleSpinBox *editScaleX;
     QDoubleSpinBox *editScaleY;
@@ -68,13 +67,13 @@ private:
     QDoubleSpinBox *editRotationX;
     QDoubleSpinBox *editRotationY;
     QDoubleSpinBox *editRotationZ;
-
+    QComboBox *chooseShader;
 
     QPushButton *destroyButton;
     QGridLayout *scaleLayout;
     QGridLayout *rotationLayout;
     QGridLayout *positionLayout;
-    std::shared_ptr<Model> m_asset;
+    std::shared_ptr<Asset> m_asset;
 
 protected:
 

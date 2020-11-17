@@ -3,9 +3,9 @@
 
 
 #include "src/core/camera.h"
-#include "core/model.h"
-#include "modelWidget/modelInterface.h"
-#include "src/modelWidget/sphereWidget.h"
+#include "core/asset.h"
+#include "widgets/modelInterface.h"
+#include "src/widgets/sphereWidget.h"
 #include "src/models/sphere.h"
 #include <functional>
 #include <QtWidgets/QWidget>
@@ -13,25 +13,26 @@
 #include "src/lights/dirLight.h"
 #include "src/lights/pointLight.h"
 #include "src/lights/spotLight.h"
-#include <src/modelWidget/lightInterface.h>
+#include <src/widgets/lightInterface.h>
 #include <src/models/assimpmodel.h>
 #include <src/models/icosphere.h>
-#include <src/modelWidget/icoSphereWidget.h>
-#include <src/modelWidget/importedModelWidget.h>
+#include <src/widgets/icoSphereWidget.h>
+#include <src/widgets/importedModelWidget.h>
 #include "src/models/bSplineSurface.h"
 #include <src/models/cube.h>
 #include <src/core/frameBuffer.h>
 #include <src/models/quad.h>
 #include <src/core/lightsManager.h>
+#include <src/core/assetManager.h>
 
 
-class OpenGLDemo {
+class Engine {
 /**
  * Engine demo
  */
 public:
-    explicit OpenGLDemo(int width, int height);
-    ~OpenGLDemo();
+    explicit Engine(int width, int height);
+    ~Engine();
 
     void resize(int width, int height);
     void draw();
@@ -40,11 +41,6 @@ public:
     void mousemove(float xpos, float ypos);
     void keyboardmove(int key, double time);
     bool keyboard(unsigned char k);
-    /**
-     * Get Widget of selected model
-     * @return
-     */
-    ModelInterface *getSelection();
     /**
      * Create new UV sphere
      */
@@ -59,32 +55,24 @@ public:
      */
     void createImportedModel(const std::string &path);
     /**
-     * Delete selected model
-     */
-    void destroySelected();
-    /**
      * Set main shader to draw models
      * @param name
      */
     void setShader(const std::string &name);
 
+    void createPointLight();
+    void createDirLight();
+    void createSpotLight();
+    void createDemo();
+    void createMetaBall();
+    void setSceneHasChanged(bool t_sceneChanged){m_scene_has_changed=t_sceneChanged;}
+
     void toggledrawmode();
 
-    void addToOpaqueModels(std::shared_ptr<Model> t_model);
-    void addToTransparentModels(std::shared_ptr<Model> t_model);
 
+    const std::shared_ptr<LightsManager>  &getLightManager(){return m_lights_manager;}
+    const std::shared_ptr<AssetManager>   &getAssetManager(){return m_asset_manager;}
 
-
-
-private:
-    /**
-     * Create models through main thread
-     */
-    void createWaitingModels();
-    /**
-     * Delete models through main thread
-     */
-    void destroyWaitingModels();
 
 protected:
     // Width and heigth of the viewport
@@ -96,26 +84,11 @@ private:
     bool _drawfill;
     bool _drawLights;
 
-    using InterfaceConstructor = std::function<ModelInterface*()>;
-
-    //Models and Model Widgets constructor
-    std::function<std::pair<std::shared_ptr<Model>,InterfaceConstructor>()> m_modelConstructor;
-    std::function<std::pair<std::shared_ptr<Light>,LightInterface*>()> m_lightConstructor;
-
-    //Lights and Lights Widget constructor
-    std::vector<std::shared_ptr<Model>> m_models;
-    std::vector<InterfaceConstructor> m_interfaces;
-    std::vector<std::shared_ptr<Model>> m_transparent_models;
-    std::vector<std::shared_ptr<Model>> m_opaque_models;
-
-    LightsManager m_lightsManager;
-    std::shared_ptr<Model> m_spline;
-
-
-    bool _waitingModels;
-    bool _waitingToDestroyModel;
-    int _selectedModel;
-
+    std::shared_ptr<LightsManager> m_lights_manager;
+    std::shared_ptr<AssetManager> m_asset_manager;
+    std::function<void()> m_demo_lambda;
+    bool m_waiting_demo{false};
+    bool m_scene_has_changed{false};
     // Shader program for rendering
     std::unique_ptr<Shader> _shader;
     std::unique_ptr<Shader> _colorShader;

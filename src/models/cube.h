@@ -6,9 +6,9 @@
 #define ENGINE_CUBE_H
 
 
-#include <src/core/model.h>
+#include <src/core/asset.h>
 
-class Cube : public Model{
+class Cube : public Asset{
     /**
      * Simple Cube
      */
