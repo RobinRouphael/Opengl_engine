@@ -99,7 +99,7 @@ void main() {
         discard;
     }
     if(mat.nb_specularMap>0){ concreteMat.specular = vec3(texture(mat.specularMap, fragTex));}
-    vec3 resultColor = vec3(0);
+    vec3 resultColor = vec3(0.1)*concreteMat.diffuse;
 
     for (int i = 0 ; i < nb_pointLight ; ++i) {
         resultColor += calcPointLight(point_light[i], normal, fragPos, viewDir);
@@ -124,7 +124,7 @@ vec3 calcDirLight(DirLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     vec3 halfwayDir = normalize(lightDir + viewDir);
     float spec = pow(max(dot(normal, halfwayDir), 0.0), mat.shininess);
     // combine results
-    vec3  ambient = light.ambient * concreteMat.diffuse ;
+    vec3  ambient = light.ambient*concreteMat.diffuse ;
     vec3 diffuse = light.diffuse * diff * concreteMat.diffuse;
     vec3 specular = light.specular * spec * concreteMat.specular;
     float shadow = computeShadow(light.shadow.shadowMap, light.shadow.lightSpaceMatrix, lightDir);
@@ -141,7 +141,7 @@ vec3 calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir) {
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
-    ambient = light.ambient * concreteMat.diffuse * attenuation;
+    ambient = light.ambient* concreteMat.diffuse * attenuation;
     diffuse = light.diffuse * diff * concreteMat.diffuse * attenuation;
     specular = light.specular * spec * concreteMat.specular * attenuation;
     float shadow=0;
@@ -166,7 +166,7 @@ vec3 calcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     float epsilon = light.cutOff - light.outerCutOff;
     float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
     // combine results
-    vec3 ambient = light.ambient * concreteMat.diffuse * attenuation * intensity;
+    vec3 ambient = light.ambient* concreteMat.diffuse * attenuation * intensity;
     vec3 diffuse = light.diffuse * diff * concreteMat.diffuse * attenuation * intensity;
     vec3 specular = light.specular * spec * concreteMat.specular * attenuation * intensity;
 
@@ -184,8 +184,7 @@ float computeShadow(sampler2D shadowMap, mat4 lightSpaceMatrix, vec3 lightDir){
     // get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
     float eps = max(0.05 * (1.0 - normalize(dot(fragNormal, lightDir))), 0.005);
-    if (currentDepth > 1.0 - eps) return 0.0;
-
+    if (currentDepth > 1.0 - eps) return 0.f;
     float shadow = 0.0;
     vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
     for(int x = -2; x <= 2; ++x)

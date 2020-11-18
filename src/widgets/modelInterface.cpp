@@ -19,8 +19,6 @@ ModelInterface::ModelInterface(const std::shared_ptr<Asset> &t_asset):
         scaleLayout(new QGridLayout()),
         rotationLayout(new QGridLayout()),
         positionLayout(new QGridLayout()),
-        openDiffuse(new QPushButton("Diffuse Color")),
-        editDiffuse(new QColorDialog()),
         chooseShader(new QComboBox()),
         m_asset(t_asset),
         mainLayout(new QVBoxLayout())
@@ -85,13 +83,7 @@ ModelInterface::ModelInterface(const std::shared_ptr<Asset> &t_asset):
     mainLayout->addLayout(rotationLayout);
 
 
-    editDiffuse->setOption(QColorDialog::DontUseNativeDialog,true);
-    editDiffuse->setOption(QColorDialog::ShowAlphaChannel,true);
-    glm::vec4 diffusecolor =m_asset->getDiffuseColor();
-    editDiffuse->setCurrentColor(QColor::fromRgbF(diffusecolor.r,diffusecolor.g,diffusecolor.b,diffusecolor.a));
-    editDiffuse->setVisible(false);
 
-    mainLayout->addWidget(openDiffuse);
     mainLayout->addWidget(chooseShader);
 
     setLayout(mainLayout);
@@ -99,9 +91,7 @@ ModelInterface::ModelInterface(const std::shared_ptr<Asset> &t_asset):
 
     QObject::connect(chooseShader,SIGNAL(currentIndexChanged(int)),this,SLOT(changeShader(int)));
 
-    QObject::connect(openDiffuse,SIGNAL(clicked()),this,SLOT(showDiffuse()));
 
-    QObject::connect(editDiffuse,SIGNAL(currentColorChanged(const QColor)),this,SLOT(diffuseChanged(const QColor)));
 
     QObject::connect(editScaleX,SIGNAL(valueChanged(double)),this,SLOT(scaleEdited(double)));
     QObject::connect(editScaleY,SIGNAL(valueChanged(double)),this,SLOT(scaleEdited(double)));
@@ -161,10 +151,7 @@ ModelInterface::~ModelInterface()
     m_asset->setSelected(false);
 }
 
-void ModelInterface::diffuseChanged(const QColor &color) {
-    m_asset->setDiffuseColor(glm::vec4(color.redF(),color.greenF(),color.blueF(),color.alphaF()));
-    emit ObjectInterface::propertiesHaveChanged();
-}
+
 
 void ModelInterface::changeShader(int row) {
     m_asset->setShaderType(row ==0 ? Asset::ShaderType::OPAQUE :Asset::ShaderType::TRANSPARENT);

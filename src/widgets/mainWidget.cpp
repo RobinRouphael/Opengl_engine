@@ -56,7 +56,7 @@ void MainWidget::on_treeSelectionChanged() {
 
     }
     else if(parentName == "Custom"){
-        m_model_settings = std::make_unique<ModelInterface>(m_opengl_widget->getAssetManager()->selectCustomFromName(name));
+        m_model_settings = std::make_unique<ImportedModelWidget>(m_opengl_widget->getAssetManager()->selectCustomFromName(name));
         m_side_layout->addWidget(m_model_settings.get());
         reconnectInterface();
         m_model_settings->propertiesHaveChanged();

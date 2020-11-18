@@ -11,7 +11,7 @@ class PointLight : public Light {
 public:
     /**
      * Constructor
-     * Initialize light from default values
+     * Initialize Pointlight from default values
      */
     PointLight();
     /**
@@ -53,15 +53,22 @@ public:
      * @param t_const
      */
     void setConstant(double t_const){ m_constant = t_const;}
-
+    /**
+     * Compute light space matrix before calling protected base class function to perform shared fbo's operations
+     * @param tr_shader
+     * @param t_width
+     * @param t_height
+     * @param tr_camTarget
+     * @param tr_models
+     */
     void renderShadowMap(Shader &tr_shader, int t_width, int t_height, const glm::vec3 &tr_camTarget,
                          const std::vector<std::shared_ptr<Asset>> &tr_models) override;
 
 
 private:
-    GLfloat m_constant;
-    GLfloat m_linear;
-    GLfloat m_quadratic;
+    GLfloat m_constant; //Constant term
+    GLfloat m_linear;   //Linear term
+    GLfloat m_quadratic;    //Quadratic term
 };
 
 

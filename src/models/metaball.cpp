@@ -20,15 +20,15 @@ m_marching_cube{}
 void MetaBall::addBall() {
     m_balls.emplace_back(Ball{glm::vec3(0),1.f});
     setWaitingToUpdate(true);
-
 }
 
 void MetaBall::updateModel() {
     setMeshs(std::vector<std::shared_ptr<Mesh>>{m_marching_cube.generateMesh(m_iso_surface)});
 }
 
-void MetaBall::removeBall(int t_index) {
-    m_balls.erase(m_balls.begin()+t_index);
+void MetaBall::removeBall() {
+    m_balls.erase(m_balls.begin()+m_selected_ball);
+    m_selected_ball=-1;
     setWaitingToUpdate(true);
 }
 

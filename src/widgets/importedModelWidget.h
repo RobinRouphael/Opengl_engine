@@ -8,8 +8,9 @@
 
 #include "modelInterface.h"
 #include "src/models/assimpmodel.h"
+#include "singleMeshModelWidget.h"
 
-class ImportedModelWidget : public ModelInterface {
+class ImportedModelWidget : public SingleMeshModelWidget  {
     Q_OBJECT
 /**
  * QT Widget to edit Imported Model
@@ -20,7 +21,7 @@ public:
      * Constructor
      * @param assimpMesh
      */
-    explicit ImportedModelWidget(const std::shared_ptr<AssimpModel> &assimpMesh);
+    explicit ImportedModelWidget(const std::shared_ptr<Asset> &assimpMesh);
     /**
      * Destructor
      */
@@ -28,7 +29,7 @@ public:
 
 
 private:
-    std::shared_ptr<AssimpModel>_assimpMesh;
+    std::shared_ptr<Asset>_assimpMesh;
 
 };
 

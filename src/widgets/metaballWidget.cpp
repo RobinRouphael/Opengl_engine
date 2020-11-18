@@ -5,7 +5,7 @@
 #include "metaballWidget.h"
 
 MetaballWidget::MetaballWidget(const std::shared_ptr<MetaBall> &t_metaball)
-: ModelInterface(t_metaball),
+: SingleMeshModelWidget(t_metaball),
   m_meta_ball(t_metaball),
   ballList(new QListWidget),
   editBallPositionX(new QDoubleSpinBox()),
@@ -25,6 +25,7 @@ MetaballWidget::MetaballWidget(const std::shared_ptr<MetaBall> &t_metaball)
     mainLayout->addWidget(new QLabel("Balls list"));
     mainLayout->addWidget(ballList);
     ballList->setCurrentRow(0);
+    m_meta_ball->setSelectedBall(0);
     auto currentPosition = m_meta_ball->getBalls()[ballList->currentRow()].pos;
     auto currentRadius = m_meta_ball->getBalls()[ballList->currentRow()].rad;
     auto currentIsoLevel = m_meta_ball->getIsolevel();
@@ -82,12 +83,12 @@ MetaballWidget::~MetaballWidget() {
 }
 
 void MetaballWidget::ballPositionEdited(double t_pos) {
-    m_meta_ball->setBallPosition(ballList->currentRow(),glm::vec3(editBallPositionX->value(),editBallPositionY->value(),editBallPositionZ->value()));
+    m_meta_ball->setBallPosition(glm::vec3(editBallPositionX->value(),editBallPositionY->value(),editBallPositionZ->value()));
     emit ObjectInterface::propertiesHaveChanged();
 }
 
 void MetaballWidget::ballRadiusEdited(double t_pos) {
-    m_meta_ball->setBallRadius(ballList->currentRow(),t_pos);
+    m_meta_ball->setBallRadius(t_pos);
     emit ObjectInterface::propertiesHaveChanged();
 }
 
@@ -98,7 +99,7 @@ void MetaballWidget::addNewBall() {
 }
 
 void MetaballWidget::removeCurrentBall() {
-    m_meta_ball->removeBall(ballList->currentRow());
+    m_meta_ball->removeBall();
     emit ObjectInterface::propertiesHaveChanged();
     updateList();
 }
@@ -113,6 +114,7 @@ void MetaballWidget::updateList() {
 
 void MetaballWidget::updateSettings(int row) {
     if(ballList->currentRow()<m_meta_ball->getBalls().size()) {
+        m_meta_ball->setSelectedBall(ballList->currentRow());
         auto currentPosition = m_meta_ball->getBalls()[ballList->currentRow()].pos;
         auto currentRadius = m_meta_ball->getBalls()[ballList->currentRow()].rad;
         editBallPositionX->setValue(currentPosition.x);

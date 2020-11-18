@@ -122,20 +122,10 @@ void AssetManager::addAssimpFromFile(const std::string &location) {
 void AssetManager::renderOpaqueAssets(Shader &tr_shader, Shader &tr_optShader, GLuint t_glMode) {
     for (auto &a: m_assets){
         a->drawModel(tr_shader, t_glMode);
-        if (a->isSelected()) {
-            tr_optShader.use();
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-            glLineWidth(1);
-            glEnable(GL_POLYGON_OFFSET_LINE);
-            glPolygonOffset(-1, -1);
-            a->drawModel(tr_optShader, t_glMode);
-            glDisable(GL_POLYGON_OFFSET_LINE);
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-            tr_shader.use();
-        }
+        tr_optShader.use();
+        a->drawSelectionEdges(tr_optShader,t_glMode);
+        tr_shader.use();
     }
-
-
 }
 
 void AssetManager::renderTransparentAssets(Shader &tr_shader, Shader &tr_optShader, GLuint t_glMode) {

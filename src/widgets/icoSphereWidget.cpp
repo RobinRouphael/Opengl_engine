@@ -6,7 +6,7 @@
 #include "icoSphereWidget.h"
 
 IcoSphereWidget::IcoSphereWidget(const std::shared_ptr<Icosphere> &sphere):
-        ModelInterface(sphere),
+        SingleMeshModelWidget(sphere),
         _sphere(sphere),
         editSubdivisions(new QSpinBox())
 {

@@ -7,11 +7,10 @@
 
 
 DirLight::DirLight():
-        Light(glm::vec3(0.3f),glm::vec3(0.3f),glm::vec3(0.3f),glm::vec3(0.f)),
-        m_direction(glm::vec3(-1,-1,0))
+        Light(glm::vec3(0.01f),glm::vec3(0.3f),glm::vec3(0.3f),glm::vec3(0.f)),
+        m_direction(glm::vec3(0,-1,0))
 {
-    addFrameBuffer(2048,2048,1);
-    addLightSpaceMatrix(glm::mat4(0));
+    addFrameBuffer(4096,4096,1);
     drawBuffers();
 }
 
@@ -21,21 +20,21 @@ void DirLight::addToShader(Shader &t_shader, int t_nbLights, int texIndex) {
     t_shader.setVec3("dir_light[" + std::to_string(t_nbLights) + "].specular", specular());
     t_shader.setVec3("dir_light[" + std::to_string(t_nbLights) + "].position",position());
     t_shader.setVec3("dir_light[" + std::to_string(t_nbLights) + "].direction", glm::normalize(m_direction));
-    t_shader.setMat4("dir_light[" + std::to_string(t_nbLights) + "].shadow.lightSpaceMatrix", getLightSpaceMatrix(0));
+    t_shader.setMat4("dir_light[" + std::to_string(t_nbLights) + "].shadow.lightSpaceMatrix", getLightSpaceMatrix());
     t_shader.setInt("dir_light[" + std::to_string(t_nbLights) + "].shadow.shadowMap", 31 - texIndex);
     Light::getShadowMap()->bindToGL(t_shader,31 - texIndex);
 }
-
-
 
 void DirLight::renderShadowMap(Shader &tr_shader, int t_width, int t_height, const glm::vec3 &tr_camTarget,
                                const std::vector<std::shared_ptr<Asset>> &tr_models) {
     glm::mat4 lightProjection, lightView;
     glm::mat4 lightSpaceMatrix;
     float near_plane = 2.0f, far_plane = 50.f;
-    glm::vec3 right = glm::cross(glm::normalize(m_direction), glm::vec3{0.f, 1.f, 0.f});
-    glm::vec3 up = glm::cross(glm::normalize(right), glm::normalize(m_direction));
-    lightProjection = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, near_plane, far_plane);
+    glm::vec3 worldUp = glm::vec3{0.f, 1.f, 0.f};
+    if (m_direction == worldUp || m_direction == -worldUp) worldUp = glm::vec3{1.f, 0.f, 0.f};
+    glm::vec3 right = glm::cross(glm::normalize(m_direction), worldUp);
+    glm::vec3 up = glm::cross(right, glm::normalize(m_direction));
+    lightProjection = glm::ortho(-50.0f, 50.0f, -50.0f, 50.0f, near_plane, far_plane);
     lightView = glm::lookAt(position(),position()+glm::normalize(m_direction), up);
     Light::renderShadowMapToFbo(lightProjection * lightView, tr_shader,t_width,t_height,tr_models,0);
 }

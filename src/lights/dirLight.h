@@ -9,7 +9,7 @@
 class DirLight : public Light{
 public:
     /**
-     * Constructor
+     * Constructor of default Directional light
      */
     DirLight();
 
@@ -22,12 +22,25 @@ public:
      * @param t_shader
      */
     void addToShader(Shader &t_shader, int t_nbLights, int texIndex) override;
-
+    /**
+     * Compute light space matrix before calling the base class function to perform shared fbo's operations
+     * @param tr_shader
+     * @param t_width
+     * @param t_height
+     * @param tr_camTarget
+     * @param tr_models
+     */
     void renderShadowMap(Shader &tr_shader, int t_width, int t_height, const glm::vec3 &tr_camTarget,
                          const std::vector<std::shared_ptr<Asset>> &tr_models) override;
-
+    /**
+     * Direction getter
+     * @return
+     */
     [[nodiscard]] const glm::vec3 &getDirection() const;
-
+    /**
+     * Direction setter
+     * @param tr_direction
+     */
     void setDirection(const glm::vec3 &tr_direction);
 
 private:

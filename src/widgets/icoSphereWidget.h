@@ -8,10 +8,11 @@
 
 #include "modelInterface.h"
 #include "src/models/icosphere.h"
+#include "singleMeshModelWidget.h"
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QDoubleSpinBox>
 #include <QtWidgets/QLabel>
-class IcoSphereWidget : public ModelInterface{
+class IcoSphereWidget : public SingleMeshModelWidget{
 Q_OBJECT
 /**
  * QT Widget to edit IcoSpheres

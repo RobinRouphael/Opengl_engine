@@ -4,9 +4,9 @@
 
 #include "importedModelWidget.h"
 
-ImportedModelWidget::ImportedModelWidget(const std::shared_ptr<AssimpModel> &assimpMesh):
+ImportedModelWidget::ImportedModelWidget(const std::shared_ptr<Asset> &assimpMesh):
         _assimpMesh(assimpMesh),
-        ModelInterface(assimpMesh)
+        SingleMeshModelWidget (assimpMesh)
     {
 
     }

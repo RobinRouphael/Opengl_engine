@@ -7,7 +7,7 @@
 #include "sphereWidget.h"
 
 SphereWidget::SphereWidget(const std::shared_ptr<Sphere> &sphere):
-        ModelInterface(sphere),
+        SingleMeshModelWidget(sphere),
         _sphere(sphere),
         editStacks(new QSpinBox()),
         editSectors(new QSpinBox()),

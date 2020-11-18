@@ -47,15 +47,10 @@ public slots:
      */
     void rotationEdited(double t_rot);
 
-    void showDiffuse(){editDiffuse->setVisible(true);}
-    void diffuseChanged(const QColor &color);
+
     void changeShader(int row);
 
 private:
-
-    QPushButton *openDiffuse;
-    QColorDialog *editDiffuse;
-
     QDoubleSpinBox *editScaleX;
     QDoubleSpinBox *editScaleY;
     QDoubleSpinBox *editScaleZ;

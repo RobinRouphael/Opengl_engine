@@ -122,8 +122,6 @@ Engine::Engine(int width, int height) : _width(width), _height(height), _drawfil
     m_revealageTex = std::make_shared<Texture>(m_transparency_buffer->textures()[1],Texture::TextureType::DIFFUSE);
     m_accumTex = std::make_shared<Texture>(m_transparency_buffer->textures()[0],Texture::TextureType::DIFFUSE);
     m_hdrTex = std::make_shared<Texture>(frame_buffer->textures()[0],Texture::TextureType::DIFFUSE);
-
-
 }
 
 
@@ -217,7 +215,6 @@ void Engine::draw()
     m_accumTex->bindToGL(*m_blend_shader,1);
     m_revealageTex->bindToGL(*m_blend_shader,2);
     glDepthMask(GL_TRUE);
-    glEnable(GL_DEPTH_TEST);
     glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
     screen_quad->drawModel(*m_blend_shader,GL_TRIANGLES);
     frame_buffer->stop(_width,_height);
@@ -319,9 +316,12 @@ void Engine::createDemo() {
     auto lm =m_lights_manager;
     auto am=m_asset_manager;
     m_demo_lambda=[lm,am]()->void {
-        lm->addSpotLight();
-        lm->addDirLight();
-        lm->addPointLight();
+        auto dir = std::make_shared<DirLight>();
+        dir->setPosition(glm::vec3(0,40,0));
+        dir->setName("dirlight");
+        //lm->addSpotLight();
+        lm->addDirLight(dir);
+        //lm->addPointLight();
 
 
         auto quad = std::make_shared<ScreenQuad>(-10,-10,20,20);
@@ -329,7 +329,6 @@ void Engine::createDemo() {
         quad->setTranslation(glm::vec3(0,-1,19.5));
         std::shared_ptr<Material> mat = std::make_shared<Material>();
         mat->setDiffuseVal(glm::vec3(1));
-        mat->addDiffuseMap(std::make_shared<Texture>("../textures/floor.png",Texture::TextureType::DIFFUSE));
         quad->setMaterial(mat);
         quad->setName("quad");
         am->addAsset(quad);
@@ -340,9 +339,9 @@ void Engine::createDemo() {
         matsphere->setAlpha(0.5);
         sphere->setMaterial(matsphere);*/
         sphere->setName("sphere");
-        am->addAsset(sphere);
+        //am->addAsset(sphere);
 
-        auto sphere1 = std::make_shared<Sphere>();
+        /*auto sphere1 = std::make_shared<Sphere>();
         std::shared_ptr<Material> matsphere1 = std::make_shared<Material>();
         matsphere1->setDiffuseVal(glm::vec3(1,0,0));
         matsphere1->setAlpha(0.5);
@@ -367,7 +366,7 @@ void Engine::createDemo() {
         sphere3->setMaterial(matsphere3);
         sphere3->setName("Tsphere3");
         sphere3->setShaderType(Asset::ShaderType::TRANSPARENT);
-        am->addAsset(sphere3);
+        am->addAsset(sphere3);*/
     };
     m_waiting_demo=true;
 

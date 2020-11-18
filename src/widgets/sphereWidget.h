@@ -8,10 +8,11 @@
 
 #include "modelInterface.h"
 #include "src/models/sphere.h"
+#include "singleMeshModelWidget.h"
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QFileDialog>
-class SphereWidget : public ModelInterface {
+class SphereWidget : public SingleMeshModelWidget {
     Q_OBJECT
 /**
  * QT Widget to edit UV Sphere

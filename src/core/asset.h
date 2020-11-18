@@ -30,7 +30,7 @@ public:
      * @param tr_shader
      */
     void drawModel(Shader &tr_shader, GLuint t_glMode);
-
+    virtual void drawSelectionEdges(Shader &tr_shader, GLuint t_glMode);
 
     /**
      * Adds a new Mesh to existing

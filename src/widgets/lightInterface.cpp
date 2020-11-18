@@ -223,9 +223,9 @@ spotLayout(new QGridLayout())
     editDirX->setMinimum(-99);
     editDirY->setMinimum(-99);
     editDirZ->setMinimum(-99);
-    editDirX->setValue(m_spotLight->getDirection().x);
-    editDirY->setValue(m_spotLight->getDirection().y);
-    editDirZ->setValue(m_spotLight->getDirection().z);
+    editDirX->setValue(m_spotLight->getTarget().x);
+    editDirY->setValue(m_spotLight->getTarget().y);
+    editDirZ->setValue(m_spotLight->getTarget().z);
     spotLayout->addWidget(new QLabel("Target X"),0,0);
     spotLayout->addWidget(new QLabel("Target Y"),0,1);
     spotLayout->addWidget(new QLabel("Target Z"),0,2);
@@ -286,7 +286,7 @@ void SpotLightInterface::ocoEdited(double val) {
 }
 
 void SpotLightInterface::directionEdited(double t_pos) {
-    m_spotLight->setDirection(glm::vec3(editDirX->value(),editDirY->value(),editDirZ->value()));
+    m_spotLight->setTarget(glm::vec3(editDirX->value(), editDirY->value(), editDirZ->value()));
     emit ObjectInterface::propertiesHaveChanged();
 }
 

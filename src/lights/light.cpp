@@ -22,10 +22,10 @@ void Light::renderShadowMapToFbo(const glm::mat4 &tr_lightSpaceMatrix, Shader &t
                                  const std::vector<std::shared_ptr<Asset>> &tr_models,int t_index) {
     m_fbo->use();
     glClear(GL_DEPTH_BUFFER_BIT);
-    m_light_space_matrixes[t_index]=tr_lightSpaceMatrix;
+    m_light_space_matrix=tr_lightSpaceMatrix;
     glEnable(GL_DEPTH_TEST);
 
-    tr_shader.setMat4("lightSpaceMatrix", m_light_space_matrixes[t_index]);
+    tr_shader.setMat4("lightSpaceMatrix", m_light_space_matrix);
     for(auto &m : tr_models)
         m->drawModel(tr_shader, GL_TRIANGLES);
 
@@ -36,8 +36,8 @@ const std::shared_ptr<Texture> &Light::getShadowMap() const {
     return m_shadow_map;
 }
 
-const glm::mat4 &Light::getLightSpaceMatrix(int t_index) const {
-    return m_light_space_matrixes[t_index];
+const glm::mat4 &Light::getLightSpaceMatrix() const {
+    return m_light_space_matrix;
 }
 
 void Light::renderShadowMap(Shader &tr_shader, int t_width, int t_height, const glm::vec3 &tr_camTarget,
@@ -62,9 +62,6 @@ void Light::drawLight(Shader &tr_mainShader, Shader &tr_optShader, GLuint t_glMo
         glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
         tr_mainShader.use();
     }
-
-
-
 }
 
 

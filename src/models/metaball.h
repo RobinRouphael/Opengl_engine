@@ -21,16 +21,20 @@ public:
     ~MetaBall() override=default;
 
     void addBall();
-    void removeBall(int t_index);
+    void removeBall();
     void updateModel() override;
     const std::vector<Ball> &getBalls(){return m_balls;}
 
-    void setBallPosition(int t_index,const glm::vec3 &pos){
-        m_balls[t_index].pos =pos;
+    void setSelectedBall(int t_index){
+        m_selected_ball=t_index;
+    }
+
+    void setBallPosition(const glm::vec3 &pos){
+        m_balls[m_selected_ball].pos =pos;
         setWaitingToUpdate(true);
     }
-    void setBallRadius(int t_index,float radius){
-        m_balls[t_index].rad=radius;
+    void setBallRadius(float radius){
+        m_balls[m_selected_ball].rad=radius;
         setWaitingToUpdate(true);
     }
     void setCubeSize(float t_size){
@@ -51,6 +55,7 @@ private:
 
     std::vector<Ball> m_balls;
     MarchingCube m_marching_cube;
+    int m_selected_ball{-1};
 
     std::function<float(glm::vec3)> m_iso_surface;
 };

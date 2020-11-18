@@ -9,8 +9,9 @@
 #include <src/models/metaball.h>
 #include <QtWidgets/QListWidget>
 #include "modelInterface.h"
+#include "singleMeshModelWidget.h"
 
-class MetaballWidget : public ModelInterface {
+class MetaballWidget : public SingleMeshModelWidget {
     Q_OBJECT
 public:
     MetaballWidget(const std::shared_ptr<MetaBall> &t_metaball);

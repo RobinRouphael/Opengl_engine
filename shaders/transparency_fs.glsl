@@ -85,7 +85,6 @@ void main() {
 
     vec3 normal = normalize(fragNormal);
     vec3 viewDir = normalize(viewPos - fragPos);
-    vec3 resultColor = vec3(0.0);
     concreteMat.diffuse = mat.diffuse;
     concreteMat.specular = mat.specular;
     concreteMat.shininess = mat.shininess;
@@ -97,6 +96,7 @@ void main() {
         }
     }
     if(mat.nb_specularMap>0){ concreteMat.specular = vec3(texture(mat.specularMap, fragTex));}
+    vec3 resultColor = vec3(0.1)*concreteMat.diffuse;
 
     for (int i = 0 ; i < nb_pointLight ; ++i) {
         resultColor += calcPointLight(point_light[i], normal, fragPos, viewDir);
@@ -110,7 +110,7 @@ void main() {
 
     float weight = max(min(1.0, max(max(resultColor.r, resultColor.g), resultColor.b) * concreteMat.alpha), concreteMat.alpha) * clamp(0.03 / (1e-5 + pow(gl_FragCoord.z / 200, 4.0)), 1e-2, 3e3);
 
-    fragColor = vec4(resultColor * concreteMat.alpha, concreteMat.alpha);
+    fragColor = vec4(resultColor * concreteMat.alpha, concreteMat.alpha) * weight;
     fragAlpha = vec4(concreteMat.alpha);
 }
 

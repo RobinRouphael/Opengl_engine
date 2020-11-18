@@ -42,7 +42,6 @@ private:
     std::vector<std::shared_ptr<Asset>> m_custom;
 
     std::vector<std::shared_ptr<Asset>> m_assets;
-    std::vector<std::shared_ptr<Asset>> m_transparent_assets;
 
 };
 
