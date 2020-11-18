@@ -10,7 +10,6 @@
 #include <string>
 #include <iostream>
 #include <cassert>
-#include "material.h"
 
 
 class Shader {
@@ -18,122 +17,81 @@ class Shader {
 public:
     /**
      * Constructor
-     * @param vertexShaderLocation
-     * @param fragmentShaderLocation
+     * @param tp_vertexShaderLocation
+     * @param tp_fragmentShaderLocation
      */
-    Shader(const char*vertexShaderLocation, const char*fragmentShaderLocation);
+    Shader(const char *tp_vertexShaderLocation, const char * tp_fragmentShaderLocation);
 
     ~Shader();
     /**
      * Activate shaders
      */
     void use() const;
-    /**
-     * Add a PointLight
-     * @param constant
-     * @param linear
-     * @param quadratic
-     * @param pos
-     * @param ambient
-     * @param diffuse
-     * @param specular
-     */
-    void addPointLight(GLfloat constant, GLfloat linear, GLfloat quadratic,
-            const glm::vec3 & pos,const glm::vec3 &ambient, const glm::vec3 &diffuse, const glm::vec3 &specular);
-    /**
-     * Add a SpotLight
-     * @param dir
-     * @param innerCutoff
-     * @param outerCutoff
-     * @param intensity
-     * @param pos
-     * @param ambient
-     * @param diffuse
-     * @param specular
-     */
-    void addSpotLight(const glm::vec3 &dir, GLfloat innerCutoff, GLfloat outerCutoff,GLfloat constant, GLfloat linear, GLfloat quadratic,
-            GLfloat intensity, const glm::vec3 & pos,const glm::vec3 &ambient, const glm::vec3 &diffuse, const glm::vec3 &specular);
-    /**
-     * Add a material
-     * @param mat
-     */
-    void addMaterial(const Material &mat);
-    /**
-     * Reset lights in shaders
-     */
-    void clearLights();
-    /**
-     * The shader may need to know if the Model is textured
-     * @param istextured
-     */
-    void isTextured(bool istextured);
 
     ///Uniform utils
     /**
      * Bool setter
-     * @param name
-     * @param value
+     * @param tr_name
+     * @param t_value
      */
-    void setBool(const std::string &name, bool value) const;
+    void setBool(const std::string &tr_name, bool t_value) const;
     /**
      * Int setter
-     * @param name
-     * @param value
+     * @param tr_name
+     * @param t_value
      */
-    void setInt(const std::string &name, int value) const;
+    void setInt(const std::string &tr_name, int t_value) const;
     /**
      * Float setter
-     * @param name
-     * @param value
+     * @param tr_name
+     * @param t_value
      */
-    void setFloat(const std::string &name, float value) const;
+    void setFloat(const std::string &tr_name, float t_value) const;
     /**
      * Vec2 setter
-     * @param name
-     * @param value
+     * @param tr_name
+     * @param t_value
      */
-    void setVec2(const std::string &name, const glm::vec2 & value) const;
+    void setVec2(const std::string &tr_name, const glm::vec2 & t_value) const;
     /**
      * Vec3 setter
-     * @param name
-     * @param value
+     * @param tr_name
+     * @param t_value
      */
-    void setVec3(const std::string &name, const glm::vec3 & value) const;
+    void setVec3(const std::string &tr_name, const glm::vec3 & t_value) const;
     /**
      * Vec4 setter
-     * @param name
-     * @param value
+     * @param tr_name
+     * @param t_value
      */
-    void setVec4(const std::string &name, const glm::vec4 & value) const;
+    void setVec4(const std::string &tr_name, const glm::vec4 & t_value) const;
     /**
      * Mat2 setter
-     * @param name
-     * @param value
+     * @param tr_name
+     * @param t_value
      */
-    void setMat2(const std::string &name, const glm::mat2 & value) const;
+    void setMat2(const std::string &tr_name, const glm::mat2 & t_value) const;
     /**
      * Mat3 setter
-     * @param name
-     * @param value
+     * @param tr_name
+     * @param t_value
      */
-    void setMat3(const std::string &name, const glm::mat3 & value) const;
+    void setMat3(const std::string &tr_name, const glm::mat3 & t_value) const;
     /**
      * Mat4 setter
-     * @param name
-     * @param value
+     * @param tr_name
+     * @param t_value
      */
-    void setMat4(const std::string &name, const glm::mat4 & value) const;
+    void setMat4(const std::string &tr_name, const glm::mat4 & t_value) const;
 
 
 
 private:
 
-    GLint _success;
-    GLchar _infoLog[512]; // warning fixed size ... request for LOG_LENGTH!!!
-    GLuint _vertexshader, _fragmentshader;
-    GLuint _program;
-    GLuint nb_PointLight;
-    GLuint nb_SpotLight;
+    GLint m_success;
+    GLchar m_info_log[512]; // warning fixed size ... request for LOG_LENGTH!!!
+    GLuint m_vertexshader, m_fragmentshader;
+    GLuint m_program;
 
 
 };

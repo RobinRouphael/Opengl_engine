@@ -4,8 +4,8 @@
 
 #ifndef ENGINE_SPHERE_H
 #define ENGINE_SPHERE_H
-#include "core/model.h"
-class Sphere : public Model{
+#include "core/asset.h"
+class Sphere : public Asset{
     /**
      * UV Sphere
      */
@@ -15,7 +15,7 @@ public:
      * Create UV Sphere in a single Mesh
      */
     Sphere();
-    Sphere(int nbStacks, int nbSectors);
+    Sphere(int t_nbStacks, int t_nbSectors);
     /**
      * Destructor
      */
@@ -23,14 +23,14 @@ public:
 
     /**
      * Set number of stacks
-     * @param nbStacks
+     * @param t_nbStacks
      */
-    void setNbStacks(int nbStacks);
+    void setNbStacks(int t_nbStacks);
     /**
      * Set number of sectors
-     * @param nbSectors
+     * @param t_nbSectors
      */
-    void setNbSectors(int nbSectors);
+    void setNbSectors(int t_nbSectors);
     /**
      * Get number of stacks
      * @return
@@ -45,11 +45,6 @@ public:
      * Reset Mesh from a new number of sectors or stacks
      */
     void updateModel() override;
-    /**
-     * Set a diffuse map
-     * @param texture
-     */
-    void setTextureDiffuse(const std::shared_ptr<Texture> &texture);
 
 
 private:
@@ -65,9 +60,8 @@ private:
     std::vector<GLuint> createIndices() ;
 
 private:
-    int _nbSectors;
-    int _nbStacks;
-    std::shared_ptr<Texture> _textureDiffuse;
+    int m_nb_sectors;
+    int m_nb_stacks;
 };
 
 

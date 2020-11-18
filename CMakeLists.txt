@@ -50,10 +50,12 @@ FILE(GLOB_RECURSE
         ${CMAKE_SOURCE_DIR}/src/*.ui
         )
 
+
 include_directories(
         ${CMAKE_SOURCE_DIR}/src
         ${CMAKE_SOURCE_DIR}/glm
         ${CMAKE_SOURCE_DIR}/textures
+
 )
 
 SOURCE_GROUP("Source Files" FILES ${folder_source})
@@ -74,9 +76,8 @@ set( CMAKE_INCLUDE_CURRENT_DIR ON )
 add_executable(${PROJECT_NAME}
         ${folder_source}
         ${folder_header}
-        ${folder_ui}
-        src/models/sphere.cpp src/models/sphere.h src/core/model.cpp src/core/model.h src/core/mesh.cpp src/core/mesh.h src/core/geometry.cpp src/core/geometry.h src/core/shader.cpp src/core/shader.h src/core/texture.cpp src/core/texture.h src/core/light.cpp src/core/light.h src/models/icosphere.cpp src/models/icosphere.h src/modelWidget/sphereWidget.cpp src/modelWidget/sphereWidget.h src/core/modelInterface.cpp src/core/modelInterface.h src/core/lightInterface.cpp src/core/lightInterface.h src/core/material.cpp src/core/material.h src/models/assimpmodel.cpp src/models/assimpmodel.h src/modelWidget/importedModelWidget.cpp src/modelWidget/importedModelWidget.h src/modelWidget/icoSphereWidget.cpp src/modelWidget/icoSphereWidget.h src/models/cube.cpp src/models/cube.h src/geometry/b_spline2D.cpp src/geometry/b_spline2D.h)
+        ${folder_ui} src/widgets/metaballWidget.cpp src/widgets/metaballWidget.h src/models/metaball.cpp src/models/metaball.h src/widgets/singleMeshModelWidget.cpp src/widgets/singleMeshModelWidget.h)
 
 set(EXT_LIBS Qt5::OpenGL ${OPENGL_LIBRARIES})
-target_link_libraries(${PROJECT_NAME} ${EXT_LIBS} )
+target_link_libraries(${PROJECT_NAME} ${EXT_LIBS})
 target_link_libraries(${PROJECT_NAME} ${ASSIMP_LIBRARIES})

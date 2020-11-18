@@ -5,7 +5,6 @@
 #include "ui_mainwindow.h"
 
 
-
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
 
@@ -16,12 +15,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     QSurfaceFormat::setDefaultFormat(format);
 
     ui->setupUi(this);
-    ui->mainLayout->removeWidget(ui->panelWidget);
-    panelWidget = nullptr;
-
-
     shaderSelection = new QActionGroup(this);
-
 
     ui->actionPhong->setCheckable(true);
 
@@ -35,61 +29,30 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     ui->actionPhong->setChecked(true);
 
-    ui->openGLWidget->setFocus();
-    ui->openGLWidget->setFormat(format);
-    ui->centralwidget->setLayout(ui->mainLayout);
-    QObject::connect(ui->openGLWidget,&MyOpenGLWidget::objectSelectionChanged,this,&MainWindow::objectSelected);
-    QObject::connect(ui->openGLWidget,&MyOpenGLWidget::noObjectSelected,this,&MainWindow::noObjectSelected);
+    ui->centralwidget->getGLWidget()->setFocus();
+    ui->centralwidget->getGLWidget()->setFormat(format);
 
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-    if(panelWidget)
-        delete panelWidget;
     delete shaderSelection;
 }
 
 
-
-
-void MainWindow::objectSelected(ModelInterface *interface)
-{
-    if(ui->panelWidget){
-        ui->mainLayout->removeWidget(ui->panelWidget);
-        delete ui->panelWidget;
-    }
-    ui->panelWidget = interface;
-    ui->mainLayout->addWidget(ui->panelWidget);
-    reconnectInterface(interface);
-}
-
-void MainWindow::noObjectSelected()
-{
-    ui->mainLayout->removeWidget(ui->panelWidget);
-    delete ui->panelWidget;
-    ui->panelWidget=nullptr;
-}
-
-
-void MainWindow::reconnectInterface(ModelInterface *interface)
-{
-    QObject::connect(interface, &ModelInterface::propertiesHaveChanged, ui->openGLWidget,
-                     &MyOpenGLWidget::modelPropertiesChanged);
-    QObject::connect(interface, &ModelInterface::objectIsToBeDestroyed, ui->openGLWidget, &MyOpenGLWidget::selectedIsToBeDestroyed);
-}
-
 void MainWindow::on_actionCreate_Sphere_triggered()
 {
-    ui->openGLWidget->createNewSphere();
-    ui->openGLWidget->setFocus();
+    ui->centralwidget->getGLWidget()->createNewSphere();
+
+
 }
 
 void MainWindow::on_actionCreate_IcoSphere_triggered()
 {
-    ui->openGLWidget->createNewIcoSphere();
-    ui->openGLWidget->setFocus();
+    ui->centralwidget->getGLWidget()->createNewIcoSphere();
+
+
 }
 
 void MainWindow::on_actionCreate_Mesh_from_file_triggered()
@@ -100,22 +63,44 @@ void MainWindow::on_actionCreate_Mesh_from_file_triggered()
             "../objects",
             tr("*.obj"));
     if(!filename.isEmpty())
-        ui->openGLWidget->createImportedModel(filename.toStdString());
-    ui->openGLWidget->setFocus();
+        ui->centralwidget->getGLWidget()->createImportedModel(filename.toStdString());
+
 }
 
 
 void MainWindow::on_actionPhong_triggered()
 {
-    ui->openGLWidget->setShader(tr("Phong"));
+    ui->centralwidget->getGLWidget()->setShader(tr("Phong"));
 }
 
 void MainWindow::on_actionBasic_Texture_triggered()
 {
-    ui->openGLWidget->setShader(tr("Basic Texture"));
+    ui->centralwidget->getGLWidget()->setShader(tr("Basic Texture"));
 }
 
 void MainWindow::on_actionApproximation_error_triggered()
 {
-    ui->openGLWidget->setShader(tr("Approximation Error"));
+    ui->centralwidget->getGLWidget()->setShader(tr("Approximation Error"));
 }
+
+void MainWindow::on_actionCreate_Metaball_triggered() {
+    ui->centralwidget->getGLWidget()->createMetaBall();
+}
+
+void MainWindow::on_actionPoint_Light_triggered() {
+    ui->centralwidget->getGLWidget()->createNewPointLight();
+}
+
+void MainWindow::on_actionDirectional_Light_triggered() {
+    ui->centralwidget->getGLWidget()->createNewDirLight();
+}
+
+void MainWindow::on_actionSpot_Light_triggered() {
+    ui->centralwidget->getGLWidget()->createNewSpotLight();
+}
+
+void MainWindow::on_actionLaunch_Demo_triggered() {
+    ui->centralwidget->getGLWidget()->createDemo();
+}
+
+

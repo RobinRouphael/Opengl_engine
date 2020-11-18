@@ -5,22 +5,22 @@
 #ifndef ENGINE_ASSIMPMODEL_H
 #define ENGINE_ASSIMPMODEL_H
 
-#include <src/core/model.h>
+#include <src/core/asset.h>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-class AssimpModel : public Model {
+class AssimpModel : public Asset {
     /**
      * Model loaded from a file
      */
 public:
     /**
      * Constructor
-     * @param path to the file
-     * @param gamma
+     * @param t_path to the file
+     * @param t_gamma
      */
-    explicit AssimpModel(std::string const &path, bool gamma = false);
+    explicit AssimpModel(std::string const &t_path, bool t_gamma = false);
 
     /**
      * Destructor
@@ -29,19 +29,19 @@ public:
 
 private:
 
-    void loadModel(const std::string &path);
+    void loadModel(const std::string &t_path);
 
-    void processNode(aiNode *node, const aiScene *scene);
+    void processNode(aiNode *t_node, const aiScene *t_scene);
 
-    std::vector<std::shared_ptr<Texture>> loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName);
+    std::vector<std::shared_ptr<Texture>> loadMaterialTextures(aiMaterial *t_mat, aiTextureType t_type, std::string t_type_name);
 
-    std::shared_ptr<Mesh> processMesh(aiMesh *mesh, const aiScene *scene);
+    std::shared_ptr<Mesh> processMesh(aiMesh *t_mesh, const aiScene *t_scene);
 
 
 private:
-    std::vector<std::shared_ptr<Texture>> textures_loaded;
-    std::string directory;
-    bool gammaCorrection;
+    std::vector<std::shared_ptr<Texture>> m_textures_loaded;
+    std::string m_directory;
+    bool m_gamma_correction;
 
 };
 

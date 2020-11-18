@@ -1,6 +1,7 @@
 #ifndef CAMERA_H
 #define CAMERA_H
-#include "opengl_stuff.h"
+#include <opengl_stuff.h>
+#include <glm/glm.hpp>
 
 // Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
 enum Camera_Movement {
@@ -25,6 +26,7 @@ public:
     glm::mat4 viewmatrix() const;
     float &zoom();
     glm::vec3 &position();
+    glm::vec3 &dir(){return _front;}
 
     void setviewport(glm::vec4 viewport);
 
@@ -61,7 +63,7 @@ protected:
 // Default camera values
 constexpr GLfloat YAW        = -90.0f;
 constexpr GLfloat PITCH      =  0.0f;
-constexpr GLfloat SPEED      =  3.0f;
+constexpr GLfloat SPEED      =  30.0f;
 constexpr GLfloat SENSITIVTY =  0.25f;
 constexpr GLfloat ZOOM       =  45.0f;
 

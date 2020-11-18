@@ -3,18 +3,22 @@
 //
 
 #include "sphere.h"
+#include "marchingCube.h"
 
 
 Sphere::Sphere():
     Sphere(20,20)
     {}
 
-Sphere::Sphere(int nbStacks, int nbSectors):
-        Model(),
-        _nbSectors(nbSectors),
-        _nbStacks(nbStacks)
+Sphere::Sphere(int t_nbStacks, int t_nbSectors):
+        Asset(),
+        m_nb_sectors(t_nbSectors),
+        m_nb_stacks(t_nbStacks)
         {
-    addMesh(std::make_shared<Mesh>(createVertices(),createIndices()));
+    //MarchingCube mc{};
+    //addMesh(mc.generateMesh([&](glm::vec3 point){ return pow(point.x,2) + pow(point.y,2) + pow(point.z,2); }));
+    addMesh(std::make_shared<Mesh>(createVertices(),createIndices(),std::make_shared<Material>()));
+    setAssetType(AssetType::Sphere);
     }
 
 Sphere::~Sphere(){}
@@ -27,21 +31,21 @@ std::vector<Vertex> Sphere::createVertices()
     float phi =0;
     float x,y,z,xy;
     float lengthInv = 1.0f;
-    for(int i = 0; i<= _nbStacks; i++){
+    for(int i = 0; i <= m_nb_stacks; i++){
 
-        delta = M_PI * i/_nbStacks;
+        delta = M_PI * i / m_nb_stacks;
         z = cosf(delta);
         xy = sinf(delta);
 
-        for(int j = 0; j<= _nbSectors; j++){
+        for(int j = 0; j <= m_nb_sectors; j++){
 
-            phi = 2*M_PI*j/_nbSectors;
+            phi = 2 * M_PI * j / m_nb_sectors;
             x = xy * cosf(phi);
             y = xy * sinf(phi);
             Vertex v;
-            v.Position = glm::vec3(x,y,z);
-            v.Normal = glm::vec3(x*lengthInv,y*lengthInv,z*lengthInv);
-            v.TexCoords = glm::vec2( float(j)/_nbSectors,float(i)/_nbStacks);
+            v.position = glm::vec3(x, y, z);
+            v.normal = glm::vec3(x * lengthInv, y * lengthInv, z * lengthInv);
+            v.texCoords = glm::vec2(float(i) / m_nb_stacks, float(j) / m_nb_sectors);
             vertices.emplace_back(v);
 
         }
@@ -53,12 +57,12 @@ std::vector<GLuint> Sphere::createIndices()
 {
     std::vector<GLuint> indices;
     int k1, k2;
-    for(int i = 0; i < _nbStacks; i++)
+    for(int i = 0; i < m_nb_stacks; i++)
     {
-        k1 = i * (_nbSectors + 1);     // beginning of current stack
-        k2 = k1 + _nbSectors + 1;      // beginning of next stack
+        k1 = i * (m_nb_sectors + 1);     // beginning of current stack
+        k2 = k1 + m_nb_sectors + 1;      // beginning of next stack
 
-        for(int j = 0; j < _nbSectors; ++j, ++k1, ++k2)
+        for(int j = 0; j < m_nb_sectors; ++j, ++k1, ++k2)
         {
             // 2 triangles per sector excluding first and last stacks
             // k1 => k2 => k1+1
@@ -70,7 +74,7 @@ std::vector<GLuint> Sphere::createIndices()
             }
 
             // k1+1 => k2 => k2+1
-            if(i != (_nbStacks-1))
+            if(i != (m_nb_stacks - 1))
             {
                 indices.emplace_back(k1 + 1);
                 indices.emplace_back(k2);
@@ -81,42 +85,35 @@ std::vector<GLuint> Sphere::createIndices()
     return indices;
 }
 
-void Sphere::setNbStacks(int nbStacks)
+void Sphere::setNbStacks(int t_nbStacks)
 {
-    _nbStacks = nbStacks;
-    waitingToUpdate = true;
+    m_nb_stacks = t_nbStacks;
+    setWaitingToUpdate(true);
 }
 
-void Sphere::setNbSectors(int nbSectors){
-    _nbSectors = nbSectors;
-    waitingToUpdate = true;
+void Sphere::setNbSectors(int t_nbSectors){
+    m_nb_sectors = t_nbSectors;
+    setWaitingToUpdate(true);
 }
 
 
 int Sphere::getNBStacks()
 {
-    return _nbStacks;
+    return m_nb_stacks;
 }
 
 void Sphere::updateModel()
 {
-    if(_textureDiffuse.get())
-        _meshs[0] = std::make_shared<Mesh>(createVertices(),createIndices(),std::vector<std::shared_ptr<Texture>>{_textureDiffuse});
-    else
-        _meshs[0] = std::make_shared<Mesh>(createVertices(),createIndices());
+    setMeshs(std::vector<std::shared_ptr<Mesh>>{std::make_shared<Mesh>(createVertices(), createIndices(), std::make_shared<Material>())});
 }
 
 
 int Sphere::getNBSectors()
 {
-    return _nbSectors;
+    return m_nb_sectors;
 }
 
-void Sphere::setTextureDiffuse(const std::shared_ptr<Texture> &texture)
-{
-    _textureDiffuse =texture;
-    waitingToUpdate = true;
-}
+
 
 
 

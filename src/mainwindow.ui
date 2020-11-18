@@ -13,50 +13,14 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
-  <widget class="QWidget" name="centralwidget">
-   <widget class="QWidget" name="horizontalLayoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>1281</width>
-      <height>601</height>
-     </rect>
-    </property>
-    <layout class="QHBoxLayout" name="mainLayout">
-     <item>
-      <widget class="MyOpenGLWidget" name="openGLWidget">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>4</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="mouseTracking">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QWidget" name="panelWidget" native="true">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>1</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-  </widget>
+  <widget class="MainWidget" name="centralwidget"/>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
      <width>1287</width>
-     <height>29</height>
+     <height>35</height>
     </rect>
    </property>
    <widget class="QMenu" name="SelectShader">
@@ -69,14 +33,31 @@
    </widget>
    <widget class="QMenu" name="menuCreate_Asset">
     <property name="title">
-     <string>Create Model</string>
+     <string>Create Asset</string>
     </property>
     <addaction name="actionCreate_Sphere"/>
     <addaction name="actionCreate_IcoSphere"/>
     <addaction name="actionCreate_Mesh_from_file"/>
+    <addaction name="actionCreate_Metaball"/>
+   </widget>
+   <widget class="QMenu" name="menuCreate_light">
+    <property name="title">
+     <string>Create Light</string>
+    </property>
+    <addaction name="actionPoint_Light"/>
+    <addaction name="actionDirectional_Light"/>
+    <addaction name="actionSpot_Light"/>
+   </widget>
+   <widget class="QMenu" name="menuDemo">
+    <property name="title">
+     <string>Demo</string>
+    </property>
+    <addaction name="actionLaunch_Demo"/>
    </widget>
    <addaction name="SelectShader"/>
    <addaction name="menuCreate_Asset"/>
+   <addaction name="menuCreate_light"/>
+   <addaction name="menuDemo"/>
   </widget>
   <action name="actionCreate_Sphere">
    <property name="text">
@@ -111,12 +92,38 @@
     <string>Approximation error</string>
    </property>
   </action>
+  <action name="actionPoint_Light">
+   <property name="text">
+    <string>Point Light</string>
+   </property>
+  </action>
+  <action name="actionDirectional_Light">
+   <property name="text">
+    <string>Directional Light</string>
+   </property>
+  </action>
+  <action name="actionSpot_Light">
+   <property name="text">
+    <string>Spot Light</string>
+   </property>
+  </action>
+  <action name="actionCreate_Metaball">
+   <property name="text">
+    <string>Create Metaball</string>
+   </property>
+  </action>
+  <action name="actionLaunch_Demo">
+   <property name="text">
+    <string>Launch Demo</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>MyOpenGLWidget</class>
-   <extends>QOpenGLWidget</extends>
-   <header>myopenglwidget.h</header>
+   <class>MainWidget</class>
+   <extends>QWidget</extends>
+   <header>widgets/mainWidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>
