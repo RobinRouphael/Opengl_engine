@@ -16,7 +16,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     ui->setupUi(this);
     shaderSelection = new QActionGroup(this);
-
     ui->actionPhong->setCheckable(true);
 
     ui->actionBasic_Texture->setCheckable(true);
@@ -58,10 +57,10 @@ void MainWindow::on_actionCreate_IcoSphere_triggered()
 void MainWindow::on_actionCreate_Mesh_from_file_triggered()
 {
     QString filename = QFileDialog::getOpenFileName(
-            this,
+            ui->centralwidget,
             "Open Obj file",
             "../objects",
-            tr("*.obj"));
+            tr("*.obj"),nullptr,QFileDialog::DontUseNativeDialog);
     if(!filename.isEmpty())
         ui->centralwidget->getGLWidget()->createImportedModel(filename.toStdString());
 

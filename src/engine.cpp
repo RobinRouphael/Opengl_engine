@@ -1,7 +1,7 @@
 
 
 
-
+#include <models/cylinder.h>
 #include "engine.h"
 
 
@@ -328,6 +328,7 @@ void Engine::createDemo() {
         quad->setRotation(glm::vec3(90,180,0));
         quad->setTranslation(glm::vec3(0,-1,19.5));
         std::shared_ptr<Material> mat = std::make_shared<Material>();
+        mat->addDiffuseMap(std::make_shared<Texture>("../textures/floor.png",Texture::TextureType::DIFFUSE));
         mat->setDiffuseVal(glm::vec3(1));
         quad->setMaterial(mat);
         quad->setName("quad");
@@ -339,7 +340,17 @@ void Engine::createDemo() {
         matsphere->setAlpha(0.5);
         sphere->setMaterial(matsphere);*/
         sphere->setName("sphere");
-        //am->addAsset(sphere);
+
+
+        auto cyl = std::make_shared<Cylinder>();
+        cyl->setName("cylinder");
+        cyl->addBone(glm::vec3(-2,0,0 ), glm::vec3(0,0, 0));
+        cyl->setAnimation(0,Transform());
+        cyl->addBone(glm::vec3(0,0,0 ), glm::vec3(2,0, 0));
+        cyl->setAnimation(1,Transform());
+
+        am->addAsset(cyl);
+
 
         /*auto sphere1 = std::make_shared<Sphere>();
         std::shared_ptr<Material> matsphere1 = std::make_shared<Material>();

@@ -15,10 +15,18 @@ ModelInterface::ModelInterface(const std::shared_ptr<Asset> &t_asset):
         editRotationX(new QDoubleSpinBox()),
         editRotationY(new QDoubleSpinBox()),
         editRotationZ(new QDoubleSpinBox()),
+        editB1RotationX(new QDoubleSpinBox()),
+        editB1RotationY(new QDoubleSpinBox()),
+        editB1RotationZ(new QDoubleSpinBox()),
+        editB2RotationX(new QDoubleSpinBox()),
+        editB2RotationY(new QDoubleSpinBox()),
+        editB2RotationZ(new QDoubleSpinBox()),
         destroyButton(new QPushButton("Destroy Object")),
         scaleLayout(new QGridLayout()),
         rotationLayout(new QGridLayout()),
         positionLayout(new QGridLayout()),
+        boneRotationLayout(new QGridLayout()),
+        bones(t_asset->getBones()),
         chooseShader(new QComboBox()),
         m_asset(t_asset),
         mainLayout(new QVBoxLayout())
@@ -32,8 +40,11 @@ ModelInterface::ModelInterface(const std::shared_ptr<Asset> &t_asset):
     auto currentScale = m_asset->getScale();
 
     editScaleX->setValue(currentScale.x);
+    editScaleX->setSingleStep(0.1);
     editScaleY->setValue(currentScale.y);
+    editScaleY->setSingleStep(0.1);
     editScaleZ->setValue(currentScale.z);
+    editScaleZ->setSingleStep(0.1);
     scaleLayout->addWidget(new QLabel("XScale"),0,0);
     scaleLayout->addWidget(new QLabel("YScale"),0,1);
     scaleLayout->addWidget(new QLabel("ZScale"),0,2);
@@ -82,9 +93,46 @@ ModelInterface::ModelInterface(const std::shared_ptr<Asset> &t_asset):
     mainLayout->addLayout(scaleLayout);
     mainLayout->addLayout(rotationLayout);
 
+    if(bones->size() == 2){
+        editB1RotationX->setMaximum(180);
+        editB1RotationX->setMinimum(-180);
+        editB1RotationY->setMaximum(180);
+        editB1RotationY->setMinimum(-180);
+        editB1RotationZ->setMaximum(180);
+        editB1RotationZ->setMinimum(-180);
+        editB1RotationX->setValue((*bones)[0].getTransformRot().x);
+        editB1RotationY->setValue((*bones)[0].getTransformRot().y);
+        editB1RotationZ->setValue((*bones)[0].getTransformRot().z);
+        boneRotationLayout->addWidget(new QLabel("Bone 1 XRotation"),0,0);
+        boneRotationLayout->addWidget(new QLabel("Bone 1 YRotation"),0,1);
+        boneRotationLayout->addWidget(new QLabel("Bone 1 ZRotation"),0,2);
+        boneRotationLayout->addWidget(editB1RotationX,1,0);
+        boneRotationLayout->addWidget(editB1RotationY,1,1);
+        boneRotationLayout->addWidget(editB1RotationZ,1,2);
+
+        editB2RotationX->setMaximum(180);
+        editB2RotationX->setMinimum(-180);
+        editB2RotationY->setMaximum(180);
+        editB2RotationY->setMinimum(-180);
+        editB2RotationZ->setMaximum(180);
+        editB2RotationZ->setMinimum(-180);
+        editB2RotationX->setValue((*bones)[1].getTransformRot().x);
+        editB2RotationY->setValue((*bones)[1].getTransformRot().y);
+        editB2RotationZ->setValue((*bones)[1].getTransformRot().z);
+        boneRotationLayout->addWidget(new QLabel("Bone 2 XRotation"),2,0);
+        boneRotationLayout->addWidget(new QLabel("Bone 2 YRotation"),2,1);
+        boneRotationLayout->addWidget(new QLabel("Bone 2 ZRotation"),2,2);
+        boneRotationLayout->addWidget(editB2RotationX,3,0);
+        boneRotationLayout->addWidget(editB2RotationY,3,1);
+        boneRotationLayout->addWidget(editB2RotationZ,3,2);
+    }
+    mainLayout->addLayout(boneRotationLayout);
+
+
 
 
     mainLayout->addWidget(chooseShader);
+
 
     setLayout(mainLayout);
     QObject::connect(destroyButton,SIGNAL(clicked()),this,SLOT(destroyModel()));
@@ -104,6 +152,14 @@ ModelInterface::ModelInterface(const std::shared_ptr<Asset> &t_asset):
     QObject::connect(editPositionX,SIGNAL(valueChanged(double)),this,SLOT(positionEdited(double)));
     QObject::connect(editPositionY,SIGNAL(valueChanged(double)),this,SLOT(positionEdited(double)));
     QObject::connect(editPositionZ,SIGNAL(valueChanged(double)),this,SLOT(positionEdited(double)));
+
+    QObject::connect(editB1RotationX,SIGNAL(valueChanged(double)),this,SLOT(boneRotationEdited(double)));
+    QObject::connect(editB1RotationY,SIGNAL(valueChanged(double)),this,SLOT(boneRotationEdited(double)));
+    QObject::connect(editB1RotationZ,SIGNAL(valueChanged(double)),this,SLOT(boneRotationEdited(double)));
+
+    QObject::connect(editB2RotationX,SIGNAL(valueChanged(double)),this,SLOT(boneRotationEdited(double)));
+    QObject::connect(editB2RotationY,SIGNAL(valueChanged(double)),this,SLOT(boneRotationEdited(double)));
+    QObject::connect(editB2RotationZ,SIGNAL(valueChanged(double)),this,SLOT(boneRotationEdited(double)));
 }
 
 void ModelInterface::destroyModel()
@@ -155,6 +211,13 @@ ModelInterface::~ModelInterface()
 
 void ModelInterface::changeShader(int row) {
     m_asset->setShaderType(row ==0 ? Asset::ShaderType::OPAQUE :Asset::ShaderType::TRANSPARENT);
+    emit ObjectInterface::propertiesHaveChanged();
+}
+
+void ModelInterface::boneRotationEdited(double t_rot) {
+    m_asset->setWaitingToUpdate(true);
+    (*bones)[0].setTransform(Transform(glm::vec3(1),glm::vec3(0),glm::vec3(editB1RotationX->value(),editB1RotationY->value(),editB1RotationZ->value())));
+    (*bones)[1].setTransform(Transform(glm::vec3(1),glm::vec3(0),glm::vec3(editB2RotationX->value(),editB2RotationY->value(),editB2RotationZ->value())));
     emit ObjectInterface::propertiesHaveChanged();
 }
 

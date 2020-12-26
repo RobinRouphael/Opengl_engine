@@ -24,6 +24,7 @@ void MetaBall::addBall() {
 
 void MetaBall::updateModel() {
     setMeshs(std::vector<std::shared_ptr<Mesh>>{m_marching_cube.generateMesh(m_iso_surface)});
+    Asset::updateModel();
 }
 
 void MetaBall::removeBall() {

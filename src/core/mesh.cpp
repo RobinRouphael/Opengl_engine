@@ -61,11 +61,63 @@ void Mesh::generateMesh()
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, texCoords));
     glEnableVertexAttribArray(2);
 
+    glVertexAttribPointer(3, 1 , GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, weights[0]));
+    glEnableVertexAttribArray(3);
+
+    glVertexAttribPointer(4, 1 , GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, weights[1]));
+    glEnableVertexAttribArray(4);
+
+    glVertexAttribPointer(5, 1 , GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, weights[2]));
+    glEnableVertexAttribArray(5);
+
+    glVertexAttribPointer(6, 1 , GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, weights[3]));
+    glEnableVertexAttribArray(6);
+
     // 7. Copy our index array in a element buffer for OpenGL to use
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indices.size() * sizeof (GLfloat), m_indices.data(), GL_STATIC_DRAW);
     //6. Unbind the VAO
     glBindVertexArray(0);
+}
+
+void Mesh::animate(const std::vector<Bone> &tr_bones) {
+    std::vector<Vertex> newVertices = m_vertices;
+    Vertex tempV;
+    for(auto i = 0; i< m_vertices.size();i++){
+        newVertices[i].position = glm::vec3(0.f);
+        float weightsum = 0;
+        for(int j = 0; j < tr_bones.size();j++){
+            Vertex temp = tr_bones[j].computeAnimation(m_vertices[i]);
+            weightsum+= newVertices[i].weights[j];
+            newVertices[i].position = newVertices[i].position + temp.position * newVertices[i].weights[j];;
+        }
+        newVertices[i].position = newVertices[i].position / weightsum;
+    }
+    // 2. Bind Vertex Array Object
+    glBindVertexArray(m_vao);
+
+    // 3. Copy our vertices array in a buffer for OpenGL to use
+    glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+    glBufferData(GL_ARRAY_BUFFER, newVertices.size() * sizeof (Vertex), newVertices.data(), GL_STATIC_DRAW);
+
+    // vertex attributes pointers
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)0);
+    glEnableVertexAttribArray(0);
+
+    // normal attributes pointers
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, normal));
+    glEnableVertexAttribArray(1);
+
+    // texture attributes pointers
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, texCoords));
+    glEnableVertexAttribArray(2);
+
+    // 7. Copy our index array in a element buffer for OpenGL to use
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indices.size() * sizeof (GLfloat), m_indices.data(), GL_STATIC_DRAW);
+    //6. Unbind the VAO
+    glBindVertexArray(0);
+
 }
 
 

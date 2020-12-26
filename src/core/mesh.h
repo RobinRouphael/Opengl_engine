@@ -6,6 +6,7 @@
 #define ENGINE_MESH_H
 
 #include "geometry.h"
+#include "bone.h"
 #include "material.h"
 #include <utility>
 #include <vector>
@@ -35,7 +36,11 @@ public:
      * @param tr_shader
      */
     void drawMesh(Shader &tr_shader, GLuint t_glmode);
-
+    /**
+     * Animate mesh on CPU
+     * @param tr_bones
+     */
+    void animate(const std::vector<Bone> &tr_bones);
 
     /**
      * Generate OpenGL buffers from geometry and topology
@@ -45,12 +50,18 @@ public:
     void setMaterial(std::shared_ptr<Material> t_mat){m_material = std::move(t_mat);}
     const std::shared_ptr<Material> &getMaterial(){return m_material;}
 
+    std::vector<Vertex> &getVertices(){
+        return m_vertices;
+    }
+
+
 
 private:
 
     std::vector<Vertex> m_vertices;
     std::vector<GLuint > m_indices;
     std::shared_ptr<Material> m_material;
+
 
     // OpenGL object for models
     GLuint m_vao;

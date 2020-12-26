@@ -60,8 +60,8 @@ struct SpotLight {
     Shadow shadow;
 };
 uniform Material mat;
-uniform PointLight point_light[3];
-uniform SpotLight spot_light[3];
+uniform PointLight point_light[10];
+uniform SpotLight spot_light[10];
 uniform DirLight dir_light[3];
 uniform int nb_pointLight;
 uniform int nb_spotLight;
@@ -99,7 +99,7 @@ void main() {
         discard;
     }
     if(mat.nb_specularMap>0){ concreteMat.specular = vec3(texture(mat.specularMap, fragTex));}
-    vec3 resultColor = vec3(0.1)*concreteMat.diffuse;
+    vec3 resultColor = vec3(0);
 
     for (int i = 0 ; i < nb_pointLight ; ++i) {
         resultColor += calcPointLight(point_light[i], normal, fragPos, viewDir);

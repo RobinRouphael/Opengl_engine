@@ -76,7 +76,7 @@ set( CMAKE_INCLUDE_CURRENT_DIR ON )
 add_executable(${PROJECT_NAME}
         ${folder_source}
         ${folder_header}
-        ${folder_ui} src/widgets/metaballWidget.cpp src/widgets/metaballWidget.h src/models/metaball.cpp src/models/metaball.h src/widgets/singleMeshModelWidget.cpp src/widgets/singleMeshModelWidget.h)
+        ${folder_ui} src/widgets/metaballWidget.cpp src/widgets/metaballWidget.h src/models/metaball.cpp src/models/metaball.h src/widgets/singleMeshModelWidget.cpp src/widgets/singleMeshModelWidget.h src/core/bone.cpp src/core/bone.h src/core/transform.cpp src/core/transform.h src/models/cylinder.cpp src/models/cylinder.h src/widgets/boneWidget.cpp src/widgets/boneWidget.h)
 
 set(EXT_LIBS Qt5::OpenGL ${OPENGL_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} ${EXT_LIBS})

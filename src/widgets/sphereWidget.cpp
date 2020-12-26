@@ -45,7 +45,7 @@ void SphereWidget::setTextureFromFile()
             this,
             "Open Image file",
             "../textures",
-            tr("*.jpg"));
+            tr("*.jpg"),nullptr,QFileDialog::DontUseNativeDialog);
     if(!filename.isEmpty()){
         std::shared_ptr<Material> material = std::make_shared<Material>();
         material->addDiffuseMap(std::make_shared<Texture>(filename.toStdString(),Texture::TextureType::DIFFUSE));

@@ -7,6 +7,7 @@
 #include <utility>
 
 #include "mesh.h"
+#include "transform.h"
 #include "material.h"
 
 class Asset {
@@ -46,39 +47,40 @@ public:
      */
     virtual void updateModel();
 
-
     /**
      * Scale getter
      * @return scale vector
      */
-    glm::vec3 getScale(){return m_scale;}
+    glm::vec3 getScale(){return m_transform.getScale();}
     /**
      * Scale setter
      * @param t_scale vector
      */
-    void setScale(glm::vec3 t_scale){ m_scale = t_scale;}
+    void setScale(glm::vec3 t_scale){ m_transform.setScale(t_scale);}
     /**
      * Rotation getter
      * @return rotation vector
      */
-    glm::vec3 getRotation(){return m_rotation;}
+    glm::vec3 getRotation(){return m_transform.getRotation();}
     /**
      * Rotation setter
      * @param t_rotation vector
      */
-    void setRotation(glm::vec3 t_rotation){ m_rotation = t_rotation;}
+    void setRotation(glm::vec3 t_rotation){ m_transform.setRotation(t_rotation);}
     /**
      * Position getter
      * @return position vector
      */
-    glm::vec3 getTranslation(){return m_translation;}
+    glm::vec3 getTranslation(){return m_transform.getTranslation();}
     /**
      * Position setter
      * @param t_position vector
      */
-    void setTranslation(glm::vec3 t_position){ m_translation = t_position;}
+    void setTranslation(glm::vec3 t_position){ m_transform.setTranslation(t_position);}
+
 
     void setMaterial(std::shared_ptr<Material> t_mat){m_meshs[0]->setMaterial(std::move(t_mat));}
+    void setBones(const std::vector<Bone> & t_bones){m_bones = t_bones;}
     void setDiffuseColor(const glm::vec4 &color){
         m_meshs[0]->getMaterial()->setDiffuseVal(glm::vec3(color.r,color.g,color.b));
         m_meshs[0]->getMaterial()->setAlpha(color.a);
@@ -106,33 +108,7 @@ public:
     bool toBeDestroyed(){return m_to_be_destroyed;}
 
 
-private:
-    /**
-     * Get Rotation Matrix
-     * @return Rotation Matrix
-     */
-    glm::mat4 getRotationMatrix(){
-        glm::vec3 x{1.f, 0.f, 0.f};
-        glm::vec3 y{0.f, 1.f, 0.f};
-        glm::vec3 z{0.f, 0.f, 1.f};
-        glm::mat4 rot = glm::rotate(glm::mat4(), glm::radians(m_rotation.x), x);
-        rot = glm::rotate(rot, glm::radians(m_rotation.y), y);
-        rot = glm::rotate(rot, glm::radians(m_rotation.z), z);
-        return rot;
-    }
 
-
-protected:
-
-    /**
-     * Get Model Matrix
-     * @return Translation Mat * Rotation Mat * Scale Mat
-     */
-    glm::mat4 getModel(){
-        return glm::translate(glm::mat4(), m_translation)
-               * getRotationMatrix()
-               *glm::scale(glm::mat4(), m_scale);
-    }
 
     [[nodiscard]] std::vector<std::shared_ptr<Mesh>> getMeshs() const {return m_meshs;}
 
@@ -140,17 +116,29 @@ protected:
 
     void setWaitingToUpdate(bool t_waitingToUpdate){ m_waiting_to_update = t_waitingToUpdate;}
 
+    void addBone(glm::vec3 t_pos1, glm::vec3 t_pos2){
+        Bone b(t_pos1,t_pos2,m_meshs[0]->getVertices(),m_bones.size());
+        m_bones.emplace_back(b);
+    }
+    void setAnimation(int t_boneID, Transform t_transform){
+        m_bones[t_boneID].setTransform(t_transform);
+        setWaitingToUpdate(true);
+    }
+
+    std::vector<Bone> *getBones(){return &m_bones;}
+
+
 
 private:
-    glm::vec3 m_scale;
-    glm::vec3 m_translation;
-    glm::vec3 m_rotation;
+    Transform m_transform;
     AssetType m_asset_type{AssetType::Custom};
     ShaderType m_shader_type{ShaderType::OPAQUE};
     bool m_waiting_to_update;
     bool m_to_be_destroyed{false};
     bool m_selected{false};
+    bool m_anim_gpu{true};
     std::vector<std::shared_ptr<Mesh>> m_meshs;
+    std::vector<Bone> m_bones;
     std::string m_name;
 };
 

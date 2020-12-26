@@ -61,8 +61,8 @@ struct SpotLight {
     Shadow shadow;
 };
 uniform Material mat;
-uniform PointLight point_light[3];
-uniform SpotLight spot_light[3];
+uniform PointLight point_light[10];
+uniform SpotLight spot_light[10];
 uniform DirLight dir_light[3];
 uniform int nb_pointLight;
 uniform int nb_spotLight;

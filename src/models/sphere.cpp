@@ -105,6 +105,7 @@ int Sphere::getNBStacks()
 void Sphere::updateModel()
 {
     setMeshs(std::vector<std::shared_ptr<Mesh>>{std::make_shared<Mesh>(createVertices(), createIndices(), std::make_shared<Material>())});
+    Asset::updateModel();
 }
 
 

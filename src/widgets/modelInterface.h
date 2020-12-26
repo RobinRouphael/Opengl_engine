@@ -47,10 +47,20 @@ public slots:
      */
     void rotationEdited(double t_rot);
 
+    void boneRotationEdited(double t_rot);
+
 
     void changeShader(int row);
 
 private:
+    QDoubleSpinBox *editB1RotationX;
+    QDoubleSpinBox *editB1RotationY;
+    QDoubleSpinBox *editB1RotationZ;
+
+    QDoubleSpinBox *editB2RotationX;
+    QDoubleSpinBox *editB2RotationY;
+    QDoubleSpinBox *editB2RotationZ;
+
     QDoubleSpinBox *editScaleX;
     QDoubleSpinBox *editScaleY;
     QDoubleSpinBox *editScaleZ;
@@ -68,7 +78,9 @@ private:
     QGridLayout *scaleLayout;
     QGridLayout *rotationLayout;
     QGridLayout *positionLayout;
+    QGridLayout *boneRotationLayout;
     std::shared_ptr<Asset> m_asset;
+    std::vector<Bone> *bones;
 
 protected:
 
